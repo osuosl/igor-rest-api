@@ -54,6 +54,10 @@ All operations will be implemented via HTTP verbs on URLS; see [here](http://blo
    * `DELETE`: Delete user `id` from the `USERS` table
    * `PUT/PATCH`: Update credentials for user `id` in the `USERS` table
 
+`/login`
+
+   * `POST`: Returns an authentication token to be sent with all future requests for this user
+
 ### IPMI Operations' Endpoints
 
 `/machines/:hostname/chassis`
