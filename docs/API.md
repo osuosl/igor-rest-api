@@ -19,7 +19,7 @@ The interface must allow the following operations from the client:
 
 ## Architecture
 
-![Igor Architecture](https://github.com/emaadmanzoor/igor-rest-api/raw/master/docs/Igor_Architecture.png "Igor Architecture")
+![Igor Architecture](https://raw.githubusercontent.com/emaadmanzoor/igor-rest-api/master/docs/Igor_Architecture.jpg "Igor Architecture")
 
 *[Diagram source](https://docs.google.com/drawings/d/1KZ2L9Hj7nB1S1TfYvx17_ZtXdjvPtdZdmY92QE4KKlI/edit?usp=sharing)*
 
