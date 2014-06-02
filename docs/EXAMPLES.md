@@ -4,7 +4,7 @@ The flow below assumes a user `root` with a known password; this user cannot be 
 
 ## User Management
 
-   * Login as `root` and get an authentication token. Future accesses can use this token instead
+Login as `root` and get an authentication token. Future accesses can use this token instead
      of sending the username and password each time.
 
 ```
@@ -23,7 +23,7 @@ Date: Mon, 02 Jun 2014 12:27:21 GMT
 export TOKEN=eyJhbGciOiJIUzI1NiIsImV4cCI6MTQwMTcxMjY0MSwiaWF0IjoxNDAxNzEyMDQxfQ.eyJ1aWQiOjJ9.xrLAOK_OYBrWh7ZUzpuK7cuSkmk:unused
 ```
 
-  * List the available users.
+List the available users.
 
 ```
 $ curl -i -u $TOKEN -X GET http://localhost:5000/users
@@ -43,7 +43,7 @@ Date: Mon, 02 Jun 2014 12:26:33 GMT
 }
 ```
 
-  * Create user `igor` with password `igor`.
+Create user `igor` with password `igor`.
 
 ```
 $ curl -i -u $TOKEN -X POST -H "Content-Type: application/json" -d '{"username":"igor", "password":"igor"}' http://localhost:5000/users
@@ -59,7 +59,7 @@ Date: Mon, 02 Jun 2014 12:29:45 GMT
 }
 ```
 
-   * Get an authentication token as user `igor`.
+Get an authentication token as user `igor`.
 
 ```
 $ curl -i -u igor:igor -X GET http://localhost:5000/login
@@ -78,7 +78,7 @@ Date: Mon, 02 Jun 2014 12:32:00 GMT
 export TOKEN=eyJhbGciOiJIUzI1NiIsImV4cCI6MTQwMTcxMjkyMCwiaWF0IjoxNDAxNzEyMzIwfQ.eyJ1aWQiOjR9.5LtrccmtSD9hmBjqzd5vdFFeVJ3-KypdJcOgijdL2x8:unused
 ```
 
-   * List the available users, that now contains `igor`.
+List the available users, that now contains `igor`.
 
 ```
 $ curl -i -u $TOKEN -X GET http://localhost:5000/users
@@ -102,7 +102,7 @@ Date: Mon, 02 Jun 2014 13:05:51 GMT
 }
 ```
 
-   * View details of the user `igor`.
+View details of the user `igor`.
 
 ```
 $ curl -i -u $TOKEN -X GET http://localhost:5000/users/igor
@@ -118,7 +118,7 @@ Date: Mon, 02 Jun 2014 13:06:26 GMT
 }
 ```
 
-   * Update the password for user `igor` (can only be done by `root` and `igor`).
+Update the password for user `igor` (can only be done by `root` and `igor`).
 
 ```
 $ curl -i -u $TOKEN -X PUT -H "Content-Type: application/json" -d '{"password": "password"}' http://localhost:5000/users/igor
@@ -133,7 +133,7 @@ Date: Mon, 02 Jun 2014 13:13:36 GMT
 }
 ```
 
-   * Try obtaining a token with the old password for `igor`.
+Try obtaining a token with the old password for `igor`.
 
 ```
 $ curl -i -u igor:igor -X GET http://localhost:5000/loginHTTP/1.0 401 UNAUTHORIZED
@@ -146,7 +146,7 @@ Date: Mon, 02 Jun 2014 13:14:00 GMT
 Unauthorized Access
 ```
 
-   * Try obtaining a token with the new password for `igor`.
+Try obtaining a token with the new password for `igor`.
 
 ```
 $ curl -i -u igor:password -X GET http://localhost:5000/login
@@ -162,7 +162,7 @@ Date: Mon, 02 Jun 2014 13:14:19 GMT
 }
 ```
 
-   * Delete the user `igor` (can only be done by `root` and `igor`).
+Delete the user `igor` (can only be done by `root` and `igor`).
 
 ```
 $ curl -i -u $TOKEN -X DELETE -H "Content-Type: application/json" http://localhost:5000/users/igor
@@ -177,7 +177,7 @@ Date: Mon, 02 Jun 2014 13:14:50 GMT
 }
 ```
 
-   * View the list of users as `root`.
+View the list of users as `root`.
 
 ```
 $ curl -i -u root:root -X GET http://localhost:5000/users
@@ -202,3 +202,5 @@ Date: Mon, 02 Jun 2014 13:15:15 GMT
 `TODO`
 
 ## IPMI Operations
+
+`TODO`
