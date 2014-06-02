@@ -6,14 +6,16 @@ A REST API providing endpoints and functions for IPMI control of OSU-OSL machine
 ## Serving
 
    * Install required packages: `pip install -r requirements.txt`
-   * Run the server: `python igor.py`
-   * Test the running server: `curl -X GET http://127.0.0.1:5000/hosts`
+   * Update the database credentials in `api/config.py`
+   * `TODO` Create the database and entries: `python api/migrate.py`
+   * Run the server: `python runserver.py`
+   * Test the running server: `curl -i -u root:root -X GET http://localhost:5000/hosts`
 
-## Sample Usage
+## Usage
+
+The flow below assumes a user `root` with a known password; this user cannot be deleted via the API.
 
 ### User Management
-
-This assumes a user `root` with a known password; this user cannot be deleted via the API.
 
    * Login as `root` and get an authentication token. Future accesses can use this token instead
      of sending the username and password each time.
