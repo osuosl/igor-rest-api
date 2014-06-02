@@ -48,15 +48,15 @@ All operations will be implemented via HTTP verbs on URLS; see [here](http://blo
    * `GET`: Gets the list of users in the `USERS` table
    * `POST`: Create a new user in the `USERS` table
 
-`/users/:id`
+`/users/:username`
 
-   * `GET`: Gets details for user `id` (username and permitted machines)
-   * `DELETE`: Delete user `id` from the `USERS` table
-   * `PUT/PATCH`: Update credentials for user `id` in the `USERS` table
+   * `GET`: Gets details for user `username` (eg. permitted machines)
+   * `DELETE`: Delete user `username` from the `USERS` table
+   * `PUT`: Update password for user `username` in the `USERS` table
 
 `/login`
 
-   * `POST`: Returns an authentication token to be sent with all future requests for this user
+   * `GET`: Returns an authentication token to be sent with all future requests for this user
 
 ### IPMI Operations' Endpoints
 
