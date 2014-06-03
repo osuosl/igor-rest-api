@@ -1,7 +1,11 @@
 Flask==0.10.1
+Flask-HTTPAuth==2.2.1
 Flask-RESTful==0.2.12
+Flask-SQLAlchemy==1.0
 Jinja2==2.7.2
 MarkupSafe==0.23
+MySQL-python==1.2.5
+SQLAlchemy==0.9.4
 Werkzeug==0.9.4
 aniso8601==0.82
 itsdangerous==0.24
