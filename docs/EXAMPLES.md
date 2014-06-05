@@ -20,7 +20,7 @@ Date: Mon, 02 Jun 2014 12:27:21 GMT
     "token": "eyJhbGciOiJIUzI1NiIsImV4cCI6MTQwMTcxMjY0MSwiaWF0IjoxNDAxNzEyMDQxfQ.eyJ1aWQiOjJ9.xrLAOK_OYBrWh7ZUzpuK7cuSkmk9Aak6pbleQR1-kpw"
 }
 
-export TOKEN=eyJhbGciOiJIUzI1NiIsImV4cCI6MTQwMTcxMjY0MSwiaWF0IjoxNDAxNzEyMDQxfQ.eyJ1aWQiOjJ9.xrLAOK_OYBrWh7ZUzpuK7cuSkmk:unused
+$ export TOKEN=eyJhbGciOiJIUzI1NiIsImV4cCI6MTQwMTcxMjY0MSwiaWF0IjoxNDAxNzEyMDQxfQ.eyJ1aWQiOjJ9.xrLAOK_OYBrWh7ZUzpuK7cuSkmk:unused
 ```
 
 List the available users.
@@ -75,7 +75,7 @@ Date: Mon, 02 Jun 2014 12:32:00 GMT
 }
 
 
-export TOKEN=eyJhbGciOiJIUzI1NiIsImV4cCI6MTQwMTcxMjkyMCwiaWF0IjoxNDAxNzEyMzIwfQ.eyJ1aWQiOjR9.5LtrccmtSD9hmBjqzd5vdFFeVJ3-KypdJcOgijdL2x8:unused
+$ export TOKEN=eyJhbGciOiJIUzI1NiIsImV4cCI6MTQwMTcxMjkyMCwiaWF0IjoxNDAxNzEyMzIwfQ.eyJ1aWQiOjR9.5LtrccmtSD9hmBjqzd5vdFFeVJ3-KypdJcOgijdL2x8:unused
 ```
 
 List the available users, that now contains `igor`.
