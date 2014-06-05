@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from api import app
+from api import manager
 
 if __name__ == '__main__':
-        app.run(debug=True)
+    manager.run()
