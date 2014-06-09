@@ -35,3 +35,17 @@ class User(db.Model):
         except BadSignature:
             return None
         return User.query.get(data['uid'])
+
+class Machine(db.Model):
+    __tablename__ = "machines"
+    mid = db.Column(db.Integer, primary_key = True)
+    hostname = db.Column(db.String(100), unique=True)
+    fqdn = db.Column(db.String(100), unique=True)
+    username = db.Column(db.String(100))
+    password = db.Column(db.String(54))
+
+    def __init__(self, hostname, fqdn, username, password):
+        self.hostname = hostname
+        self.fqdn = fqdn
+        self.username = username
+        self.password = password
