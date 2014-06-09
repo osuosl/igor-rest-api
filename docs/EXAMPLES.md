@@ -199,7 +199,90 @@ Date: Mon, 02 Jun 2014 13:15:15 GMT
 
 ## Machine Management
 
-`TODO`
+The following examples assume the existence of a user `root` with password `root`,
+and use username:password authentication instead of an auth token.
+
+Add a new machine.
+
+```
+$ curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"hostname": "osl01", "fqdn": "osl01.lab.osl.edu", "username":"osl", "password":"osl"}' http://localhost:5000/machines
+HTTP/1.0 201 CREATED
+Content-Type: application/json
+Content-Length: 85
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Mon, 09 Jun 2014 18:35:01 GMT
+
+{
+    "hostname": "osl01",
+    "location": "http://localhost:5000/machines/osl01"
+}
+```
+
+List available machines.
+
+```
+$ curl -i -u root:root -X GET http://localhost:5000/machinesHTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 145
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Mon, 09 Jun 2014 18:35:02 GMT
+
+{
+    "machines": [
+        {
+            "hostname": "osl01",
+            "location": "http://localhost:5000/machines/osl01"
+        }
+    ]
+}
+```
+
+View machine details.
+
+```
+$ curl -i -u root:root -X GET http://localhost:5000/machines/osl01
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 85
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Mon, 09 Jun 2014 18:34:08 GMT
+
+{
+    "fqdn": "osl01.lab.osl.edu",
+    "hostname": "osl01",
+    "location": "http://localhost:5000/machines/osl01"
+}
+```
+
+Update machine details.
+
+```
+$ curl -i -u root:root -X PUT -H "Content-Type: application/json" -d '{"fqdn": "osl01.osl.edu", "username": "username", "password": "password"}' http://localhost:5000/machines/osl01
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 50
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Mon, 09 Jun 2014 18:42:25 GMT
+
+{
+    "message": "Updated entry for host osl01"
+}
+```
+
+Delete a machine.
+
+```
+$ curl -i -u root:root -X DELETE http://localhost:5000/machines/osl01
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 40
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Mon, 09 Jun 2014 18:34:51 GMT
+
+{
+    "message": "Host osl01 deleted"
+}
+```
 
 ## IPMI Operations
 
