@@ -5,11 +5,16 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, Signatur
 
 db = SQLAlchemy()
 
+machine_users = db.Table('permissions',
+                         db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+                         db.Column('machine_id', db.Integer, db.ForeignKey('machine.id')))
+
 class User(db.Model):
-    __tablename__ = "users"
-    uid = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(100), unique=True)
     pwdhash = db.Column(db.String(54))
+    machines = db.relationship('Machine', secondary=machine_users,
+                               backref=db.backref('machines', lazy='dynamic'))
    
     def __init__(self, username, password):
         self.username = username
@@ -23,7 +28,7 @@ class User(db.Model):
 
     def generate_auth_token(self, expiration=600):
         s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
-        return s.dumps({'uid': self.uid})
+        return s.dumps({'id': self.id})
 
     @staticmethod
     def validate_auth_token(token):
@@ -34,15 +39,16 @@ class User(db.Model):
             return None
         except BadSignature:
             return None
-        return User.query.get(data['uid'])
+        return User.query.get(data['id'])
 
 class Machine(db.Model):
-    __tablename__ = "machines"
-    mid = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key = True)
     hostname = db.Column(db.String(100), unique=True)
     fqdn = db.Column(db.String(100), unique=True)
     username = db.Column(db.String(100))
     password = db.Column(db.String(54))
+    users = db.relationship('User', secondary=machine_users,
+                            backref=db.backref('users', lazy='dynamic'))
 
     def __init__(self, hostname, fqdn, username, password):
         self.hostname = hostname
