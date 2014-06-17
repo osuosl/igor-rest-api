@@ -284,6 +284,264 @@ Date: Mon, 09 Jun 2014 18:34:51 GMT
 }
 ```
 
+## Permissions Management
+
+Create a new machine entry.
+
+```
+$ curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"hostname": "osl01", "fqdn": "osl01.lab.osl.edu", "username":"osl", "password":"osl"}' http://localhost:5000/machines
+HTTP/1.0 201 CREATED
+Content-Type: application/json
+Content-Length: 145
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Tue, 17 Jun 2014 18:46:08 GMT
+
+{
+    "hostname": "osl01",
+    "location": "http://localhost:5000/machines/osl01",
+    "users": "http://localhost:5000/machines/osl01/users"
+}
+```
+
+View machines user `root` is permitted to access.
+
+```
+$ curl -i -X GET -u root:root http://localhost:5000/users/root/machines
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 48
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Tue, 17 Jun 2014 18:46:12 GMT
+
+{
+    "machines": [],
+    "username": "root"
+}
+```
+
+View users having access to machine `osl01`.
+
+```
+$ curl -i -X GET -u root:root http://localhost:5000/machines/osl01/users
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 46
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Tue, 17 Jun 2014 18:46:18 GMT
+
+{
+    "hostname": "osl01",
+    "users": []
+}
+```
+
+Add permission for user `root` to access machine `osl01`.
+
+```
+$ curl -i -X PUT -u root:root http://localhost:5000/users/root/machines/osl01
+HTTP/1.0 201 CREATED
+Content-Type: application/json
+Content-Length: 68
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Tue, 17 Jun 2014 18:46:52 GMT
+
+{
+    "message": "Created permission for user root to host osl01"
+}
+```
+
+View machines user `root` is permitted to access.
+
+```
+$ curl -i -X GET -u root:root http://localhost:5000/users/root/machines
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 170
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Tue, 17 Jun 2014 18:46:56 GMT
+
+{
+    "machines": [
+        {
+            "hostname": "osl01",
+            "location": "http://localhost:5000/machines/osl01"
+        }
+    ],
+    "username": "root"
+}
+```
+
+View users having access to machine `osl01`.
+
+```
+$ curl -i -X GET -u root:root http://localhost:5000/machines/osl01/users
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 163
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Tue, 17 Jun 2014 18:47:00 GMT
+
+{
+    "hostname": "osl01",
+    "users": [
+        {
+            "location": "http://localhost:5000/users/root",
+            "username": "root"
+        }
+    ]
+}
+```
+
+Revoke permission for `root` to access `osl01`.
+
+```
+$ curl -i -X DELETE -u root:root http://localhost:5000/users/root/machines/osl01HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 68
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Tue, 17 Jun 2014 18:47:11 GMT
+
+{
+    "message": "Deleted permission for user root to host osl01"
+}
+```
+
+View machines user `root` is permitted to access.
+
+```
+$ curl -i -X GET -u root:root http://localhost:5000/users/root/machines
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 48
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Tue, 17 Jun 2014 18:47:14 GMT
+
+{
+    "machines": [],
+    "username": "root"
+}
+```
+
+View users having access to machine `osl01`.
+
+```
+$ curl -i -X GET -u root:root http://localhost:5000/machines/osl01/users
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 46
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Tue, 17 Jun 2014 18:47:17 GMT
+
+{
+    "hostname": "osl01",
+    "users": []
+}
+```
+
+Add permission for user `root` to access machine `osl01`.
+
+```
+$ curl -i -X PUT -u root:root http://localhost:5000/machines/osl01/users/root
+HTTP/1.0 201 CREATED
+Content-Type: application/json
+Content-Length: 68
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Tue, 17 Jun 2014 18:47:26 GMT
+
+{
+    "message": "Created permission for user root to host osl01"
+}
+```
+
+View machines user `root` is permitted to access.
+
+```
+$ curl -i -X GET -u root:root http://localhost:5000/users/root/machines
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 170
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Tue, 17 Jun 2014 18:47:31 GMT
+
+{
+    "machines": [
+        {
+            "hostname": "osl01",
+            "location": "http://localhost:5000/machines/osl01"
+        }
+    ],
+    "username": "root"
+}
+```
+
+View users having access to machine `osl01`.
+
+```
+$ curl -i -X GET -u root:root http://localhost:5000/machines/osl01/users
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 163
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Tue, 17 Jun 2014 18:47:34 GMT
+
+{
+    "hostname": "osl01",
+    "users": [
+        {
+            "location": "http://localhost:5000/users/root",
+            "username": "root"
+        }
+    ]
+}
+```
+
+Revoke permission for `root` to access `osl01`.
+
+```
+$ curl -i -X DELETE -u root:root http://localhost:5000/machines/osl01/users/root
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 68
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Tue, 17 Jun 2014 18:47:45 GMT
+
+{
+    "message": "Deleted permission for user root to host osl01"
+}
+```
+
+View machines user `root` is permitted to access.
+
+```
+$ curl -i -X GET -u root:root http://localhost:5000/users/root/machines
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 48
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Tue, 17 Jun 2014 18:47:50 GMT
+
+{
+    "machines": [],
+    "username": "root"
+}
+```
+
+View users having access to machine `osl01`.
+
+```
+$ curl -i -X GET -u root:root http://localhost:5000/machines/osl01/users
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 46
+Server: Werkzeug/0.9.4 Python/2.7.6
+Date: Tue, 17 Jun 2014 18:47:55 GMT
+
+{
+    "hostname": "osl01",
+    "users": []
+}
+```
+
 ## IPMI Operations
 
 `TODO`
