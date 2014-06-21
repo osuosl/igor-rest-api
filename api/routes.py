@@ -6,7 +6,6 @@ from flask.ext.httpauth import HTTPBasicAuth
 from models import db, User, Machine
 from pyipmi import make_bmc, IpmiError
 from pyipmi.bmc import LanBMC
-import jsonpickle
 
 # Define the HTTP error codes we use
 OK = 200
