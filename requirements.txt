@@ -9,5 +9,7 @@ SQLAlchemy==0.9.4
 Werkzeug==0.9.4
 aniso8601==0.82
 itsdangerous==0.24
+pexpect==3.2
+pyipmi==0.11.0
 pytz==2014.3
 six==1.6.1
