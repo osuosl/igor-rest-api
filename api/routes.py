@@ -4,8 +4,11 @@ from flask import session, url_for, g
 from flask.ext.restful import Api, Resource, reqparse
 from flask.ext.httpauth import HTTPBasicAuth
 from models import db, User, Machine
+from pyipmi import make_bmc, IpmiError
+from pyipmi.bmc import LanBMC
 
 # Define the HTTP error codes we use
+OK = 200
 CREATED = 201 
 BAD_REQUEST = 400 
 UNAUTHORIZED = 401 
@@ -16,10 +19,17 @@ FORBIDDEN = 403
 TOKEN_EXPIRATION = 600 # 10 minutes
 
 igor_api = Api(app)
-
-# Authentication
 auth = HTTPBasicAuth()
 
+# Utility functions
+def try_ipmi_command(command, **kwargs):
+    try:
+        response = command(**kwargs), OK
+    except IpmiError as error:
+        response = error.message, BAD_REQUEST
+    return response
+
+# Authentication, writes g.user
 @auth.verify_password
 def validate_password(username_or_token, password):
     user = User.validate_auth_token(username_or_token)
@@ -30,7 +40,8 @@ def validate_password(username_or_token, password):
     g.user = user
     return True
 
-# Authorization, requires g.user and hostname, writes g.machine
+# Authorization for the IPMI operations
+# Requires g.user and hostname, writes g.machine
 def permission_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -130,6 +141,9 @@ class UserAPI(Resource):
         if not user:
             return {'message': 'User %s does not exist' % username}, NOT_FOUND
         else:
+            user.machines = []
+            db.session.add(user)
+            db.session.commit()
             db.session.delete(user)
             db.session.commit()
             return {'message': 'User %s deleted' % user.username}
@@ -232,6 +246,9 @@ class MachineAPI(Resource):
         if not machine:
             return {'message': 'Host %s does not exist' % hostname}, NOT_FOUND
         else:
+            machine.users = []
+            db.session.add(machine)
+            db.session.commit()
             db.session.delete(machine)
             db.session.commit()
             return {'message': 'Host %s deleted' % machine.hostname}
@@ -407,3 +424,70 @@ igor_api.add_resource(UserMachinesAPI, '/users/<string:username>/machines', endp
 igor_api.add_resource(UserMachineAPI, '/users/<string:username>/machines/<string:hostname>', endpoint='user_machine')
 igor_api.add_resource(MachineUsersAPI, '/machines/<string:hostname>/users', endpoint='machine_users')
 igor_api.add_resource(MachineUserAPI, '/machines/<string:hostname>/users/<string:username>', endpoint='machine_user')
+
+# IPMI Operations
+class IPMIResource(Resource):
+    decorators = [permission_required, auth.login_required]
+
+    def __init__(self):
+        self.bmc = make_bmc(LanBMC, hostname=g.machine.fqdn,
+                            username=g.machine.username,
+                            password=g.machine.password)
+        super(IPMIResource, self).__init__()
+
+"""
+    GET     /machines/:hostname/chassis     Gets the chassis status
+"""
+class MachineChassisAPI(IPMIResource):
+
+    def get(self, hostname):
+        ipmi_response = try_ipmi_command(self.bmc.get_chassis_status)
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, BAD_REQUEST
+
+        response = ipmi_response[0].__dict__
+        response['hostname'] = hostname
+        return response
+
+igor_api.add_resource(MachineChassisAPI, '/machines/<string:hostname>/chassis', endpoint='machine_chassis')
+
+"""
+    GET     /machines/:hostname/chassis/power     Gets the chassis power status
+    POST    /machines/:hostname/chassis/power
+            {'power': 'on'|'off'|'cycle}          Sets the chassis power
+"""
+class MachineChassisPowerAPI(IPMIResource):
+
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('power', type=str, required=True,
+                                    help='No power status provided',
+                                    location='json')
+        super(MachineChassisPowerAPI, self).__init__()
+
+    def get(self, hostname):
+        ipmi_response = try_ipmi_command(self.bmc.get_chassis_status)
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, BAD_REQUEST
+
+        power_on = ipmi_response[0].power_on
+        if power_on:
+            power_status = 'on'
+        else:
+            power_status = 'off'
+
+        return {'hostname': hostname, 'power': power_status}
+
+    def post(self, hostname):
+        args = self.reqparse.parse_args()
+        power_status = args['power']
+
+        ipmi_response = try_ipmi_command(self.bmc.set_chassis_power,
+                                         mode=power_status)
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, BAD_REQUEST
+
+        return {'hostname': hostname,
+                'message': 'Power status set to %s' % power_status}
+
+igor_api.add_resource(MachineChassisPowerAPI, '/machines/<string:hostname>/chassis/power', endpoint='machine_chassis_power')
