@@ -1,4 +1,5 @@
 from api import app
+from functools import wraps
 from flask import session, url_for, g
 from flask.ext.restful import Api, Resource, reqparse
 from flask.ext.httpauth import HTTPBasicAuth
@@ -29,6 +30,26 @@ def validate_password(username_or_token, password):
     g.user = user
     return True
 
+# Authorization, requires g.user and hostname, writes g.machine
+def permission_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        user = g.user
+
+        hostname = kwargs['hostname']
+        machine = Machine.query.filter_by(hostname=hostname).first()
+        if not machine:
+            return {'message': 'Host %s does not exist' % hostname}, NOT_FOUND
+
+        if not user in machine.users:
+            return {'message': 'User %s does not have permission for host %s'
+                    % (user.username, hostname)}, FORBIDDEN
+
+        g.machine = machine
+        return f(*args, **kwargs)
+    return decorated
+
+# Login endpoint
 """
     GET     /login            Generates an returns an authentication token
 """
@@ -344,7 +365,7 @@ class MachineUserAPI(Resource):
         if user in machine.users:
             return {'username': username,
                     'hostname': hostname,
-                    'location': url_for('user', userame=username, _external=True)}
+                    'location': url_for('user', username=username, _external=True)}
         else:
             return {'message': 'User %s does not have permission for host %s' % (username, hostname)}, NOT_FOUND
 
