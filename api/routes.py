@@ -60,6 +60,16 @@ def permission_required(f):
         return f(*args, **kwargs)
     return decorated
 
+# Root endpoint, used to test connection
+"""
+    GET     /                 Returns 200 OK with a message
+"""
+class RootAPI(Resource):
+    def get(self):
+        return {'message': 'Igor lives!'}
+
+igor_api.add_resource(RootAPI, '/', endpoint='root')
+
 # Login endpoint
 """
     GET     /login            Generates an returns an authentication token
@@ -223,17 +233,17 @@ class MachineAPI(Resource):
     decorators = [auth.login_required]
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('fqdn', type=str, required=True,
+        self.reqparse.add_argument('fqdn', type=str,
                                     help='No FQDN provided', location='json')
-        self.reqparse.add_argument('username', type=str, required=True,
+        self.reqparse.add_argument('username', type=str,
                                     help='No username provided', location='json')
-        self.reqparse.add_argument('password', type=str, required=True,
+        self.reqparse.add_argument('password', type=str,
                                     help='No password provided', location='json')
         super(MachineAPI, self).__init__()
 
     def get(self, hostname):
         machine = Machine.query.filter_by(hostname=hostname).first()
-        if not hostname:
+        if not machine:
             return {'message': 'Host %s does not exist' % hostname}, NOT_FOUND
         else:
             return {'hostname': machine.hostname,
@@ -256,15 +266,20 @@ class MachineAPI(Resource):
     def put(self, hostname):
         args = self.reqparse.parse_args()
         machine = Machine.query.filter_by(hostname=hostname).first()
-        fqdn = args['fqdn']
-        username = args['username']
-        password = args['password']
+
+        fqdn = args['fqdn'] if 'fqdn' in args else None
+        username = args['username'] if 'username' in args else None
+        password = args['password'] if 'password' in args else None
+
         if not machine:
             return {'message': 'Host %s does not exist' % hostname}, NOT_FOUND
         else:
-            machine.fqdn = fqdn
-            machine.username = username
-            machine.password = password
+            if fqdn:
+                machine.fqdn = fqdn
+            if username:
+                machine.username = username
+            if password:
+                machine.password = password
             db.session.add(machine)
             db.session.commit()
             return {'message': 'Updated entry for host %s' % hostname}
