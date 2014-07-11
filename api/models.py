@@ -1,13 +1,16 @@
 from api import app
 from flask.ext.sqlalchemy import SQLAlchemy
 from werkzeug import generate_password_hash, check_password_hash
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, SignatureExpired, BadSignature
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous import SignatureExpired, BadSignature
 
 db = SQLAlchemy()
 
 machine_users = db.Table('permissions',
-                         db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-                         db.Column('machine_id', db.Integer, db.ForeignKey('machine.id')))
+                         db.Column('user_id', db.Integer,
+                                   db.ForeignKey('user.id')),
+                         db.Column('machine_id', db.Integer,
+                                   db.ForeignKey('machine.id')))
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
