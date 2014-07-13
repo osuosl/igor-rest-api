@@ -31,7 +31,7 @@ class MachineChassisAPI(IPMIResource):
 
         response = ipmi_response[0].__dict__
         response['hostname'] = hostname
-        return response
+        return response, OK
 
 """
     GET     /machines/:hostname/chassis/power     Gets the chassis power status
@@ -48,18 +48,13 @@ class MachineChassisPowerAPI(IPMIResource):
         super(MachineChassisPowerAPI, self).__init__()
 
     def get(self, hostname):
-        ipmi_response = try_ipmi_command(self.bmc.get_chassis_status)
-        if ipmi_response[-1] != OK:
-            return {'hostname': hostname, 'message': ipmi_response[0]}, \
-                   BAD_REQUEST
+        chassisInfo = MachineChassisAPI()
+        response, error_code = chassisInfo.get(hostname)
 
-        power_on = ipmi_response[0].power_on
-        if power_on:
-            power_status = 'on'
-        else:
-            power_status = 'off'
+        if error_code != OK:
+            return response
 
-        return {'hostname': hostname, 'power': power_status}
+        return {'hostname': hostname, 'power_on': response['power_on']}
 
     def post(self, hostname):
         args = self.reqparse.parse_args()
@@ -71,5 +66,89 @@ class MachineChassisPowerAPI(IPMIResource):
             return {'hostname': hostname, 'message': ipmi_response[0]}, \
                    BAD_REQUEST
 
-        return {'hostname': hostname,
-                'message': 'Power status set to %s' % power_status}
+        return self.get(hostname)
+
+"""
+    GET     /machines/:hostname/sensors         Returns all sensor readings
+"""
+class MachineSensorsAPI(IPMIResource):
+
+    def get(self, hostname):
+        # TODO: Not implemented
+        """
+        ipmi_response = try_ipmi_command(self.bmc.sdr_list)
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+        """
+        return {'message': 'Not implemented'}, NOT_FOUND
+        
+
+"""
+    GET     /machines/:hostname/sensors/:string     Returns the readings
+                                                    for all sensors matching
+                                                    the provided :string
+"""
+class MachineSensorAPI(IPMIResource):
+
+    def get(self, hostname, string):
+        # TODO: Not implemented
+        """
+        machineSensorsAPI = MachineSensorsAPI()
+        response, error_code = MachineSensorsAPI.get()
+
+        if error_code != OK:
+            return response
+        """
+        return {'message': 'Not implemented'}, NOT_FOUND
+
+"""
+    GET     /machines/:hostname/lan                         View and set lan
+                                                            channel information
+"""
+class MachineLanAPI(IPMIResource):
+
+    def get(self, hostname, channel=None):
+        print "channel:", channel
+        ipmi_response = try_ipmi_command(self.bmc.lan_print, channel=channel)
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+        
+        response = ipmi_response[0].__dict__
+        return response, OK
+
+"""
+    GET     /machines/:hostname/lan/:channel                View and set lan
+    POST    /machines/:hostname/lan/:channel                channel information
+            {'command': '<command>', 'param': '<param>'}
+"""
+class MachineLanChannelAPI(IPMIResource):
+
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('command', type=str, required=True,
+                                    help='No command provided to lan set',
+                                    location='json')
+        self.reqparse.add_argument('param', type=str, required=True,
+                                    help='No param provided to lan set',
+                                    location='json')
+        super(MachineLanChannelAPI, self).__init__()
+
+    def get(self, hostname, channel):
+        machineLanAPI = MachineLanAPI()
+        ipmi_response, error_code = machineLanAPI.get(hostname, channel=channel)
+        return ipmi_response, error_code
+
+    def post(self, hostname, channel):
+        args = self.reqparse.parse_args()
+        command = args['command']
+        param = args['param']
+
+        ipmi_response = try_ipmi_command(self.bmc.lan_set, channel=channel,
+                                         command=command, param=param)
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': 'bad lan set command'}, \
+                   BAD_REQUEST
+
+        return self.get(hostname, channel)
