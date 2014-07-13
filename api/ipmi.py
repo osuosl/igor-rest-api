@@ -74,14 +74,13 @@ class MachineChassisPowerAPI(IPMIResource):
 class MachineSensorsAPI(IPMIResource):
 
     def get(self, hostname):
-        # TODO: Not implemented
         """
         ipmi_response = try_ipmi_command(self.bmc.sdr_list)
         if ipmi_response[-1] != OK:
             return {'hostname': hostname, 'message': ipmi_response[0]}, \
                    BAD_REQUEST
         """
-        return {'message': 'Not implemented'}, NOT_FOUND
+        return {'message': 'not implemented'}, NOT_IMPLEMENTED
         
 
 """
@@ -92,7 +91,6 @@ class MachineSensorsAPI(IPMIResource):
 class MachineSensorAPI(IPMIResource):
 
     def get(self, hostname, string):
-        # TODO: Not implemented
         """
         machineSensorsAPI = MachineSensorsAPI()
         response, error_code = MachineSensorsAPI.get()
@@ -100,16 +98,14 @@ class MachineSensorAPI(IPMIResource):
         if error_code != OK:
             return response
         """
-        return {'message': 'Not implemented'}, NOT_FOUND
+        return {'message': 'not implemented'}, NOT_IMPLEMENTED
 
 """
-    GET     /machines/:hostname/lan                         View and set lan
-                                                            channel information
+    GET     /machines/:hostname/lan         View lan channel information
 """
 class MachineLanAPI(IPMIResource):
 
     def get(self, hostname, channel=None):
-        print "channel:", channel
         ipmi_response = try_ipmi_command(self.bmc.lan_print, channel=channel)
         if ipmi_response[-1] != OK:
             return {'hostname': hostname, 'message': ipmi_response[0]}, \
@@ -117,6 +113,23 @@ class MachineLanAPI(IPMIResource):
         
         response = ipmi_response[0].__dict__
         return response, OK
+
+"""
+    GET     /machines/:hostname/lan/alert   View lan alert channel information
+"""
+class MachineLanAlertAPI(IPMIResource):
+
+    def get(self, hostname, channel=None):
+        """
+        ipmi_response = try_ipmi_command(self.bmc.alert_print, channel=channel)
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+
+        response = ipmi_response[0].__dict__
+        return response, OK
+        """
+        return {'message': 'endpoint not implemented'}, NOT_IMPLEMENTED
 
 """
     GET     /machines/:hostname/lan/:channel                View and set lan
@@ -152,3 +165,42 @@ class MachineLanChannelAPI(IPMIResource):
                    BAD_REQUEST
 
         return self.get(hostname, channel)
+
+"""
+    GET     /machines/:hostname/lan/:channel/alert      View and set lan alert
+    POST    /machines/:hostname/lan/:channel/alert      channel information
+            {'command': '<command>', 'param': '<param>'}
+"""
+class MachineLanChannelAlertAPI(IPMIResource):
+
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('command', type=str, required=True,
+                                    help='No command provided to lan set',
+                                    location='json')
+        self.reqparse.add_argument('param', type=str, required=True,
+                                    help='No param provided to lan set',
+                                    location='json')
+        super(MachineLanChannelAlertAPI, self).__init__()
+
+    def get(self, hostname, channel):
+        machineLanAlertAPI = MachineLanAlertAPI()
+        ipmi_response, error_code = machineLanAlertAPI.get(hostname,
+                                                           channel=channel)
+        return ipmi_response, error_code
+
+    def post(self, hostname, channel):
+        args = self.reqparse.parse_args()
+        command = args['command']
+        param = args['param']
+
+        """
+        ipmi_response = try_ipmi_command(self.bmc.lan_set, channel=channel,
+                                         command=command, param=param)
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': 'bad lan set command'}, \
+                   BAD_REQUEST
+
+        return self.get(hostname, channel)
+        """
+        return {'message': 'endpoint not implemented'}, NOT_IMPLEMENTED
