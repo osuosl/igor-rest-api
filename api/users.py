@@ -74,7 +74,8 @@ class UserAPI(Resource):
 
     def delete(self, username):
         if g.user.username != 'root' and g.user.username != username:
-            return {'message': '%s cannot delete user %s' % (g.user.username, username)}
+            return {'message': '%s cannot delete user %s' % (g.user.username, username)},\
+                   BAD_REQUEST
 
         user = User.query.filter_by(username=username).first()
         if not user:
@@ -90,7 +91,7 @@ class UserAPI(Resource):
     def put(self, username):
         if g.user.username != 'root' and g.user.username != username:
             return {'message': '%s cannot modify user %s' % (g.user.username, username)}
-        
+
         args = self.reqparse.parse_args()
         user = User.query.filter_by(username=username).first()
         password = args['password']
