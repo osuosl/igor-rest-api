@@ -8,6 +8,7 @@ from machines import MachineAPI, MachinesAPI
 from permissions import UserMachineAPI, UserMachinesAPI
 from permissions import MachineUserAPI, MachineUsersAPI
 from ipmi import MachineChassisAPI, MachineChassisPowerAPI
+from ipmi import MachineChassisPolicyAPI
 from ipmi import MachineSensorsAPI, MachineLanAPI, MachineLanChannelAPI
 from ipmi import MachineLanAlertAPI, MachineLanChannelAlertAPI
 
@@ -33,6 +34,9 @@ igor_api.add_resource(MachineUserAPI,
 igor_api.add_resource(MachineChassisAPI,
                       '/machines/<string:hostname>/chassis',
                       endpoint='machine_chassis')
+igor_api.add_resource(MachineChassisPolicyAPI,
+                      '/machines/<string:hostname>/chassis/policy',
+                      endpoint='machine_chassis_policy')
 igor_api.add_resource(MachineChassisPowerAPI,
                       '/machines/<string:hostname>/chassis/power',
                       endpoint='machine_chassis_power')

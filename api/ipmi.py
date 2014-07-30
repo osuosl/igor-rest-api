@@ -19,7 +19,7 @@ class IPMIResource(Resource):
         super(IPMIResource, self).__init__()
 
 """
-    GET     /machines/:hostname/chassis     Gets the chassis status
+    GET     /machines/:hostname/chassis     View chassis status information
 """
 class MachineChassisAPI(IPMIResource):
 
@@ -34,16 +34,16 @@ class MachineChassisAPI(IPMIResource):
         return response, OK
 
 """
-    GET     /machines/:hostname/chassis/power     Gets the chassis power status
-    POST    /machines/:hostname/chassis/power
-            {'power': 'on'|'off'|'cycle}          Sets the chassis power
+    GET     /machines/:hostname/chassis/power   View and set the chassis power
+    POST    /machines/:hostname/chassis/power   status
+            {'state': <valid state>}
 """
 class MachineChassisPowerAPI(IPMIResource):
 
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('power', type=str, required=True,
-                                    help='No power status provided',
+        self.reqparse.add_argument('state', type=str, required=True,
+                                    help='No target power state provided',
                                     location='json')
         super(MachineChassisPowerAPI, self).__init__()
 
@@ -58,10 +58,46 @@ class MachineChassisPowerAPI(IPMIResource):
 
     def post(self, hostname):
         args = self.reqparse.parse_args()
-        power_status = args['power']
+        power_status = args['state']
 
         ipmi_response = try_ipmi_command(self.bmc.set_chassis_power,
                                          mode=power_status)
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+
+        return self.get(hostname)
+
+"""
+    GET     /machines/:hostname/chassis/policy      View and set the power
+    POST    /machines/:hostname/chassis/policy      policy in the event of
+            {'state': <valid state>}                power failure
+"""
+class MachineChassisPolicyAPI(IPMIResource):
+
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('state', type=str, required=True,
+                                    help='No target power policy provided',
+                                    location='json')
+        super(MachineChassisPolicyAPI, self).__init__()
+
+    def get(self, hostname):
+        chassisInfo = MachineChassisAPI()
+        response, error_code = chassisInfo.get(hostname)
+
+        if error_code != OK:
+            return response
+
+        return {'hostname': hostname,
+                'policy': response['power_restore_policy']}
+
+    def post(self, hostname):
+        args = self.reqparse.parse_args()
+        policy_status = args['state']
+
+        ipmi_response = try_ipmi_command(self.bmc.set_chassis_policy,
+                                         state=policy_status)
         if ipmi_response[-1] != OK:
             return {'hostname': hostname, 'message': ipmi_response[0]}, \
                    BAD_REQUEST
