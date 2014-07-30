@@ -8,9 +8,9 @@ from machines import MachineAPI, MachinesAPI
 from permissions import UserMachineAPI, UserMachinesAPI
 from permissions import MachineUserAPI, MachineUsersAPI
 from ipmi import MachineChassisAPI, MachineChassisPowerAPI
-from ipmi import MachineChassisPolicyAPI
 from ipmi import MachineSensorsAPI, MachineLanAPI, MachineLanChannelAPI
 from ipmi import MachineLanAlertAPI, MachineLanChannelAlertAPI
+from ipmi import MachineChassisPolicyAPI, MachineSelAPI
 
 igor_api = Api(app)
 
@@ -55,3 +55,6 @@ igor_api.add_resource(MachineLanAlertAPI,
 igor_api.add_resource(MachineLanChannelAlertAPI,
                       '/machines/<string:hostname>/lan/<int:channel>/alert',
                       endpoint='machine_lan_channel_alert')
+igor_api.add_resource(MachineSelAPI,
+                      '/machines/<string:hostname>/sel',
+                      endpoint='machine_sel')

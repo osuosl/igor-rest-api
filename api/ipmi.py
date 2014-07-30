@@ -240,3 +240,23 @@ class MachineLanChannelAlertAPI(IPMIResource):
         return self.get(hostname, channel)
         """
         return {'message': 'endpoint not implemented'}, NOT_IMPLEMENTED
+
+"""
+    GET     /machines/:hostname/sel     View system event log information
+"""
+class MachineSelAPI(IPMIResource):
+
+    def get(self, hostname):
+        ipmi_response = try_ipmi_command(self.bmc.sel_info)
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+
+        response = ipmi_response[0].__dict__
+        response['hostname'] = hostname
+
+        # Fix non-JSON-serializable values
+        response['last_add_time'] = str(response['last_add_time'])
+        response['last_del_time'] = str(response['last_del_time'])
+
+        return response, OK
