@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
 from constants import *
-from flask import g
+from flask import g, request
 from flask.ext.restful import Resource, reqparse
 from login import auth, permission_required
 from pyipmi import make_bmc, IpmiError
 from pyipmi.bmc import LanBMC
+from pyipmi.sel import SELTimestamp, SELRecord
 from utils import try_ipmi_command
+from datetime import datetime
 
 # IPMI Operations
 class IPMIResource(Resource):
@@ -240,3 +242,122 @@ class MachineLanChannelAlertAPI(IPMIResource):
         return self.get(hostname, channel)
         """
         return {'message': 'endpoint not implemented'}, NOT_IMPLEMENTED
+
+"""
+    GET     /machines/:hostname/sel     View system event log information
+"""
+class MachineSelAPI(IPMIResource):
+
+    def get(self, hostname):
+        ipmi_response = try_ipmi_command(self.bmc.sel_info)
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+
+        response = ipmi_response[0].__dict__
+        response['hostname'] = hostname
+
+        # Fix non-JSON-serializable values
+        response['last_add_time'] = str(response['last_add_time'])
+        response['last_del_time'] = str(response['last_del_time'])
+
+        return response, OK
+
+"""
+    GET     /machines/:hostname/sel/time    View and set the SEL clock's time
+    POST    /machines/:hostname/sel/time    HH is in the 24-hour format
+            {'time': 'MM/DD/YYYY HH:MM:SS'}
+"""
+class MachineSelTimeAPI(IPMIResource):
+
+    def __init__(self):
+        def validate_time(time):
+            try:
+                time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+            except ValueError as e:
+                raise ValueError('Invalid time format. ' + e.message)
+            except:
+                raise ValueError
+            return datetime.strftime(time, '%m/%d/%Y %H:%M:%S')
+
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('time', type=validate_time, required=True,
+                                    help='Missing or invalid time ' +
+                                         '(YYYY-MM-DD hh:mm:ss)',
+                                    location='json')
+        super(MachineSelTimeAPI, self).__init__()
+
+    def get(self, hostname):
+        ipmi_response = try_ipmi_command(self.bmc.get_sel_time)
+
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+
+        response = ipmi_response[0].__dict__
+        response['hostname'] = hostname
+        response['time'] = str(response['time'])
+
+        return response, OK
+
+    def post(self, hostname):
+        args = self.reqparse.parse_args()
+        selTimestamp = SELTimestamp(timestamp=args['time'])
+        ipmi_response = try_ipmi_command(self.bmc.set_sel_time,
+                                         time=selTimestamp)
+
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+
+        return self.get(hostname)
+
+"""
+    GET     /machines/:hostname/sel/records?extended=True|False     View and
+    DELETE  /machines/:hostname/sel/records                         update the
+    POST    /machines/:hostname/sel/records                         list of
+            {'records': [{'record_id': <record_id>,                 SEL records
+                          'record_type': <record_type>,
+                          'timestamp': <timestamp>,
+                          'generator_id': <generator_id>,
+                          'evm_rev': <evm_rev>,
+                          'sensor_type': <sensor_type>,
+                          'sensor_number': <sensor_number>,
+                          'event_type': <event_type>,
+                          'event_direction': <event_direction>,
+                          'event_data': [0, 0, 0]},
+                          ...]}
+"""
+class MachineSelRecordsAPI(IPMIResource):
+
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('records', required=True,
+                                    help='No records provided',
+                                    location='json')
+        super(MachineSelRecordsAPI, self).__init__()
+
+    def get(self, hostname):
+        extended = request.args.get('extended', 'False')
+
+        if extended == 'True':
+            ipmi_response = try_ipmi_command(self.bmc.sel_elist)
+        else:
+            ipmi_response = try_ipmi_command(self.bmc.sel_list)
+
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+
+        response = {'hostname': hostname,
+                    'records': ipmi_response[0]}
+        return response, OK
+
+    def delete(self, hostname):
+        ipmi_response = try_ipmi_command(self.bmc.sel_clear)
+
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+
+        return self.get(hostname)

@@ -8,50 +8,64 @@ from machines import MachineAPI, MachinesAPI
 from permissions import UserMachineAPI, UserMachinesAPI
 from permissions import MachineUserAPI, MachineUsersAPI
 from ipmi import MachineChassisAPI, MachineChassisPowerAPI
-from ipmi import MachineChassisPolicyAPI
 from ipmi import MachineSensorsAPI, MachineLanAPI, MachineLanChannelAPI
 from ipmi import MachineLanAlertAPI, MachineLanChannelAlertAPI
+from ipmi import MachineChassisPolicyAPI, MachineSelAPI, MachineSelTimeAPI
+from ipmi import MachineSelRecordsAPI
 
 igor_api = Api(app)
 
-igor_api.add_resource(RootAPI, '/', endpoint='root')
-igor_api.add_resource(LoginAPI, '/login', endpoint='login')
-igor_api.add_resource(UsersAPI, '/users', endpoint='users')
-igor_api.add_resource(UserAPI, '/users/<string:username>', endpoint='user')
-igor_api.add_resource(MachinesAPI, '/machines', endpoint='machines')
-igor_api.add_resource(MachineAPI, '/machines/<string:hostname>',
-                      endpoint='machine')
-igor_api.add_resource(UserMachinesAPI, '/users/<string:username>/machines',
-                      endpoint='user_machines')
-igor_api.add_resource(UserMachineAPI,
-                      '/users/<string:username>/machines/<string:hostname>',
-                      endpoint='user_machine')
-igor_api.add_resource(MachineUsersAPI, '/machines/<string:hostname>/users',
-                      endpoint='machine_users')
-igor_api.add_resource(MachineUserAPI,
-                      '/machines/<string:hostname>/users/<string:username>',
-                      endpoint='machine_user')
-igor_api.add_resource(MachineChassisAPI,
-                      '/machines/<string:hostname>/chassis',
-                      endpoint='machine_chassis')
-igor_api.add_resource(MachineChassisPolicyAPI,
-                      '/machines/<string:hostname>/chassis/policy',
-                      endpoint='machine_chassis_policy')
-igor_api.add_resource(MachineChassisPowerAPI,
-                      '/machines/<string:hostname>/chassis/power',
-                      endpoint='machine_chassis_power')
-igor_api.add_resource(MachineSensorsAPI,
-                      '/machines/<string:hostname>/sensors',
-                      endpoint='machine_sensors')
-igor_api.add_resource(MachineLanAPI,
-                      '/machines/<string:hostname>/lan',
-                      endpoint='machine_lan')
-igor_api.add_resource(MachineLanChannelAPI,
-                      '/machines/<string:hostname>/lan/<int:channel>',
-                      endpoint='machine_lan_channel')
-igor_api.add_resource(MachineLanAlertAPI,
-                      '/machines/<string:hostname>/lan/alert',
-                      endpoint='machine_lan_alert')
-igor_api.add_resource(MachineLanChannelAlertAPI,
-                      '/machines/<string:hostname>/lan/<int:channel>/alert',
-                      endpoint='machine_lan_channel_alert')
+resources = [
+            (RootAPI, '/', 'root'),
+            (LoginAPI, '/login', 'login'),
+            (UsersAPI, '/users', 'users'),
+            (UserAPI, '/users/<string:username>', 'user'),
+            (MachinesAPI, '/machines', 'machines'),
+            (MachineAPI, '/machines/<string:hostname>', 'machine'),
+            (UserMachinesAPI, '/users/<string:username>/machines',
+                'user_machines'),
+            (UserMachineAPI,
+                '/users/<string:username>/machines/<string:hostname>',
+                'user_machine'),
+            (MachineUsersAPI, '/machines/<string:hostname>/users',
+                'machine_users'),
+            (MachineUserAPI,
+                '/machines/<string:hostname>/users/<string:username>',
+                'machine_user'),
+            (MachineChassisAPI,
+                '/machines/<string:hostname>/chassis',
+                'machine_chassis'),
+            (MachineChassisPolicyAPI,
+                '/machines/<string:hostname>/chassis/policy',
+                'machine_chassis_policy'),
+            (MachineChassisPowerAPI,
+                '/machines/<string:hostname>/chassis/power',
+                'machine_chassis_power'),
+            (MachineSensorsAPI,
+                '/machines/<string:hostname>/sensors',
+                'machine_sensors'),
+            (MachineLanAPI,
+                '/machines/<string:hostname>/lan',
+                'machine_lan'),
+            (MachineLanChannelAPI,
+                '/machines/<string:hostname>/lan/<int:channel>',
+                'machine_lan_channel'),
+            (MachineLanAlertAPI,
+                '/machines/<string:hostname>/lan/alert',
+                'machine_lan_alert'),
+            (MachineLanChannelAlertAPI,
+                '/machines/<string:hostname>/lan/<int:channel>/alert',
+                'machine_lan_channel_alert'),
+            (MachineSelAPI,
+                '/machines/<string:hostname>/sel',
+                'machine_sel'),
+            (MachineSelTimeAPI,
+                '/machines/<string:hostname>/sel/time',
+                'machine_sel_time'),
+            (MachineSelRecordsAPI,
+                '/machines/<string:hostname>/sel/records',
+                'machine_sel_records')
+            ]
+
+for resourceClass, url, endpoint in resources:
+    igor_api.add_resource(resourceClass, url, endpoint=endpoint)
