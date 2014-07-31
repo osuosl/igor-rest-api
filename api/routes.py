@@ -11,6 +11,7 @@ from ipmi import MachineChassisAPI, MachineChassisPowerAPI
 from ipmi import MachineSensorsAPI, MachineLanAPI, MachineLanChannelAPI
 from ipmi import MachineLanAlertAPI, MachineLanChannelAlertAPI
 from ipmi import MachineChassisPolicyAPI, MachineSelAPI, MachineSelTimeAPI
+from ipmi import MachineSelRecordsAPI
 
 igor_api = Api(app)
 
@@ -60,7 +61,10 @@ resources = [
                 'machine_sel'),
             (MachineSelTimeAPI,
                 '/machines/<string:hostname>/sel/time',
-                'machine_sel_time')
+                'machine_sel_time'),
+            (MachineSelRecordsAPI,
+                '/machines/<string:hostname>/sel/records',
+                'machine_sel_records')
             ]
 
 for resourceClass, url, endpoint in resources:
