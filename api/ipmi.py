@@ -6,7 +6,9 @@ from flask.ext.restful import Resource, reqparse
 from login import auth, permission_required
 from pyipmi import make_bmc, IpmiError
 from pyipmi.bmc import LanBMC
+from pyipmi.sel import SELTimestamp
 from utils import try_ipmi_command
+from datetime import datetime
 
 # IPMI Operations
 class IPMIResource(Resource):
@@ -260,3 +262,50 @@ class MachineSelAPI(IPMIResource):
         response['last_del_time'] = str(response['last_del_time'])
 
         return response, OK
+
+"""
+    GET     /machines/:hostname/sel/time    View and set the SEL clock's time
+    POST    /machines/:hostname/sel/time    HH is in the 24-hour format
+            {'time': 'MM/DD/YYYY HH:MM:SS'}
+"""
+class MachineSelTimeAPI(IPMIResource):
+
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('time', type=str, required=True,
+                                    help='No time provided',
+                                    location='json')
+        super(MachineSelTimeAPI, self).__init__()
+
+    def get(self, hostname):
+        ipmi_response = try_ipmi_command(self.bmc.get_sel_time)
+
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+
+        response = ipmi_response[0].__dict__
+        response['hostname'] = hostname
+        response['time'] = str(response['time'])
+
+        return response, OK
+
+    def post(self, hostname):
+        args = self.reqparse.parse_args()
+
+        try:
+            time = datetime.strptime(args['time'], '%Y-%m-%d %H:%M:%S')
+        except ValueError as e:
+            return {'message': e.message}, BAD_REQUEST
+
+        selTimestamp = SELTimestamp(timestamp=datetime.strftime(time,
+                                                        '%m/%d/%Y %H:%M:%S'))
+
+        ipmi_response = try_ipmi_command(self.bmc.set_sel_time,
+                                         time=selTimestamp)
+
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+
+        return self.get(hostname)

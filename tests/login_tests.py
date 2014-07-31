@@ -3,7 +3,7 @@
 import base64
 from . import IgorApiTestCase
 from flask import url_for
-from endpoints import * 
+from api.routes import resources
 
 class LoginTestCase(IgorApiTestCase):
 
@@ -18,26 +18,30 @@ class LoginTestCase(IgorApiTestCase):
 
         self.assert_401(self.client.get(url_for('login'),
                         headers=[('Authorization', 'Basic '
-                                                  + base64.b64encode('toor:root'))]),
+                                    + base64.b64encode('toor:root'))]),
                         message='login should fail with incorrect username')
 
         self.assert_401(self.client.get(url_for('login'),
                         headers=[('Authorization', 'Basic '
-                                                  + base64.b64encode('root:toor'))]),
+                                    + base64.b64encode('root:toor'))]),
                         message='login should fail with incorrect password')
 
         self.assert_401(self.client.get(url_for('login'),
                         headers=[('Authorization', 'Basic '
-                                                  + base64.b64encode('toor:toor'))]),
-                        message='login should fail with incorrect username and password')
+                                    + base64.b64encode('toor:toor'))]),
+                        message='login should fail with wrong username/pass')
         
         self.assert_200(self.client.get(url_for('login'),
                         headers=[('Authorization', 'Basic '
-                                                  + base64.b64encode('root:root'))]),
-                        message='login should pass with correct username and password')
+                                    + base64.b64encode('root:root'))]),
+                        message='login should pass with correct username/pass')
 
     def test_unauthenticated_endpoints(self):
-        for endpoint in all_endpoints:
+        for resource in resources:
+            resourceClass, url, endpoint = resource
+
+            if endpoint == 'root':
+                continue
 
             endpoint_url = url_for(endpoint,
                                    username='username',
