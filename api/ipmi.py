@@ -352,3 +352,12 @@ class MachineSelRecordsAPI(IPMIResource):
         response = {'hostname': hostname,
                     'records': ipmi_response[0]}
         return response, OK
+
+    def delete(self, hostname):
+        ipmi_response = try_ipmi_command(self.bmc.sel_clear)
+
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+
+        return self.get(hostname)
