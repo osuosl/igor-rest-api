@@ -11,6 +11,11 @@ A REST API providing endpoints and functions for IPMI control of OSU-OSL machine
    * Test the running server: `curl -i -u root:root -X GET http://localhost:5000/users`
    * Run automated tests: `nosetests -s`
 
-## [API Design & Architecture](https://github.com/emaadmanzoor/igor-rest-api/blob/master/docs/API.md)
+## Design Documents
 
-## [API Usage Examples](https://github.com/emaadmanzoor/igor-rest-api/blob/master/docs/EXAMPLES.md)
+   * [API Architecture](https://github.com/emaadmanzoor/igor-rest-api/blob/master/docs/API.md)
+   * [Serial-on-LAN over REST](https://github.com/emaadmanzoor/igor-rest-api/blob/master/docs/API.md)
+   
+## API Documentation
+
+   * [API Usage Examples](https://github.com/emaadmanzoor/igor-rest-api/blob/master/docs/EXAMPLES.md)
