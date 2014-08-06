@@ -19,3 +19,7 @@ A REST API providing endpoints and functions for IPMI control of OSU-OSL machine
 ## API Documentation
 
    * [API Usage Examples](https://github.com/emaadmanzoor/igor-rest-api/blob/master/docs/EXAMPLES.md)
+
+## Resources
+
+   * Pure Python pyipmi alternative: [python-ipmi](https://github.com/xcat-org/python-ipmi)
