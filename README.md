@@ -22,4 +22,5 @@ A REST API providing endpoints and functions for IPMI control of OSU-OSL machine
 
 ## Resources
 
-   * Pure Python pyipmi alternative: [python-ipmi](https://github.com/xcat-org/python-ipmi)
+   * xcat pure Python pyipmi alternative: [python-ipmi](https://github.com/xcat-org/python-ipmi)
+   * kontron pure Python pyipmi alternative: [python-ipmi](https://github.com/kontron/python-ipmi)
