@@ -158,16 +158,16 @@ class MachineLanAPI(IPMIResource):
 class MachineLanAlertAPI(IPMIResource):
 
     def get(self, hostname, channel=None):
-        """
-        ipmi_response = try_ipmi_command(self.bmc.alert_print, channel=channel)
+        ipmi_response = try_ipmi_command(self.bmc.lan_alert_print,
+                                         channel=channel)
         if ipmi_response[-1] != OK:
             return {'hostname': hostname, 'message': ipmi_response[0]}, \
                    BAD_REQUEST
 
-        response = ipmi_response[0].__dict__
+        response = {'hostname': hostname,
+                    'alerts': [alert.__dict__ for alert in ipmi_response[0]]}
+        print response
         return response, OK
-        """
-        return {'message': 'endpoint not implemented'}, NOT_IMPLEMENTED
 
 """
     GET     /machines/:hostname/lan/:channel                View and set lan
@@ -216,6 +216,9 @@ class MachineLanChannelAlertAPI(IPMIResource):
         self.reqparse.add_argument('command', type=str, required=True,
                                     help='No command provided to lan set',
                                     location='json')
+        self.reqparse.add_argument('dest', type=str, required=True,
+                                    help='No alert destination for lan set',
+                                    location='json')
         self.reqparse.add_argument('param', type=str, required=True,
                                     help='No param provided to lan set',
                                     location='json')
@@ -231,17 +234,16 @@ class MachineLanChannelAlertAPI(IPMIResource):
         args = self.reqparse.parse_args()
         command = args['command']
         param = args['param']
+        dest = args['dest']
 
-        """
-        ipmi_response = try_ipmi_command(self.bmc.lan_set, channel=channel,
-                                         command=command, param=param)
+        ipmi_response = try_ipmi_command(self.bmc.lan_alert_set,
+                                         channel=channel, command=command,
+                                         alert_destination=dest, param=param)
         if ipmi_response[-1] != OK:
             return {'hostname': hostname, 'message': 'bad lan set command'}, \
                    BAD_REQUEST
 
         return self.get(hostname, channel)
-        """
-        return {'message': 'endpoint not implemented'}, NOT_IMPLEMENTED
 
 """
     GET     /machines/:hostname/sel     View system event log information
