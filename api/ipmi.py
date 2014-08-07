@@ -314,27 +314,19 @@ class MachineSelTimeAPI(IPMIResource):
 
         return self.get(hostname)
 
-"""
-    GET     /machines/:hostname/sel/records?extended=True|False     View and
-    DELETE  /machines/:hostname/sel/records                         update the
-    POST    /machines/:hostname/sel/records                         list of
-            {'records': [{'record_id': <record_id>,                 SEL records
-                          'record_type': <record_type>,
-                          'timestamp': <timestamp>,
-                          'generator_id': <generator_id>,
-                          'evm_rev': <evm_rev>,
-                          'sensor_type': <sensor_type>,
-                          'sensor_number': <sensor_number>,
-                          'event_type': <event_type>,
-                          'event_direction': <event_direction>,
-                          'event_data': [0, 0, 0]},
-                          ...]}
+"""View the list of SEL records
+
+    GET     /machines/:hostname/sel/records?extended=True|False
+    DELETE  /machines/:hostname/sel/records
+    POST    /machines/:hostname/sel/records
+            {'records': [{'id': <record_id>, ...}]}
 """
 class MachineSelRecordsAPI(IPMIResource):
 
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('records', required=True,
+                                    type=lambda x: [i for i in x],
                                     help='No records provided',
                                     location='json')
         super(MachineSelRecordsAPI, self).__init__()
@@ -353,6 +345,7 @@ class MachineSelRecordsAPI(IPMIResource):
 
         response = {'hostname': hostname,
                     'records': ipmi_response[0]}
+
         return response, OK
 
     def delete(self, hostname):
@@ -363,3 +356,46 @@ class MachineSelRecordsAPI(IPMIResource):
                    BAD_REQUEST
 
         return self.get(hostname)
+
+    def post(self, hostname):
+        args = self.reqparse.parse_args()
+        ids = [record['id'] for record in args['records']]
+
+        ipmi_response = try_ipmi_command(self.bmc.sel_get,
+                                         *ids)
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+
+        response = {'hostname': hostname,
+                    'records': ipmi_response[0]}
+
+        return response, OK
+
+"""Get and delete SEL record entries
+
+    GET     /machines/:hostname/sel/records/:id
+    DELETE  /machines/:hostname/sel/records/:id
+"""
+class MachineSelRecordAPI(IPMIResource):
+
+    def get(self, hostname, id):
+        ipmi_response = try_ipmi_command(self.bmc.sel_get, id)
+
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+
+        response = {'hostname': hostname,
+                    'records': ipmi_response[0]}
+
+        return response, OK
+
+    def delete(self, hostname, id):
+        ipmi_response = try_ipmi_command(self.bmc.sel_delete, id)
+
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+
+        return {'hostname': hostname, 'message': 'Deleted record ' + id}, OK
