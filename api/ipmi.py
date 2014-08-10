@@ -9,6 +9,7 @@ from pyipmi.bmc import LanBMC
 from pyipmi.sel import SELTimestamp, SELRecord
 from utils import try_ipmi_command
 from datetime import datetime
+from urllib import unquote_plus
 
 # IPMI Operations
 class IPMIResource(Resource):
@@ -108,35 +109,84 @@ class MachineChassisPolicyAPI(IPMIResource):
 
 """
     GET     /machines/:hostname/sensors         Returns all sensor readings
+    POST    /machines/:hostname/sensors
+            {'sensors': [{'id': <sensor_id>}, ...]}
+
 """
 class MachineSensorsAPI(IPMIResource):
 
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('sensors', required=True,
+                                    type=lambda x: [i for i in x],
+                                    help='No sensor IDs provided',
+                                    location='json')
+        super(MachineSensorsAPI, self).__init__()
+
     def get(self, hostname):
-        """
-        ipmi_response = try_ipmi_command(self.bmc.sdr_list)
+        ipmi_response = try_ipmi_command(self.bmc.sensor_list)
+
         if ipmi_response[-1] != OK:
             return {'hostname': hostname, 'message': ipmi_response[0]}, \
                    BAD_REQUEST
-        """
-        return {'message': 'not implemented'}, NOT_IMPLEMENTED
-        
+
+        response = {'hostname': hostname,
+                    'records': ipmi_response[0]}
+
+        return response, OK
+
+    def post(self, hostname):
+        args = self.reqparse.parse_args()
+        ids = [sensor['id'] for sensor in args['sensors']]
+
+        ipmi_response = try_ipmi_command(self.bmc.sensor_get, *ids)
+
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+
+        response = {'sensors': [sensor.__dict__ for sensor
+                                in ipmi_response[0]]}
+
+        return response, OK
 
 """
-    GET     /machines/:hostname/sensors/:string     Returns the readings
-                                                    for all sensors matching
-                                                    the provided :string
+    POST    /machines:hostname/sensors/:sensor
+            {'threshold': '<setting>|lower|upper',
+             'values': [<value>, ...]}
 """
 class MachineSensorAPI(IPMIResource):
 
-    def get(self, hostname, string):
-        """
-        machineSensorsAPI = MachineSensorsAPI()
-        response, error_code = MachineSensorsAPI.get()
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('threshold', required=True,
+                                    type=str,
+                                    help='No threshold setting provided',
+                                    location='json')
+        self.reqparse.add_argument('values', required=True,
+                                    type=lambda x: [i for i in x],
+                                    help='No theshold value(s) provided',
+                                    location='json')
+        super(MachineSensorAPI, self).__init__()
 
-        if error_code != OK:
-            return response
-        """
-        return {'message': 'not implemented'}, NOT_IMPLEMENTED
+    def post(self, hostname, sensor):
+        args = self.reqparse.parse_args()
+        threshold = args['threshold']
+        values = [str(i) for i in args['values']]
+        sensor = unquote_plus(sensor)
+
+        ipmi_response = try_ipmi_command(self.bmc.sensor_thresh,
+                                         sensor=sensor,
+                                         threshold=threshold,
+                                         values=values)
+
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+
+        response = {'message': ipmi_response[0]}
+
+        return response, OK
 
 """
     GET     /machines/:hostname/lan         View lan channel information
@@ -166,7 +216,6 @@ class MachineLanAlertAPI(IPMIResource):
 
         response = {'hostname': hostname,
                     'alerts': [alert.__dict__ for alert in ipmi_response[0]]}
-        print response
         return response, OK
 
 """
