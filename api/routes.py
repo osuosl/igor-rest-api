@@ -8,7 +8,8 @@ from machines import MachineAPI, MachinesAPI
 from permissions import UserMachineAPI, UserMachinesAPI
 from permissions import MachineUserAPI, MachineUsersAPI
 from ipmi import MachineChassisAPI, MachineChassisPowerAPI
-from ipmi import MachineSensorsAPI, MachineLanAPI, MachineLanChannelAPI
+from ipmi import MachineSensorsAPI, MachineSensorAPI
+from ipmi import MachineLanAPI, MachineLanChannelAPI
 from ipmi import MachineLanAlertAPI, MachineLanChannelAlertAPI
 from ipmi import MachineChassisPolicyAPI, MachineSelAPI, MachineSelTimeAPI
 from ipmi import MachineSelRecordsAPI
@@ -44,6 +45,9 @@ resources = [
             (MachineSensorsAPI,
                 '/machines/<string:hostname>/sensors',
                 'machine_sensors'),
+            (MachineSensorAPI,
+                '/machines/<string:hostname>/sensors/<string:sensor>',
+                'machine_sensor'),
             (MachineLanAPI,
                 '/machines/<string:hostname>/lan',
                 'machine_lan'),
