@@ -151,7 +151,8 @@ class MachineSensorsAPI(IPMIResource):
         return response, OK
 
 """
-    POST    /machines:hostname/sensors/:sensor
+    GET     /machines/:hostname/sensors/:sensor
+    POST    /machines/:hostname/sensors/:sensor
             {'threshold': '<setting>|lower|upper',
              'values': [<value>, ...]}
 """
@@ -168,6 +169,18 @@ class MachineSensorAPI(IPMIResource):
                                     help='No theshold value(s) provided',
                                     location='json')
         super(MachineSensorAPI, self).__init__()
+
+    def get(self, hostname, sensor):
+        ipmi_response = try_ipmi_command(self.bmc.sensor_get, sensor)
+
+        if ipmi_response[-1] != OK:
+            return {'hostname': hostname, 'message': ipmi_response[0]}, \
+                   BAD_REQUEST
+
+        response = {'sensors': [sensor.__dict__ for sensor
+                                in ipmi_response[0]]}
+
+        return response, OK
 
     def post(self, hostname, sensor):
         args = self.reqparse.parse_args()

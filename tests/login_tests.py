@@ -46,6 +46,7 @@ class LoginTestCase(IgorApiTestCase):
             endpoint_url = url_for(endpoint,
                                    username='username',
                                    hostname='hostname',
+                                   sensor='sensor',
                                    channel=0)
 
             self.assert_401(self.client.get(endpoint_url),
