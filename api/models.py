@@ -44,6 +44,9 @@ class User(db.Model):
             return None
         return User.query.get(data['id'])
 
+    def __eq__(self, user):
+        return self.hostname == user.hostname
+
 class Machine(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     hostname = db.Column(db.String(100), unique=True)
@@ -58,3 +61,6 @@ class Machine(db.Model):
         self.fqdn = fqdn
         self.username = username
         self.password = password
+
+    def __eq__(self, machine):
+        return self.hostname == machine.hostname
