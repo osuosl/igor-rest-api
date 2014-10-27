@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
-from constants import *
 from functools import wraps
-from models import User, Machine
+
 from flask import g
-from flask.ext.restful import Resource
 from flask.ext.httpauth import HTTPBasicAuth
+from flask.ext.restful import Resource
+
+from .models import User, Machine
+from .constants import *
 
 auth = HTTPBasicAuth()
 

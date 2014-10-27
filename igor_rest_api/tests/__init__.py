@@ -2,8 +2,9 @@
 
 from flask.ext.testing import TestCase
 from flask import Flask
-from api.models import db
-from api import app, init_db
+
+from igor_rest_api import app
+from igor_rest_api.api.models import db, init_db
 
 class IgorApiTestCase(TestCase):
 

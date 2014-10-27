@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
-from constants import *
-from models import db, User
 from flask import g, url_for
 from flask.ext.restful import Resource, reqparse
-from login import auth
+
+from .constants import *
+from .models import db, User
+from .login import auth
 
 # User management endpoints
 """
@@ -35,11 +36,11 @@ class UsersAPI(Resource):
 
     def post(self):
         args = self.reqparse.parse_args()
-        
+
         username = args['username']
         password = args['password']
         if User.query.filter_by(username=username).first() is not None:
-            return {'message': 'User %s exists' % username}, BAD_REQUEST 
+            return {'message': 'User %s exists' % username}, BAD_REQUEST
         else:
             user = User(username, password)
             db.session.add(user)
@@ -101,4 +102,4 @@ class UserAPI(Resource):
             user.set_password(password)
             db.session.add(user)
             db.session.commit()
-            return {'message': 'Updated entry for user %s' % username} 
+            return {'message': 'Updated entry for user %s' % username}

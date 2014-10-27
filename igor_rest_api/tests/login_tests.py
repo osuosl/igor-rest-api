@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 import base64
-from . import IgorApiTestCase
 from flask import url_for
-from api.routes import resources
+
+from . import IgorApiTestCase
+from igor_rest_api.api.routes import resources
 
 class LoginTestCase(IgorApiTestCase):
 
@@ -30,7 +31,7 @@ class LoginTestCase(IgorApiTestCase):
                         headers=[('Authorization', 'Basic '
                                     + base64.b64encode('toor:toor'))]),
                         message='login should fail with wrong username/pass')
-        
+
         self.assert_200(self.client.get(url_for('login'),
                         headers=[('Authorization', 'Basic '
                                     + base64.b64encode('root:root'))]),

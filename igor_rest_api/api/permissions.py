@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
-from constants import *
-from models import db, Machine, User
 from flask import url_for
 from flask.ext.restful import Resource
-from login import auth
+
+from .constants import *
+from .login import auth
+from .models import db, Machine, User
 
 # Machine-user permissions endpoints
 """
@@ -33,7 +34,7 @@ class UserMachinesAPI(Resource):
                                                     table
     DELETE  /users/:username/machines/:hostname     Deletes
                                                     :username-:hostname entry
-                                                    in the permissions table  
+                                                    in the permissions table
 """
 class UserMachineAPI(Resource):
     decorators = [auth.login_required]
@@ -119,7 +120,7 @@ class MachineUsersAPI(Resource):
                                                     table
     DELETE  /machines/:hostname/users/:username     Deletes
                                                     :username-:hostname entry
-                                                    in the permissions table  
+                                                    in the permissions table
 """
 class MachineUserAPI(Resource):
     decorators = [auth.login_required]

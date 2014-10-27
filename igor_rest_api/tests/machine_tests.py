@@ -2,10 +2,11 @@
 
 import base64
 import json
-from . import IgorApiTestCase
 from flask import url_for
-from config import ROOT_USER, ROOT_PASS
-from api.models import Machine
+
+from . import IgorApiTestCase
+from igor_rest_api.config import ROOT_USER, ROOT_PASS
+from igor_rest_api.api.models import Machine
 
 class MachinesTestCase(IgorApiTestCase):
 
@@ -65,7 +66,7 @@ class MachinesTestCase(IgorApiTestCase):
 
         expected_existing_user_response = {u'message': u'Host %s exists'
                                                        % self.test_host}
-        
+
         data = json.dumps({'hostname': self.test_host,
                            'fqdn': 'new_fqdn',
                            'username': 'new_user',
@@ -103,10 +104,10 @@ class MachinesTestCase(IgorApiTestCase):
                                               hostname=self.test_host),
                                       headers=self.headers)
         self.assert_200(response)
-        
+
         machine = Machine.query.filter_by(hostname=self.test_host).first()
         self.assertIsNone(machine)
-    
+
     def test_remove_nonexistent_machine(self):
         response = self.client.delete(url_for('machine', hostname='something'),
                                       headers=self.headers)

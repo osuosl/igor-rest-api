@@ -1,10 +1,13 @@
-from api import app
 from flask.ext.sqlalchemy import SQLAlchemy
-from werkzeug import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import SignatureExpired, BadSignature
+from werkzeug import generate_password_hash, check_password_hash
+
+from igor_rest_api import app
+from igor_rest_api import config
 
 db = SQLAlchemy()
+db.init_app(app)
 
 machine_users = db.Table('permissions',
                          db.Column('user_id', db.Integer,
@@ -18,14 +21,14 @@ class User(db.Model):
     pwdhash = db.Column(db.String(54))
     machines = db.relationship('Machine', secondary=machine_users,
                                backref=db.backref('machines', lazy='dynamic'))
-   
+
     def __init__(self, username, password):
         self.username = username
         self.set_password(password)
-     
+
     def set_password(self, password):
         self.pwdhash = generate_password_hash(password)
-   
+
     def check_password(self, password):
         return check_password_hash(self.pwdhash, password)
 
@@ -64,3 +67,14 @@ class Machine(db.Model):
 
     def __eq__(self, machine):
         return self.hostname == machine.hostname
+
+
+def init_db(app, db=db):
+    # Create tables and root user
+    with app.app_context():
+        db.create_all()
+        root_user = User.query.filter_by(username=config.ROOT_USER).first()
+        if not root_user:
+            root_user = User(config.ROOT_USER, config.ROOT_PASS)
+            db.session.add(root_user)
+            db.session.commit()

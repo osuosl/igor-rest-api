@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-from constants import *
 from pyipmi import IpmiError
+
+from .constants import *
 
 # Utility functions
 def try_ipmi_command(ipmi_command, *args, **kwargs):

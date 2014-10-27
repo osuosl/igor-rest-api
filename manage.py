@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-
-from api import manager
+from igor_rest_api import management
 
 if __name__ == '__main__':
-    manager.run()
+    management.run()

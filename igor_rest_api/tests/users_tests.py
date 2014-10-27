@@ -2,10 +2,11 @@
 
 import base64
 import json
-from . import IgorApiTestCase
 from flask import url_for
-from config import ROOT_USER, ROOT_PASS
-from api.models import User
+
+from . import IgorApiTestCase
+from igor_rest_api.config import ROOT_USER, ROOT_PASS
+from igor_rest_api.api.models import User
 
 class UsersTestCase(IgorApiTestCase):
 
@@ -61,7 +62,7 @@ class UsersTestCase(IgorApiTestCase):
                                       u'machines': url_for('user_machines',
                                                     username=self.test_user,
                                                     _external=True)}
-        
+
         data = json.dumps({'username': self.test_user,
                            'password': self.test_pass})
 
@@ -81,7 +82,7 @@ class UsersTestCase(IgorApiTestCase):
 
         expected_existing_user_response = {u'message': u'User %s exists'
                                                        % self.test_user}
-        
+
         data = json.dumps({'username': self.test_user,
                            'password': 'new_pass'})
 
@@ -130,10 +131,10 @@ class UsersTestCase(IgorApiTestCase):
                                               username=self.test_user),
                                       headers=self.headers)
         self.assert_200(response)
-        
+
         user = User.query.filter_by(username=self.test_user).first()
         self.assertIsNone(user)
-    
+
     def test_remove_nonexistent_user(self):
         response = self.client.delete(url_for('user', username='something'),
                                       headers=self.headers)

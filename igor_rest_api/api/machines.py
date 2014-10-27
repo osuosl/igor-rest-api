@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
-from constants import *
-from models import db, Machine
 from flask import url_for
 from flask.ext.restful import Resource, reqparse
-from login import auth
+
+from .constants import *
+from .login import auth
+from .models import db, Machine
 
 # Machine management endpoints
 """

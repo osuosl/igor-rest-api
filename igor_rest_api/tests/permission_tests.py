@@ -2,10 +2,11 @@
 
 import base64
 import json
-from . import IgorApiTestCase
 from flask import url_for
-from config import ROOT_USER, ROOT_PASS
-from api.models import User, Machine
+
+from . import IgorApiTestCase
+from igor_rest_api.config import ROOT_USER, ROOT_PASS
+from igor_rest_api.api.models import User, Machine
 
 class PermissionsTestCase(IgorApiTestCase):
 
@@ -78,7 +79,7 @@ class PermissionsTestCase(IgorApiTestCase):
         self.assert_200(response)
         self.assertEquals(0, len((response.json)['users']),
                           'no permissions should exist before grant')
-        
+
         user1 = self.create_test_user(username='user_one')
         user2 = self.create_test_user(username='user_two')
         machine.users.extend([user1, user2])
@@ -129,7 +130,7 @@ class PermissionsTestCase(IgorApiTestCase):
     def test_check_machine_for_user(self):
         machine = self.create_test_machine()
         user = self.create_test_user()
-        
+
         response = self.client.get(url_for('user_machine',
                                             username=user.username,
                                             hostname=machine.hostname),
@@ -139,7 +140,7 @@ class PermissionsTestCase(IgorApiTestCase):
         user.machines.append(machine)
         self.db.session.add(user)
         self.db.session.commit()
-        
+
         response = self.client.get(url_for('user_machine',
                                             username=user.username,
                                             hostname=machine.hostname),
@@ -159,7 +160,7 @@ class PermissionsTestCase(IgorApiTestCase):
         machine.users.append(user)
         self.db.session.add(machine)
         self.db.session.commit()
-        
+
         response = self.client.get(url_for('machine_user',
                                             username=user.username,
                                             hostname=machine.hostname),
@@ -169,7 +170,7 @@ class PermissionsTestCase(IgorApiTestCase):
     def test_remove_machine_from_user(self):
         machine = self.create_test_machine()
         user = self.create_test_user()
-        
+
         user.machines.append(machine)
         self.db.session.add(user)
         self.db.session.commit()
@@ -179,23 +180,23 @@ class PermissionsTestCase(IgorApiTestCase):
                                                hostname=machine.hostname),
                                       headers=self.headers)
         self.assert_200(response, 'unexpected error revoking permission')
-        
+
         user2 = User.query.filter_by(username=user.username).first()
         self.assertEquals(0, len(user2.machines))
-    
+
     def test_remove_user_from_machine(self):
         machine = self.create_test_machine()
         user = self.create_test_user()
-        
+
         machine.users.append(user)
         self.db.session.add(machine)
         self.db.session.commit()
-        
+
         response = self.client.delete(url_for('machine_user',
                                                username=user.username,
                                                hostname=machine.hostname),
                                       headers=self.headers)
         self.assert_200(response, 'unexpected error revoking permission')
-        
+
         machine2 = Machine.query.filter_by(hostname=machine.hostname).first()
         self.assertEquals(0, len(machine2.users))

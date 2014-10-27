@@ -27,5 +27,11 @@ setup(
     ],
     dependency_links=[
         "git+https://github.com/emaadmanzoor/pyipmi.git@17d41fa34abc1be487b6d68da9b33d205fd1529e#egg=pyipmi-0.11.0"
-    ]
+    ],
+    entry_points={
+        'console_scripts': [
+            'igor-manage = igor_rest_api.management:run'
+        ]
+    },
+    test_suite = 'nose.collector'
 )

@@ -1,12 +1,6 @@
 #!/usr/bin/env python
 
-from api import app
 from flask.ext.restful import Api
-from login import LoginAPI, RootAPI
-from users import UserAPI, UsersAPI
-from machines import MachineAPI, MachinesAPI
-from permissions import UserMachineAPI, UserMachinesAPI
-from permissions import MachineUserAPI, MachineUsersAPI
 from ipmi import MachineChassisAPI, MachineChassisPowerAPI
 from ipmi import MachineSensorsAPI, MachineSensorAPI
 from ipmi import MachineLanAPI, MachineLanChannelAPI
@@ -14,7 +8,12 @@ from ipmi import MachineLanAlertAPI, MachineLanChannelAlertAPI
 from ipmi import MachineChassisPolicyAPI, MachineSelAPI, MachineSelTimeAPI
 from ipmi import MachineSelRecordsAPI
 
-igor_api = Api(app)
+from .login import LoginAPI, RootAPI
+from .machines import MachineAPI, MachinesAPI
+from .permissions import UserMachineAPI, UserMachinesAPI
+from .permissions import MachineUserAPI, MachineUsersAPI
+from .users import UserAPI, UsersAPI
+
 
 resources = [
             (RootAPI, '/', 'root'),
@@ -71,5 +70,7 @@ resources = [
                 'machine_sel_records')
             ]
 
-for resourceClass, url, endpoint in resources:
-    igor_api.add_resource(resourceClass, url, endpoint=endpoint)
+def setup(app):
+    igor_api = Api(app)
+    for resourceClass, url, endpoint in resources:
+        igor_api.add_resource(resourceClass, url, endpoint=endpoint)
