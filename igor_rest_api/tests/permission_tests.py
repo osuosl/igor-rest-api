@@ -6,7 +6,8 @@ from flask import url_for
 
 from . import IgorApiTestCase
 from igor_rest_api.config import ROOT_USER, ROOT_PASS
-from igor_rest_api.api.models import User, Machine
+from igor_rest_api.api.auth.models import User
+from igor_rest_api.api.machines.models import Machine
 
 class PermissionsTestCase(IgorApiTestCase):
 

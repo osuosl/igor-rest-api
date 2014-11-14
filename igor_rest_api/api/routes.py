@@ -1,18 +1,22 @@
 #!/usr/bin/env python
 
-from flask.ext.restful import Api
-from ipmi import MachineChassisAPI, MachineChassisPowerAPI
-from ipmi import MachineSensorsAPI, MachineSensorAPI
-from ipmi import MachineLanAPI, MachineLanChannelAPI
-from ipmi import MachineLanAlertAPI, MachineLanChannelAlertAPI
-from ipmi import MachineChassisPolicyAPI, MachineSelAPI, MachineSelTimeAPI
-from ipmi import MachineSelRecordsAPI
+from .auth.views import LoginAPI
 
-from .login import LoginAPI, RootAPI
-from .machines import MachineAPI, MachinesAPI
-from .permissions import UserMachineAPI, UserMachinesAPI
-from .permissions import MachineUserAPI, MachineUsersAPI
-from .users import UserAPI, UsersAPI
+from .ipmi.views import (
+    MachineChassisAPI, MachineChassisPowerAPI,
+    MachineSensorsAPI, MachineSensorAPI,
+    MachineLanAPI, MachineLanChannelAPI,
+    MachineLanAlertAPI, MachineLanChannelAlertAPI,
+    MachineChassisPolicyAPI, MachineSelAPI, MachineSelTimeAPI,
+    MachineSelRecordsAPI,
+)
+from .machines.views import MachineAPI, MachinesAPI
+from .machines.views.permissions import (
+    UserMachineAPI, UserMachinesAPI,
+    MachineUserAPI, MachineUsersAPI,
+)
+from .auth.views import UserAPI, UsersAPI
+from .views import RootAPI
 
 
 resources = [
@@ -70,7 +74,6 @@ resources = [
                 'machine_sel_records')
             ]
 
-def setup(app):
-    igor_api = Api(app)
+def setup(api):
     for resourceClass, url, endpoint in resources:
-        igor_api.add_resource(resourceClass, url, endpoint=endpoint)
+        api.add_resource(resourceClass, url, endpoint=endpoint)

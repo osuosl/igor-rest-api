@@ -3,9 +3,11 @@
 from flask import g, url_for
 from flask.ext.restful import Resource, reqparse
 
-from .constants import *
-from .models import db, User
+from igor_rest_api.api.constants import *
+from igor_rest_api.db import db
+
 from .login import auth
+from .models import User
 
 # User management endpoints
 """
@@ -103,3 +105,14 @@ class UserAPI(Resource):
             db.session.add(user)
             db.session.commit()
             return {'message': 'Updated entry for user %s' % username}
+
+
+# Login endpoint
+"""
+    GET     /login            Generates an returns an authentication token
+"""
+class LoginAPI(Resource):
+    decorators = [auth.login_required]
+    def get(self):
+        token = g.user.generate_auth_token(TOKEN_EXPIRATION)
+        return {'token': token.decode('ascii'), 'duration': TOKEN_EXPIRATION}

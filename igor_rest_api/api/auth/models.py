@@ -4,10 +4,8 @@ from itsdangerous import SignatureExpired, BadSignature
 from werkzeug import generate_password_hash, check_password_hash
 
 from igor_rest_api import app
-from igor_rest_api import config
+from igor_rest_api.db import db
 
-db = SQLAlchemy()
-db.init_app(app)
 
 machine_users = db.Table('permissions',
                          db.Column('user_id', db.Integer,
@@ -50,31 +48,11 @@ class User(db.Model):
     def __eq__(self, user):
         return self.hostname == user.hostname
 
-class Machine(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    hostname = db.Column(db.String(100), unique=True)
-    fqdn = db.Column(db.String(100), unique=True)
-    username = db.Column(db.String(100))
-    password = db.Column(db.String(54))
-    users = db.relationship('User', secondary=machine_users,
-                            backref=db.backref('users', lazy='dynamic'))
-
-    def __init__(self, hostname, fqdn, username, password):
-        self.hostname = hostname
-        self.fqdn = fqdn
-        self.username = username
-        self.password = password
-
-    def __eq__(self, machine):
-        return self.hostname == machine.hostname
-
-
-def init_db(app, db=db):
-    # Create tables and root user
+def create_root_user():
+    # Create root user
     with app.app_context():
-        db.create_all()
-        root_user = User.query.filter_by(username=config.ROOT_USER).first()
+        root_user = User.query.filter_by(username=app.config['ROOT_USER']).first()
         if not root_user:
-            root_user = User(config.ROOT_USER, config.ROOT_PASS)
+            root_user = User(app.config['ROOT_USER'], app.config['ROOT_PASS'])
             db.session.add(root_user)
             db.session.commit()

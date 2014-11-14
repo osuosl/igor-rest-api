@@ -3,9 +3,12 @@
 from flask import url_for
 from flask.ext.restful import Resource, reqparse
 
-from .constants import *
-from .login import auth
-from .models import db, Machine
+from igor_rest_api.api.auth.login import auth
+from igor_rest_api.api.constants import *
+from igor_rest_api.api.machines.models import Machine
+from igor_rest_api.db import db
+
+
 
 # Machine management endpoints
 """

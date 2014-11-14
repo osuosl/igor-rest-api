@@ -6,8 +6,10 @@ from flask import g
 from flask.ext.httpauth import HTTPBasicAuth
 from flask.ext.restful import Resource
 
-from .models import User, Machine
-from .constants import *
+from igor_rest_api.api.constants import *
+from igor_rest_api.api.machines.models import Machine
+
+from .models import User
 
 auth = HTTPBasicAuth()
 
@@ -42,20 +44,3 @@ def permission_required(f):
         return f(*args, **kwargs)
     return decorated
 
-# Root endpoint, used to test connection
-"""
-    GET     /                 Returns 200 OK with a message
-"""
-class RootAPI(Resource):
-    def get(self):
-        return {'message': 'Igor lives!'}
-
-# Login endpoint
-"""
-    GET     /login            Generates an returns an authentication token
-"""
-class LoginAPI(Resource):
-    decorators = [auth.login_required]
-    def get(self):
-        token = g.user.generate_auth_token(TOKEN_EXPIRATION)
-        return {'token': token.decode('ascii'), 'duration': TOKEN_EXPIRATION}

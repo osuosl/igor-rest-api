@@ -8,8 +8,9 @@ from pyipmi import make_bmc, IpmiError
 from pyipmi.bmc import LanBMC
 from pyipmi.sel import SELTimestamp, SELRecord
 
-from .constants import *
-from .login import auth, permission_required
+from igor_rest_api.api.constants import *
+from igor_rest_api.api.auth.login import auth, permission_required
+
 from .utils import try_ipmi_command
 
 # IPMI Operations

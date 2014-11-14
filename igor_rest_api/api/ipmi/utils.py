@@ -2,7 +2,7 @@
 
 from pyipmi import IpmiError
 
-from .constants import *
+from igor_rest_api.api.constants import *
 
 # Utility functions
 def try_ipmi_command(ipmi_command, *args, **kwargs):
