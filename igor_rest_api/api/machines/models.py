@@ -1,6 +1,5 @@
-from igor_rest_api.api.auth.models import machine_users
+from igor_rest_api.api.models import machine_users
 from igor_rest_api.db import db
-
 
 class Machine(db.Model):
     id = db.Column(db.Integer, primary_key=True)

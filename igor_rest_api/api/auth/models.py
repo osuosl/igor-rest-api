@@ -5,13 +5,8 @@ from werkzeug import generate_password_hash, check_password_hash
 
 from igor_rest_api import app
 from igor_rest_api.db import db
+from igor_rest_api.api.models import machine_users
 
-
-machine_users = db.Table('permissions',
-                         db.Column('user_id', db.Integer,
-                                   db.ForeignKey('user.id')),
-                         db.Column('machine_id', db.Integer,
-                                   db.ForeignKey('machine.id')))
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
