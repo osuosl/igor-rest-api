@@ -6,7 +6,7 @@ from flask.ext.restful import Resource, reqparse
 from igor_rest_api.api.auth.login import auth
 from igor_rest_api.api.constants import *
 from igor_rest_api.api.machines.models import Machine
-from igor_rest_api.db import db
+from igor_rest_api.api.models import db
 
 
 

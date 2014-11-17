@@ -4,7 +4,7 @@ from flask import g, url_for
 from flask.ext.restful import Resource, reqparse
 
 from igor_rest_api.api.constants import *
-from igor_rest_api.db import db
+from igor_rest_api.api.models import db
 
 from .login import auth
 from .models import User

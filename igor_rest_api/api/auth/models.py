@@ -1,11 +1,10 @@
+from flask import current_app
 from flask.ext.sqlalchemy import SQLAlchemy
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import SignatureExpired, BadSignature
 from werkzeug import generate_password_hash, check_password_hash
 
-from igor_rest_api import app
-from igor_rest_api.db import db
-from igor_rest_api.api.models import machine_users
+from igor_rest_api.api.models import db, machine_users
 
 
 class User(db.Model):
@@ -26,12 +25,12 @@ class User(db.Model):
         return check_password_hash(self.pwdhash, password)
 
     def generate_auth_token(self, expiration=600):
-        s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
+        s = Serializer(current_app.config.get('SECRET_KEY'), expires_in=expiration)
         return s.dumps({'id': self.id})
 
     @staticmethod
     def validate_auth_token(token):
-        s = Serializer(app.config['SECRET_KEY'])
+        s = Serializer(current_app.config.get('SECRET_KEY'))
         try:
             data = s.loads(token)
         except SignatureExpired:
@@ -45,9 +44,9 @@ class User(db.Model):
 
 def create_root_user():
     # Create root user
-    with app.app_context():
-        root_user = User.query.filter_by(username=app.config['ROOT_USER']).first()
+    with current_app.app_context():
+        root_user = User.query.filter_by(username=current_app.config.get('ROOT_USER')).first()
         if not root_user:
-            root_user = User(app.config['ROOT_USER'], app.config['ROOT_PASS'])
+            root_user = User(current_app.config.get('ROOT_USER'), current_app.config.get('ROOT_PASS'))
             db.session.add(root_user)
             db.session.commit()

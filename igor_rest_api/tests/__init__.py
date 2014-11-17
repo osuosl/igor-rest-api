@@ -4,7 +4,7 @@ from flask.ext.testing import TestCase
 from flask import Flask
 
 from igor_rest_api import app
-from igor_rest_api.db import db
+from igor_rest_api.api.models import db
 from igor_rest_api.api.auth.models import create_root_user
 
 class IgorApiTestCase(TestCase):

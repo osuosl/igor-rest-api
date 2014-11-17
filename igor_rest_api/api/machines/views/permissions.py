@@ -6,7 +6,7 @@ from flask.ext.restful import Resource
 from igor_rest_api.api.auth.login import auth
 from igor_rest_api.api.auth.models import User
 from igor_rest_api.api.constants import *
-from igor_rest_api.db import db
+from igor_rest_api.api.models import db
 
 from ..models import Machine
 
