@@ -72,6 +72,7 @@ class UsersAPI(Resource):
 
 class UserAPI(Resource):
     decorators = [auth.login_required]
+
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('password', type=str, required=True,
