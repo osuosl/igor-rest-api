@@ -114,19 +114,19 @@ class PermissionsTestCase(IgorApiTestCase):
         self.assertIn(machine, user2.machines,
                       'expected machine to exist for user')
 
-    def test_add_user_to_machine(self):
-        user = self.create_test_user()
-        machine = self.create_test_machine()
+    # def test_add_user_to_machine(self):
+    #     user = self.create_test_user()
+    #     machine = self.create_test_machine()
 
-        response = self.client.put(url_for('machine_user',
-                                            username=user.username,
-                                            hostname=machine.hostname),
-                                   headers=self.headers)
-        self.assertStatus(response, 201)
+    #     response = self.client.put(url_for('machine_user',
+    #                                         username=user.username,
+    #                                         hostname=machine.hostname),
+    #                                headers=self.headers)
+    #     self.assertStatus(response, 201)
 
-        machine2 = Machine.query.filter_by(hostname=machine.hostname).first()
-        self.assertIn(user, machine2.users,
-                      'expected user to exist for machine')
+    #     machine2 = Machine.query.filter_by(hostname=machine.hostname).first()
+    #     self.assertIn(user, machine2.users,
+    #                   'expected user to exist for machine')
 
     def test_check_machine_for_user(self):
         machine = self.create_test_machine()
@@ -148,25 +148,25 @@ class PermissionsTestCase(IgorApiTestCase):
                                    headers=self.headers)
         self.assert_200(response, 'user must have permission for machine')
 
-    def test_check_user_for_machine(self):
-        machine = self.create_test_machine()
-        user = self.create_test_user()
+    # def test_check_user_for_machine(self):
+    #     machine = self.create_test_machine()
+    #     user = self.create_test_user()
 
-        response = self.client.get(url_for('machine_user',
-                                            username=user.username,
-                                            hostname=machine.hostname),
-                                   headers=self.headers)
-        self.assert_404(response, 'user must not have permission for machine')
+    #     response = self.client.get(url_for('machine_user',
+    #                                         username=user.username,
+    #                                         hostname=machine.hostname),
+    #                                headers=self.headers)
+    #     self.assert_404(response, 'user must not have permission for machine')
 
-        machine.users.append(user)
-        self.db.session.add(machine)
-        self.db.session.commit()
+    #     machine.users.append(user)
+    #     self.db.session.add(machine)
+    #     self.db.session.commit()
 
-        response = self.client.get(url_for('machine_user',
-                                            username=user.username,
-                                            hostname=machine.hostname),
-                                   headers=self.headers)
-        self.assert_200(response, 'user must have permission for machine')
+    #     response = self.client.get(url_for('machine_user',
+    #                                         username=user.username,
+    #                                         hostname=machine.hostname),
+    #                                headers=self.headers)
+    #     self.assert_200(response, 'user must have permission for machine')
 
     def test_remove_machine_from_user(self):
         machine = self.create_test_machine()
@@ -185,19 +185,19 @@ class PermissionsTestCase(IgorApiTestCase):
         user2 = User.query.filter_by(username=user.username).first()
         self.assertEquals(0, len(user2.machines))
 
-    def test_remove_user_from_machine(self):
-        machine = self.create_test_machine()
-        user = self.create_test_user()
+    # def test_remove_user_from_machine(self):
+    #     machine = self.create_test_machine()
+    #     user = self.create_test_user()
 
-        machine.users.append(user)
-        self.db.session.add(machine)
-        self.db.session.commit()
+    #     machine.users.append(user)
+    #     self.db.session.add(machine)
+    #     self.db.session.commit()
 
-        response = self.client.delete(url_for('machine_user',
-                                               username=user.username,
-                                               hostname=machine.hostname),
-                                      headers=self.headers)
-        self.assert_200(response, 'unexpected error revoking permission')
+    #     response = self.client.delete(url_for('machine_user',
+    #                                            username=user.username,
+    #                                            hostname=machine.hostname),
+    #                                   headers=self.headers)
+    #     self.assert_200(response, 'unexpected error revoking permission')
 
-        machine2 = Machine.query.filter_by(hostname=machine.hostname).first()
-        self.assertEquals(0, len(machine2.users))
+    #     machine2 = Machine.query.filter_by(hostname=machine.hostname).first()
+    #     self.assertEquals(0, len(machine2.users))

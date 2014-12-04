@@ -2,42 +2,55 @@
 
 from flask.ext.restful import Api
 
-from .auth.views import LoginAPI, UserAPI, UsersAPI
-from .ipmi.views import (
+from igor_rest_api.api import errors
+from igor_rest_api.api.auth.views import LoginAPI
+from igor_rest_api.api.auth.views.users import (
+    UserAPI, UsersAPI,
+    UserMachinesAPI,
+)
+from igor_rest_api.api.ipmi.views import (
     MachineChassisAPI, MachineChassisPowerAPI,
     MachineSensorsAPI, MachineSensorAPI,
     MachineLanAPI, MachineLanChannelAPI,
     MachineLanAlertAPI, MachineLanChannelAlertAPI,
     MachineChassisPolicyAPI, MachineSelAPI, MachineSelTimeAPI,
     MachineSelRecordsAPI,
-    )
-from .machines.views import MachineAPI, MachinesAPI
-from .machines.views.permissions import (
-    UserMachineAPI, UserMachinesAPI,
-    MachineUserAPI, MachineUsersAPI,
-    )
-from .views import RootAPI
+)
+from igor_rest_api.api.machines.views import MachineAPI, MachinesAPI
+from igor_rest_api.api.machines.views.permissions import (
+    MachineUsersAPI,
+    UserPermissionsMachineAPI,
+)
+from igor_rest_api.api.views import RootAPI
 
-api = Api()
+api = Api(errors=errors)
+
+def add_resources(api, resources):
+    for resource, url, endpoint in resources:
+        api.add_resource(resource, url, endpoint=endpoint)
+
 
 resources = [
     (RootAPI, '/', 'root'),
     (LoginAPI, '/login', 'login'),
     (UsersAPI, '/users', 'users'),
-    (UserAPI, '/users/<string:username>', 'user'),
-    (MachinesAPI, '/machines', 'machines'),
-    (MachineAPI, '/machines/<string:hostname>', 'machine'),
+    (UserAPI,
+        '/users/<string:username>',
+        'user'),
     (UserMachinesAPI,
         '/users/<string:username>/machines',
         'user_machines'),
-    (UserMachineAPI,
-        '/users/<string:username>/machines/<string:hostname>',
+    (MachinesAPI,
+        '/machines',
+        'machines'),
+    (MachineAPI,
+        '/machines/<string:hostname>',
+        'machine'),
+    (UserPermissionsMachineAPI,
+        '/users/<string:username>/machines/<string:hostname>/permissions',
         'user_machine'),
     (MachineUsersAPI, '/machines/<string:hostname>/users',
         'machine_users'),
-    (MachineUserAPI,
-        '/machines/<string:hostname>/users/<string:username>',
-        'machine_user'),
     (MachineChassisAPI,
         '/machines/<string:hostname>/chassis',
         'machine_chassis'),
@@ -76,5 +89,4 @@ resources = [
         'machine_sel_records')
 ]
 
-for resource, url, endpoint in resources:
-    api.add_resource(resource, url, endpoint=endpoint)
+add_resources(api, resources)

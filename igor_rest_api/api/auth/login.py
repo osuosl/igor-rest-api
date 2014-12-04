@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 from functools import wraps
 
 from flask import g
@@ -12,6 +11,7 @@ from igor_rest_api.api.machines.models import Machine
 from .models import User
 
 auth = HTTPBasicAuth()
+
 
 # Authentication, writes g.user
 @auth.verify_password

@@ -40,7 +40,7 @@ class User(db.Model):
         return User.query.get(data['id'])
 
     def __eq__(self, user):
-        return self.hostname == user.hostname
+        return self.username == user.username
 
 def create_root_user():
     # Create root user

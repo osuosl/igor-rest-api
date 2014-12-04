@@ -10,39 +10,17 @@ from igor_rest_api.api.models import db
 
 from ..models import Machine
 
-# Machine-user permissions endpoints
-"""
-    GET     /users/:username/machines   Returns the list of machines
-                                        accessible by :username
-"""
-class UserMachinesAPI(Resource):
+class UserPermissionsMachineAPI(Resource):
+    """
+    GET, PUT, DELETE    /users/:username/machines/:hostname/permissions
+    """
     decorators = [auth.login_required]
 
-    def get(self, username):
-        user = User.query.filter_by(username=username).first()
-        if not user:
-            return {'message': 'User %s does not exist' % username}, NOT_FOUND
-        return {'username': user.username,
-                'machines': [{'hostname': machine.hostname,
-                              'location': url_for('machine',
-                                                  hostname=machine.hostname,
-                                                  _external=True)}
-                              for machine in user.machines]}
-"""
-    GET     /users/:username/machines/:hostname     Returns 200 or 404,
-                                                    depending on :username's
-                                                    access to :hostname
-    PUT     /users/:username/machines/:hostname     Adds :username-:hostname
-                                                    entry to the permissions
-                                                    table
-    DELETE  /users/:username/machines/:hostname     Deletes
-                                                    :username-:hostname entry
-                                                    in the permissions table
-"""
-class UserMachineAPI(Resource):
-    decorators = [auth.login_required]
 
     def get(self, username, hostname):
+        """
+        Returns 200 or 404, depending on :username's access to :hostname
+        """
         user = User.query.filter_by(username=username).first()
         if not user:
             return {'message': 'User %s does not exist' % username}, NOT_FOUND
@@ -61,6 +39,9 @@ class UserMachineAPI(Resource):
                     % (username, hostname)}, NOT_FOUND
 
     def put(self, username, hostname):
+        """
+        Adds :username-:hostname entry to the permissions table
+        """
         user = User.query.filter_by(username=username).first()
         if not user:
             return {'message': 'User %s does not exist' % username}, NOT_FOUND
@@ -78,6 +59,10 @@ class UserMachineAPI(Resource):
                 % (username, hostname)}, CREATED
 
     def delete(self, username, hostname):
+        """"
+        Deletes :username-:hostname entry in the permissions table
+        """
+
         user = User.query.filter_by(username=username).first()
         if not user:
             return {'message': 'User %s does not exist' % username}, NOT_FOUND
@@ -97,14 +82,18 @@ class UserMachineAPI(Resource):
             return {'message': 'User %s does not have permission for host %s'
                     % (username, hostname)}, NOT_FOUND
 
-"""
-    GET     /machines/:hostname/users   Returns the list of users with access
-                                        to :hostname
-"""
+
 class MachineUsersAPI(Resource):
+    """
+    GET     /machines/:hostname/users
+    """
+
     decorators = [auth.login_required]
 
     def get(self, hostname):
+        """
+        Returns the list of users with access to :hostname
+        """
         machine = Machine.query.filter_by(hostname=hostname).first()
         if not machine:
             return {'message': 'Host %s does not exist' % hostname}, NOT_FOUND
@@ -114,71 +103,5 @@ class MachineUsersAPI(Resource):
                            'location': url_for('user', username=user.username,
                                                _external=True)}
                             for user in machine.users]}
-"""
-    GET     /machines/:hostname/users/:username     Returns 200 or 404,
-                                                    depending on :username's
-                                                    access to :hostname
-    PUT     /machines/:hostname/users/:username     Adds :username-:hostname
-                                                    entry to the permissions
-                                                    table
-    DELETE  /machines/:hostname/users/:username     Deletes
-                                                    :username-:hostname entry
-                                                    in the permissions table
-"""
-class MachineUserAPI(Resource):
-    decorators = [auth.login_required]
 
-    def get(self, hostname, username):
-        user = User.query.filter_by(username=username).first()
-        if not user:
-            return {'message': 'User %s does not exist' % username}, NOT_FOUND
 
-        machine = Machine.query.filter_by(hostname=hostname).first()
-        if not machine:
-            return {'message': 'Host %s does not exist' % hostname}, NOT_FOUND
-
-        if user in machine.users:
-            return {'username': username,
-                    'hostname': hostname,
-                    'location': url_for('user', username=username,
-                                        _external=True)}
-        else:
-            return {'message': 'User %s does not have permission for host %s'
-                    % (username, hostname)}, NOT_FOUND
-
-    def put(self, hostname, username):
-        user = User.query.filter_by(username=username).first()
-        if not user:
-            return {'message': 'User %s does not exist' % username}, NOT_FOUND
-
-        machine = Machine.query.filter_by(hostname=hostname).first()
-        if not machine:
-            return {'message': 'Host %s does not exist' % hostname}, NOT_FOUND
-
-        if user not in machine.users:
-            machine.users.append(user)
-            db.session.add(machine)
-            db.session.commit()
-
-        return {'message': 'Created permission for user %s to host %s'
-                % (username, hostname)}, CREATED
-
-    def delete(self, hostname, username):
-        user = User.query.filter_by(username=username).first()
-        if not user:
-            return {'message': 'User %s does not exist' % username}, NOT_FOUND
-
-        machine = Machine.query.filter_by(hostname=hostname).first()
-        if not machine:
-            return {'message': 'Host %s does not exist' % hostname}, NOT_FOUND
-
-        if user in machine.users:
-            machine.users.remove(user)
-            db.session.add(machine)
-            db.session.commit()
-
-            return {'message': 'Deleted permission for user %s to host %s'
-                    % (username, hostname)}
-        else:
-            return {'message': 'User %s does not have permission for host %s'
-                    % (username, hostname)}, NOT_FOUND

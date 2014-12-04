@@ -1,9 +1,10 @@
-from flask.ext.script import Manager
+from flask.ext.script import Manager, Server, Shell
 
+from igor_rest_api import create_app
 from igor_rest_api.api.models import db
 from igor_rest_api.api.auth.models import create_root_user
 
-manager = Manager()
+manager = Manager(create_app)
 
 @manager.command
 def init_db():
@@ -13,5 +14,3 @@ def init_db():
     create_root_user()
     print "Done"
 
-def run():
-    manager.run()

@@ -1,5 +1,6 @@
 from flask.ext.restful import Resource
 
+
 # Root endpoint, used to test connection
 """
     GET     /                 Returns 200 OK with a message

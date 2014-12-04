@@ -7,7 +7,7 @@ setup(
     install_requires=[
         "Flask==0.10.1",
         "Flask-HTTPAuth==2.2.1",
-        "Flask-RESTful==0.2.12",
+        "Flask-RESTful==0.3.0",
         "Flask-SQLAlchemy==1.0",
         "Flask-Script==2.0.5",
         "Flask-Testing==0.4.2",

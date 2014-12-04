@@ -2,4 +2,4 @@
 from igor_rest_api import management
 
 if __name__ == '__main__':
-    management.run()
+    management.manager.run()
