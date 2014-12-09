@@ -18,6 +18,7 @@ user_fields = {
 
 machine_fields = {
     'machines': fields.List(fields.Nested({
+        "id": fields.Integer,
         "hostname": fields.String,
     }))
 }
@@ -101,9 +102,6 @@ class UserAPI(Resource):
         if not user:
             raise ResourceDoesNotExist("User %s does not exist!" % username)
         else:
-            # user.machines = []
-            # db.session.add(user)
-            # db.session.commit()
             db.session.delete(user)
             db.session.commit()
             return user
@@ -139,5 +137,5 @@ class UserMachinesAPI(Resource):
         user = User.query.filter_by(username=username).first()
         if not user:
             raise ResourceDoesNotExist("User %s does not exist!" % username)
-        return user.machines
+        return {'machines': user.machines}
 

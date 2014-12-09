@@ -1,14 +1,23 @@
 #!/usr/bin/env python
 
 from flask import url_for
-from flask.ext.restful import Resource
+from flask.ext.restful import Resource, fields, marshal_with
 
 from igor_rest_api.api.auth.login import auth
 from igor_rest_api.api.auth.models import User
 from igor_rest_api.api.constants import *
+from igor_rest_api.api.exceptions import (
+    PermissionDenied, ResourceAlreadyExists, ResourceDoesNotExist,
+)
 from igor_rest_api.api.models import db
 
 from ..models import Machine
+
+
+machine_fields = {
+    'hostname':fields.String,
+    'username': fields.String,
+}
 
 class UserPermissionsMachineAPI(Resource):
     """
@@ -16,27 +25,22 @@ class UserPermissionsMachineAPI(Resource):
     """
     decorators = [auth.login_required]
 
-
+    @marshal_with(machine_fields)
     def get(self, username, hostname):
         """
         Returns 200 or 404, depending on :username's access to :hostname
         """
-        user = User.query.filter_by(username=username).first()
-        if not user:
-            return {'message': 'User %s does not exist' % username}, NOT_FOUND
 
-        machine = Machine.query.filter_by(hostname=hostname).first()
+        machine = Machine.query.join(Machine.users) \
+            .filter(User.username==username) \
+            .filter(Machine.hostname==hostname) \
+            .first()
+
         if not machine:
-            return {'message': 'Host %s does not exist' % hostname}, NOT_FOUND
+            raise PermissionDenied()
 
-        if machine in user.machines:
-            return {'username': username,
-                    'hostname': hostname,
-                    'location': url_for('machine', hostname=hostname,
-                                        _external=True)}
-        else:
-            return {'message': 'User %s does not have permission for host %s'
-                    % (username, hostname)}, NOT_FOUND
+        return {'hostname': hostname, 'username': username}
+
 
     def put(self, username, hostname):
         """
@@ -52,7 +56,6 @@ class UserPermissionsMachineAPI(Resource):
 
         if machine not in user.machines:
             user.machines.append(machine)
-            db.session.add(user)
             db.session.commit()
 
         return {'message': 'Created permission for user %s to host %s'
@@ -73,7 +76,7 @@ class UserPermissionsMachineAPI(Resource):
 
         if machine in user.machines:
             user.machines.remove(machine)
-            db.session.add(user)
+            # db.session.add(user)
             db.session.commit()
 
             return {'message': 'Deleted permission for user %s to host %s'
@@ -83,6 +86,13 @@ class UserPermissionsMachineAPI(Resource):
                     % (username, hostname)}, NOT_FOUND
 
 
+machine_users_fields = {
+    'users': fields.Nested({
+        'id': fields.Integer,
+        'username': fields.String,
+    }),
+}
+
 class MachineUsersAPI(Resource):
     """
     GET     /machines/:hostname/users
@@ -90,18 +100,14 @@ class MachineUsersAPI(Resource):
 
     decorators = [auth.login_required]
 
+    @marshal_with(machine_users_fields)
     def get(self, hostname):
         """
         Returns the list of users with access to :hostname
         """
         machine = Machine.query.filter_by(hostname=hostname).first()
         if not machine:
-            return {'message': 'Host %s does not exist' % hostname}, NOT_FOUND
+            raise ResourceDoesNotExist("Host %s does not exist!" % hostname)
 
-        return {'hostname': machine.hostname,
-                'users': [{'username': user.username,
-                           'location': url_for('user', username=user.username,
-                                               _external=True)}
-                            for user in machine.users]}
-
+        return machine
 
