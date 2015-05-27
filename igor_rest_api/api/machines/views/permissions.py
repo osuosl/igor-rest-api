@@ -69,6 +69,7 @@ class UserMachineAPI(Resource):
         if not machine:
             return {'message': 'Host %s does not exist' % hostname}, NOT_FOUND
 
+        print dir(user)
         if machine not in user.machines:
             user.machines.append(machine)
             db.session.add(user)

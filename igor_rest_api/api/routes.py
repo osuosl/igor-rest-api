@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from .auth.views import LoginAPI
-
+from .snmp.views import SNMPLoginAPI
 from .ipmi.views import (
     MachineChassisAPI, MachineChassisPowerAPI,
     MachineSensorsAPI, MachineSensorAPI,
@@ -11,21 +11,32 @@ from .ipmi.views import (
     MachineSelRecordsAPI,
 )
 from .machines.views import MachineAPI, MachinesAPI
+from .pdus.views import PduAPI, PdusAPI
 from .machines.views.permissions import (
     UserMachineAPI, UserMachinesAPI,
     MachineUserAPI, MachineUsersAPI,
 )
+from .pdus.views.permissions import (
+        UserPduAPI, UserPdusAPI,
+        PduUserAPI, PduUsersAPI,
+)
 from .auth.views import UserAPI, UsersAPI
+from .snmp.views import SNMPUserAPI, SNMPUsersAPI
 from .views import RootAPI
 
 
 resources = [
             (RootAPI, '/', 'root'),
             (LoginAPI, '/login', 'login'),
+            (SNMPLoginAPI, '/snmplogin', 'snmplogin'),
             (UsersAPI, '/users', 'users'),
             (UserAPI, '/users/<string:username>', 'user'),
+            (SNMPUsersAPI, '/snmpusers', 'snmpusers'),
+            (SNMPUserAPI, '/snmpusers/<string:username>', 'snmpuser'),
             (MachinesAPI, '/machines', 'machines'),
             (MachineAPI, '/machines/<string:hostname>', 'machine'),
+            (PdusAPI, '/pdus', 'pdus'),
+            (PduAPI, '/pdus/<string:ip>', 'pdu'),
             (UserMachinesAPI, '/users/<string:username>/machines',
                 'user_machines'),
             (UserMachineAPI,
@@ -36,6 +47,16 @@ resources = [
             (MachineUserAPI,
                 '/machines/<string:hostname>/users/<string:username>',
                 'machine_user'),
+            (UserPdusAPI, '/snmpusers/<string:username>/pdus',
+                'user_pdus'),
+            (UserPduAPI,
+                '/snmpusers/<string:username>/pdus/<string:ip>',
+                'user_pdu'),
+            (PduUsersAPI, '/pdus/<string:ip>/users',
+                'pdu_users'),
+            (PduUserAPI,
+                '/pdus/<string:ip>/users/<string:username>',
+                'pdu_user'),
             (MachineChassisAPI,
                 '/machines/<string:hostname>/chassis',
                 'machine_chassis'),
