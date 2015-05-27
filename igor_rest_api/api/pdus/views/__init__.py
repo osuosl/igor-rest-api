@@ -43,7 +43,12 @@ class PdusAPI(Resource):
         for pdu in Pdu.query.all():
             pdus.append(pdu.ip)
         return {'pdus': [{'ip': ip,
-                              }
+                              'users': url_for('pdu_users',
+                                               ip=ip,
+                                               _external=True),
+                              'location': url_for('pdu',
+                                                  ip=ip,
+                                                  _external=True)}
                               for ip in pdus]}
 
 
@@ -60,8 +65,13 @@ class PdusAPI(Resource):
             pdu = Pdu(hostname, ip, username, password)
             db.session.add(pdu)
             db.session.commit()
-            return {'ip': pdu.ip
-                    }, CREATED
+            return {'ip': pdu.ip,
+                    'users': url_for('pdu_users', ip=ip,
+                                     _external=True),
+                    'location': url_for('pdu', ip=pdu.ip,
+                                        _external=True)}, CREATED
+
+ 
 
 """
     GET     /pdus/:ip             Return details for the machine
@@ -89,7 +99,11 @@ class PduAPI(Resource):
         else:
             return {'hostname': pdu.hostname,
                     'ip': pdu.ip,
-                    }
+                    'users': url_for('pdu_users', ip=ip,
+                                     _external=True),
+                    'location': url_for('pdu', ip=ip,
+                                        _external=True)}
+                    
 
     def delete(self, ip):
         pdu = Pdu.query.filter_by(ip=ip).first()

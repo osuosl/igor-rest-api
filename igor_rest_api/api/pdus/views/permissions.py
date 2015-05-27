@@ -22,16 +22,13 @@ class UserPdusAPI(Resource):
         user = Snmpuser.query.filter_by(username=username).first()
         if not user:
             return {'message': 'User %s does not exist' % username}, NOT_FOUND
-        print dir(user)
-        return "okay"
-        """
+
         return {'username': user.username,
-                'machines': [{'ip': machine.ip,
-                              'location': url_for('machine',
-                                                  ip=machine.ip,
+                'machines': [{'ip': pdu.ip,
+                              'location': url_for('pdu',
+                                                  ip=pdu.ip,
                                                   _external=True)}
-                              for machine in user.machines]}
-        """
+                              for pdu in user.pdus]}
 """
     GET     /Snmpusers/:username/pdu/:ip     Returns 200 or 404,
                                                     depending on :username's
@@ -117,7 +114,7 @@ class PduUsersAPI(Resource):
 
         return {'ip': pdu.ip,
                 'users': [{'username': user.username,
-                           'location': url_for('Snmpuser', username=user.username,
+                           'location': url_for('snmpuser', username=user.username,
                                                _external=True)}
                             for user in pdu.users]}
 """
