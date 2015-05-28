@@ -136,4 +136,4 @@ class PduAPI(Resource):
                 pdu.password = password
             db.session.add(pdu)
             db.session.commit()
-            return {'message': 'Updated entry for pdu %s' % pdu}
+            return {'message': 'Updated entry for pdu %s' % pdu.ip}

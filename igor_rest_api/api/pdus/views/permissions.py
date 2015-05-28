@@ -10,7 +10,7 @@ from igor_rest_api.db import db
 
 from ..models import Pdu
 
-# Machine-user permissions endpoints
+# Pdu-user permissions endpoints
 """
     GET     /Snmpusers/:username/pdus   Returns the list of pdus 
                                         accessible by :username
@@ -24,7 +24,7 @@ class UserPdusAPI(Resource):
             return {'message': 'User %s does not exist' % username}, NOT_FOUND
 
         return {'username': user.username,
-                'machines': [{'ip': pdu.ip,
+                'pdus': [{'ip': pdu.ip,
                               'location': url_for('pdu',
                                                   ip=pdu.ip,
                                                   _external=True)}
@@ -49,15 +49,14 @@ class UserPduAPI(Resource):
             return {'message': 'User %s does not exist' % username}, NOT_FOUND
 
         pdu = Pdu.query.filter_by(ip=ip).first()
-        if not machine:
+        if not pdu:
             return {'message': 'Host %s does not exist' % ip}, NOT_FOUND
 
         if pdu in user.pdus:
-            return "okay"
-        #    return {'username': username,
-        #            'ip': ip,
-        #            'location': url_for('machine', ip=ip,
-        #                                _external=True)}
+            return {'username': username,
+                    'ip': ip,
+                    'location': url_for('pdu', ip=ip,
+                                        _external=True)}
         else:
             return {'message': 'User %s does not have permission for pdu %s'
                     % (username, ip)}, NOT_FOUND
@@ -81,7 +80,7 @@ class UserPduAPI(Resource):
                 % (username, ip)}, CREATED
 
     def delete(self, username, ip):
-        user = User.query.filter_by(username=username).first()
+        user = Snmpuser.query.filter_by(username=username).first()
         if not user:
             return {'message': 'User %s does not exist' % username}, NOT_FOUND
 
@@ -90,7 +89,7 @@ class UserPduAPI(Resource):
             return {'message': 'Pdu %s does not exist' % ip}, NOT_FOUND
 
         if pdu in user.pdus:
-            user.pdus.remove(machine)
+            user.pdus.remove(pdu)
             db.session.add(user)
             db.session.commit()
 
@@ -177,7 +176,7 @@ class PduUserAPI(Resource):
 
         if user in pdu.users:
             pdu.users.remove(user)
-            db.session.add(machine)
+            db.session.add(pdu)
             db.session.commit()
 
             return {'message': 'Deleted permission for user %s to pdu %s'
