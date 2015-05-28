@@ -29,12 +29,12 @@ Running the test server locally can be done using `manage.py` or `igor-manage`
 
 ## Design Documents
 
-   * [API Architecture](https://github.com/emaadmanzoor/igor-rest-api/blob/master/docs/API.md)
-   * [Serial-on-LAN over REST](https://github.com/emaadmanzoor/igor-rest-api/blob/master/docs/API.md)
+   * [API Architecture](docs/API.md)
+   * [Serial-on-LAN over REST](docs/SOL.md)
 
 ## API Documentation
 
-   * [API Usage Examples](https://github.com/emaadmanzoor/igor-rest-api/blob/master/docs/EXAMPLES.md)
+   * [API Usage Examples](docs/EXAMPLES.md)
 
 ## Resources
 
