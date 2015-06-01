@@ -585,3 +585,70 @@ Date: Thu, 28 May 2015 11:31:38 GMT
 }
 ```
 
+## User Management
+ 
+To get status of all the outlets of pdu with ip '10.0.1.33'
+```
+$curl -i -u root:root -X GET http://localhost:5000/pdu/10.0.1.33/status
+
+
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 831
+Server: Werkzeug/0.9.6 Python/2.7.9
+Date: Mon, 01 Jun 2015 11:54:56 GMT
+
+{
+    "status": {
+        "TowerA_Outlet1": "off", 
+        "TowerA_Outlet2": "off", 
+        "TowerA_Outlet3": "off", 
+        "TowerA_Outlet4": "off", 
+        "TowerA_Outlet5": "off", 
+        "TowerA_Outlet6": "off", 
+        "TowerA_Outlet7": "on", 
+        "TowerA_Outlet8": "on", 
+        "TowerB_Outlet1": "off", 
+        "TowerB_Outlet10": "on", 
+        "TowerB_Outlet11": "on", 
+        "TowerB_Outlet12": "on", 
+        "TowerB_Outlet13": "on", 
+        "TowerB_Outlet14": "on", 
+        "TowerB_Outlet15": "on", 
+        "TowerB_Outlet16": "on", 
+        "TowerB_Outlet2": "on", 
+        "TowerB_Outlet3": "on", 
+        "TowerB_Outlet4": "off", 
+        "TowerB_Outlet5": "on", 
+        "TowerB_Outlet6": "on", 
+        "TowerB_Outlet7": "on", 
+        "TowerB_Outlet8": "on", 
+        "TowerB_Outlet9": "on"
+    }
+}
+```
+
+View status of specific outlet , for example to view status of Tower A ,outlet 3
+```
+$curl -i -u root:root -X GET http://localhost:5000/pdu/10.0.1.33/A/3
+
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 22
+Server: Werkzeug/0.9.6 Python/2.7.9
+Date: Mon, 01 Jun 2015 11:55:18 GMT
+
+{
+    "state": "off"
+}
+```
+
+change state of outlet 3 in tower A
+```
+$curl -u root:root -H "Content-Type: application/json" -X POST -d '{"state":"on"}' http://localhost:5000/pdu/10.0.1.33/A/3
+
+
+{
+    "Success": "Changed state"
+}
+```

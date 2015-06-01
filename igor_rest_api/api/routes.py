@@ -10,6 +10,7 @@ from .ipmi.views import (
     MachineChassisPolicyAPI, MachineSelAPI, MachineSelTimeAPI,
     MachineSelRecordsAPI,
 )
+from .snmpcontrol.views import Pdustatus, OutletStatus
 from .machines.views import MachineAPI, MachinesAPI
 from .pdus.views import PduAPI, PdusAPI
 from .machines.views.permissions import (
@@ -37,6 +38,8 @@ resources = [
             (MachineAPI, '/machines/<string:hostname>', 'machine'),
             (PdusAPI, '/pdus', 'pdus'),
             (PduAPI, '/pdus/<string:ip>', 'pdu'),
+            (Pdustatus, '/pdu/<string:ip>/status', 'pdustatus'),
+            (OutletStatus, '/pdu/<string:ip>/<string:tower>/<int:outlet>', 'Outletstatus'),
             (UserMachinesAPI, '/users/<string:username>/machines',
                 'user_machines'),
             (UserMachineAPI,
