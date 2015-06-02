@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from flask import url_for 
+from flask import url_for, g
 from flask.ext.restful import Resource, reqparse
 from sqlalchemy.exc import IntegrityError
 
@@ -51,6 +51,9 @@ class PdusAPI(Resource):
 
     def post(self):
         args = self.reqparse.parse_args()
+
+        if g.user.username is not 'root':
+            return {'Error':'only root can add pdus'}
 
         hostname = args['hostname']
         ip = args['ip']
@@ -103,6 +106,9 @@ class PduAPI(Resource):
                     
 
     def delete(self, ip):
+        if g.user.username is not 'root':
+            return {'Error' : 'only root can delete pdus'}
+
         pdu = Pdu.query.filter_by(ip=ip).first()
         if not pdu:
             return {'message': 'Pdu %s does not exist' % ip}, NOT_FOUND
@@ -115,6 +121,9 @@ class PduAPI(Resource):
             return {'message': 'Pdu %s deleted' % pdu.ip}
 
     def put(self, ip):
+        if g.user.username is not 'root':
+            return {'Error': 'only root can modify pdu data'}
+
         args = self.reqparse.parse_args()
         pdu = Pdu.query.filter_by(ip=ip).first()
 

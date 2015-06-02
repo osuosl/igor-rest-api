@@ -39,6 +39,9 @@ class SNMPUsersAPI(Resource):
     def post(self):
         args = self.reqparse.parse_args()
 
+        if g.user.username is not 'root' :
+            return {'Error': 'only root can add users'}
+
         username = args['username']
         password = args['password']
         if Snmpuser.query.filter_by(username=username).first() is not None:
