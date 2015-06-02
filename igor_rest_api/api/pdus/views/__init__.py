@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-from flask import url_for
+from flask import url_for 
 from flask.ext.restful import Resource, reqparse
+from sqlalchemy.exc import IntegrityError
 
 from igor_rest_api.api.snmp.login import auth
 from igor_rest_api.api.constants import *
@@ -14,7 +15,6 @@ from igor_rest_api.db import db
 """
     GET     /pdus                           Returns the list of pdus
     POST    /pdus {'hostname': hostname,
-                       'username': username,
                        'ip':     ip,
                        'password': password}    Creates a new pdu entry
 """
@@ -27,9 +27,6 @@ class PdusAPI(Resource):
                                     location='json')
         self.reqparse.add_argument('ip', type=str, required=True,
                                     help='No ip provided',
-                                    location='json')
-        self.reqparse.add_argument('username', type=str, required=True,
-                                    help='No username provided',
                                     location='json')
         self.reqparse.add_argument('password', type=str, required=True,
                                     help='No password provided',
@@ -57,19 +54,22 @@ class PdusAPI(Resource):
 
         hostname = args['hostname']
         ip = args['ip']
-        username = args['username']
         password = args['password']
         if Pdu.query.filter_by(ip=ip).first() is not None:
             return {'message': 'Host %s exists' % hostname}, BAD_REQUEST
         else:
-            pdu = Pdu(hostname, ip, username, password)
+            pdu = Pdu(hostname, ip, password)
             db.session.add(pdu)
-            db.session.commit()
-            return {'ip': pdu.ip,
+            try:
+                db.session.commit()
+                return {'ip': pdu.ip,
                     'users': url_for('pdu_users', ip=ip,
                                      _external=True),
                     'location': url_for('pdu', ip=pdu.ip,
                                         _external=True)}, CREATED
+            except IntegrityError as e:
+                return {'Error': 'Integrity Error'}
+
 
  
 
@@ -84,9 +84,6 @@ class PduAPI(Resource):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('ip', type=str,
                                     help='No ip provided', location='json')
-        self.reqparse.add_argument('username', type=str,
-                                    help='No username provided',
-                                    location='json')
         self.reqparse.add_argument('password', type=str,
                                     help='No password provided',
                                     location='json')
@@ -122,7 +119,6 @@ class PduAPI(Resource):
         pdu = Pdu.query.filter_by(ip=ip).first()
 
         hostname = args['hostname'] if 'hostname' in args else None
-        username = args['username'] if 'username' in args else None
         password = args['password'] if 'password' in args else None
 
         if not pdu:
