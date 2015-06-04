@@ -163,15 +163,10 @@ class PermissionsTestCase(IgorApiTestCase):
         self.db.session.commit()
 
 
-        url = url_for('pdu_user',username=user.username,ip=pdu.ip)
-        response = self.client.get(url,headers=self.headers)
-        print response
-        """
         response = self.client.get(url_for('pdu_user',
                                             username=user.username,
                                             ip=pdu.ip),
                                    headers=self.headers)
-                                   """
         self.assert_200(response, 'user must have permission for pdu')
 
     def test_remove_pdu_from_user(self):

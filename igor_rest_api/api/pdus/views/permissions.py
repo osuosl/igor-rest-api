@@ -142,7 +142,7 @@ class PduUserAPI(Resource):
         if user in pdu.users:
             return {'username': username,
                     'ip': ip,
-                    'location': url_for('Snmpuser', username=username,
+                    'location': url_for('snmpuser', username=username,
                                         _external=True)}
         else:
             return {'message': 'User %s does not have permission for pdu %s'
