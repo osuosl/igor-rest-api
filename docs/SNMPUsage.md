@@ -283,7 +283,7 @@ Date: Thu, 28 May 2015 11:08:29 GMT
 Update pdu details.(only root can do this)
 
 ```
-$curl -i -u root:root -X PUT -H "Content-Type: application/json" -d '{"ip": "10.0.0.11", "password": "password"}' http://localhost:5000/pdus/10.0.0.10
+$curl -i -u root:root -X PUT -H "Content-Type: application/json" -d '{"hostname": "new_hostname", "password": "password"}' http://localhost:5000/pdus/10.0.0.10
 
 HTTP/1.0 200 OK
 Content-Type: application/json

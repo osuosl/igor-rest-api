@@ -52,7 +52,7 @@ class PdusAPI(Resource):
     def post(self):
         args = self.reqparse.parse_args()
 
-        if g.user.username is not 'root':
+        if g.user.username != 'root':
             return {'Error':'only root can add pdus'}
 
         hostname = args['hostname']
@@ -87,6 +87,8 @@ class PduAPI(Resource):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('ip', type=str,
                                     help='No ip provided', location='json')
+        self.reqparse.add_argument('hostname', type=str,
+                                    help='No hostname provided', location='json')
         self.reqparse.add_argument('password', type=str,
                                     help='No password provided',
                                     location='json')
@@ -106,7 +108,7 @@ class PduAPI(Resource):
                     
 
     def delete(self, ip):
-        if g.user.username is not 'root':
+        if g.user.username != 'root':
             return {'Error' : 'only root can delete pdus'}
 
         pdu = Pdu.query.filter_by(ip=ip).first()
@@ -121,7 +123,7 @@ class PduAPI(Resource):
             return {'message': 'Pdu %s deleted' % pdu.ip}
 
     def put(self, ip):
-        if g.user.username is not 'root':
+        if g.user.username != 'root':
             return {'Error': 'only root can modify pdu data'}
 
         args = self.reqparse.parse_args()
@@ -135,8 +137,6 @@ class PduAPI(Resource):
         else:
             if hostname:
                 pdu.hostname = hostname 
-            if username:
-                pdu.username = username
             if password:
                 pdu.password = password
             db.session.add(pdu)

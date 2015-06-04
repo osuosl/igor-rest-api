@@ -12,3 +12,5 @@ SECRET_KEY = 'secret'
 
 # Development
 DEBUG = True
+#this is added to fix a bug in flask (https://github.com/jarus/flask-testing/issues/21)
+PRESERVE_CONTEXT_ON_EXCEPTION = False

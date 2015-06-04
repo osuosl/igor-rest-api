@@ -39,7 +39,7 @@ class SNMPUsersAPI(Resource):
     def post(self):
         args = self.reqparse.parse_args()
 
-        if g.user.username is not 'root' :
+        if g.user.username != 'root' :
             return {'Error': 'only root can add users'}
 
         username = args['username']
@@ -51,6 +51,7 @@ class SNMPUsersAPI(Resource):
             db.session.add(user)
             db.session.commit()
             return {'username': user.username,
+                    'pdus': url_for('user_pdus', username=username, _external=True),
                     'location': url_for('snmpuser', username=user.username,
                                         _external=True)}, CREATED
 
@@ -73,6 +74,7 @@ class SNMPUserAPI(Resource):
             return {'message': 'User %s does not exist' % username}, NOT_FOUND
         else:
             return {'username': user.username,
+                    'pdus': url_for('user_pdus', username=username, _external=True),
                     'location': url_for('snmpuser', username=username, _external=True)}
 
     def delete(self, username):
