@@ -24,10 +24,23 @@ from .pdus.views.permissions import (
 from .auth.views import UserAPI, UsersAPI
 from .snmp.views import SNMPUserAPI, SNMPUsersAPI
 from .views import RootAPI
+from .grouping.views import (
+        PdudetailsAPI, PdudetailAPI,
+        PduoutletsAPI, PduoutletAPI,
+        GroupsAPI, GroupAPI,
+        GroupoutletsAPI,
+)
 
 
 resources = [
             (RootAPI, '/', 'root'),
+            (PdudetailsAPI,'/groupings/pdu','groupings_pdus'),
+            (PdudetailAPI,'/groupings/pdu/<string:ip>','groupings_pdu'),
+            (PduoutletsAPI,'/groupings/outlets','groupings_outlets'),
+            (PduoutletAPI,'/groupings/outlets/<int:id>','groupings_outlet'),
+            (GroupsAPI,'/groupings/groups','groupings_groups'),
+            (GroupAPI,'/groupings/groups/<int:id>','groupings_group'),
+            (GroupoutletsAPI,'/groupings/groupings','groupings_groupings'),
             (LoginAPI, '/login', 'login'),
             (SNMPLoginAPI, '/snmplogin', 'snmplogin'),
             (UsersAPI, '/users', 'users'),
