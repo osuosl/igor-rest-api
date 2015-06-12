@@ -4,14 +4,15 @@ from flask import url_for, g
 from flask.ext.restful import Resource, reqparse
 from sqlalchemy.exc import IntegrityError
 
-#from igor_rest_api.api.grouping.login import auth
+from igor_rest_api.api.grouping.login import rootauth
 from igor_rest_api.api.constants import *
 from igor_rest_api.api.grouping.models import Group, Pdudetails, Outlets, Groupoutlets
-from igor_rest_api.api.grouping.utils import query_group, pduipfromid
+from igor_rest_api.api.grouping.utils import query_group, pduipfromid, query_group_outlets
 from igor_rest_api.db import db
 
 
 class PdudetailsAPI(Resource):
+    decorators = [rootauth.login_required]
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('ip', type=str, required=True,
@@ -41,12 +42,13 @@ class PdudetailsAPI(Resource):
             db.session.add(pdu)
             try:
                 db.session.commit()
-                return {'Success':'added pdu'}
+                return {'Success':'added pdu %s ' % ip}
             except IntegrityError as e:
                 return {'Error': 'Integrity Error'}
 
 
 class PdudetailAPI(Resource):
+    decorators = [rootauth.login_required]
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('access_string', type=str, required=True,
@@ -88,6 +90,7 @@ class PdudetailAPI(Resource):
 
 
 class PduoutletsAPI(Resource):
+    decorators = [rootauth.login_required]
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('pduid', type=str, required=True,
@@ -123,6 +126,7 @@ class PduoutletsAPI(Resource):
 
 
 class PduoutletAPI(Resource):
+    decorators = [rootauth.login_required]
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('pduid', type=str, 
@@ -179,6 +183,7 @@ class PduoutletAPI(Resource):
 
 
 class GroupsAPI(Resource):
+    decorators = [rootauth.login_required]
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('name', type=str, required=True,
@@ -197,13 +202,17 @@ class GroupsAPI(Resource):
         args = self.reqparse.parse_args()
 
         name = args['name']
+        group = Group.query.filter_by(name=name).first()
+        if group is not None:
+            return {'message' : 'Group %s already exists' %name}, BAD_REQUEST
         group = Group(name)
         db.session.add(group)
         db.session.commit()
-        return {'Success' : 'added group'}
+        return {'Success' : 'added group %s' %name}
 
 
 class GroupAPI(Resource):
+    decorators = [rootauth.login_required]
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('name', type=str, required=True, 
@@ -215,8 +224,10 @@ class GroupAPI(Resource):
        group = Group.query.filter_by(id=id).first()
        if not group:
             return {'message': 'group with id %s does not exist' % id}, NOT_FOUND
+       outlets = query_group_outlets(id)
        return {'group': [{'id': group.id,
-                          'name': group.name}]}
+                          'name': group.name,
+                          'outlets': outlets}]}
 
     def put(self, id):
        args = self.reqparse.parse_args()
@@ -241,6 +252,7 @@ class GroupAPI(Resource):
 
 
 class GroupoutletsAPI(Resource):
+    decorators = [rootauth.login_required]
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('outlet_id', type=int, required=True,

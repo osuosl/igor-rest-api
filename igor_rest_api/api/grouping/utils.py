@@ -18,6 +18,22 @@ def query_group(id):
         return pdus
 
 
+def query_group_outlets(id):
+        outletids = []
+        temp = Groupoutlets.query.filter_by(group_id=id).all()
+        for i in temp:
+            outletids.append(i.outlet_id)
+
+        pdus = []
+        for i in outletids:
+            temp = Outlets.query.filter_by(id=i).all()
+            for j in temp:
+                temp_pdu = query_pduip(j.pdu_id)
+                temp_pdu.extend([j.towername,j.outlet])
+                pdus.append(temp_pdu)
+        return pdus
+
+
 def query_pdudetails(id):
     pdu = Pdudetails.query.filter_by(id=id).first()
     retvalue = []
@@ -29,3 +45,12 @@ def query_pdudetails(id):
 def pduipfromid(id):
     pdu = Pdudetails.query.filter_by(id=id).first()
     return pdu.ip
+
+
+def query_pduip(id):
+    pdu = Pdudetails.query.filter_by(id=id).first()
+    retvalue = []
+    retvalue.append(pdu.ip)
+    return retvalue
+
+

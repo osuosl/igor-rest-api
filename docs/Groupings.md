@@ -2,9 +2,10 @@
 # Usage Examples
 
 ## Pdu management
-Create a new pdu entry 
+Only root can manage pdus
+Create a new pdu entry  
 ```
-$ curl -i -X POST -H "Content-Type: application/json" -d '{"ip": "10.10.10.11","access_string":"string"}' http://localhost:5000/groupings/pdu
+$ curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"ip": "10.10.10.11","access_string":"string"}' http://localhost:5000/groupings/pdu
 
 HTTP/1.0 200 OK
 Content-Type: application/json
@@ -13,13 +14,13 @@ Server: Werkzeug/0.9.6 Python/2.7.10
 Date: Wed, 10 Jun 2015 10:27:22 GMT
 
 {
-    "Success": "added pdu"
+    "Success": "added pdu 10.10.10.11"
 }
 ```
 
-View all pdu's
+View all pdu's 
 ```
-$curl -X GET http://localhost:5000/groupings/pdu
+$curl -i -u root:root -X GET http://localhost:5000/groupings/pdu
 
 
 {
@@ -31,9 +32,9 @@ $curl -X GET http://localhost:5000/groupings/pdu
     ]
 }
 ```
-View details of pdu with id 1
+View details of pdu with ip 10.10.10.11
 ```
-$curl   -X GET http://localhost:5000/groupings/pdu/10.10.10.11
+$curl -i -u root:root  -X GET http://localhost:5000/groupings/pdu/10.10.10.11
 
 {
     "Pdudetails": [
@@ -47,7 +48,7 @@ $curl   -X GET http://localhost:5000/groupings/pdu/10.10.10.11
 ```
 Modify access_string of pdu with ip 10.10.10.11
 ```
-$curl -i -X PUT -H "Content-Type: application/json" -d '{"access_string":"newstring"}' http://localhost:5000/groupings/pdu/10.10.10.11
+$curl -i -u root:root -X PUT -H "Content-Type: application/json" -d '{"access_string":"newstring"}' http://localhost:5000/groupings/pdu/10.10.10.11
 
 HTTP/1.0 200 OK
 Content-Type: application/json
@@ -62,7 +63,7 @@ Date: Wed, 10 Jun 2015 10:30:03 GMT
 
 Delete pdu with ip 10.10.10.11
 ```
-$curl -i -X DELETE http://localhost:5000/groupings/pdu/10.10.10.11
+$curl -i -u root:root -X DELETE http://localhost:5000/groupings/pdu/10.10.10.11
 
 HTTP/1.0 200 OK
 Content-Type: application/json
@@ -85,7 +86,7 @@ $curl   -X GET http://localhost:5000/groupings/pdu
 
 Add two pdu's 
 ```
-$curl -i -X POST -H "Content-Type: application/json" -d '{"ip": "10.10.10.11","access_string":"string"}' http://localhost:5000/groupings/pdu
+$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"ip": "10.10.10.11","access_string":"string"}' http://localhost:5000/groupings/pdu
 
 HTTP/1.0 200 OK
 Content-Type: application/json
@@ -94,10 +95,10 @@ Server: Werkzeug/0.9.6 Python/2.7.10
 Date: Wed, 10 Jun 2015 10:32:31 GMT
 
 {
-    "Success": "added pdu"
+    "Success": "added pdu 10.10.10.11"
 }
 
-$curl -i -X POST -H "Content-Type: application/json" -d '{"ip": "10.10.10.21","access_string":"string"}' http://localhost:5000/groupings/pdu
+$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"ip": "10.10.10.21","access_string":"string"}' http://localhost:5000/groupings/pdu
 
 HTTP/1.0 200 OK
 Content-Type: application/json
@@ -106,14 +107,15 @@ Server: Werkzeug/0.9.6 Python/2.7.10
 Date: Wed, 10 Jun 2015 10:32:54 GMT
 
 {
-    "Success": "added pdu"
+    "Success": "added pdu 10.10.10.21"
 }
 ```
 
 ## Outlet management
+Only root can manage outlets
 Add outlet of pdu with id 1 , tower A and oulet number 1 to be managed
 ```
-$curl  -H "Content-Type: application/json" -X POST -d '{"pduid":1,"towername":"A","outlet":1}' http://localhost:5000/groupings/outlets
+$curl -i -u root:root -H "Content-Type: application/json" -X POST -d '{"pduid":1,"towername":"A","outlet":1}' http://localhost:5000/groupings/outlets
 
 {
     "Success": "added outlet"
@@ -122,7 +124,7 @@ $curl  -H "Content-Type: application/json" -X POST -d '{"pduid":1,"towername":"A
 
 View all outlets
 ```
-$curl   -X GET http://localhost:5000/groupings/outlets
+$curl -i -u root:root  -X GET http://localhost:5000/groupings/outlets
 
 {
     "outlets": [
@@ -138,7 +140,7 @@ $curl   -X GET http://localhost:5000/groupings/outlets
 
 View details of outlet with id 1
 ```
-$curl -X GET http://localhost:5000/groupings/outlets/1
+$curl -i -u root:root -X GET http://localhost:5000/groupings/outlets/1
 
 {
     "outlets": [
@@ -154,7 +156,7 @@ $curl -X GET http://localhost:5000/groupings/outlets/1
 
 Change details of outlet with id 1
 ```
-$curl  -H "Content-Type: application/json" -X PUT -d '{"pduid":2,"towername":"B","outlet":8}' http://localhost:5000/groupings/outlets/1
+$curl -i -u root:root -H "Content-Type: application/json" -X PUT -d '{"pduid":2,"towername":"B","outlet":8}' http://localhost:5000/groupings/outlets/1
 
 {
     "message": "Updated entry for outlet 1"
@@ -163,7 +165,7 @@ $curl  -H "Content-Type: application/json" -X PUT -d '{"pduid":2,"towername":"B"
 
 Delete outlet with id 1
 ```
-$curl   -X DELETE http://localhost:5000/groupings/outlets/1
+$curl -i -u root:root -X DELETE http://localhost:5000/groupings/outlets/1
 
 {
     "message": "outlet with id 1 deleted"
@@ -172,13 +174,13 @@ $curl   -X DELETE http://localhost:5000/groupings/outlets/1
 
 Add two outlets
 ```
-$curl  -H "Content-Type: application/json" -X POST -d '{"pduid":2,"towername":"A","outlet":1}' http://localhost:5000/groupings/outlets
+$curl -i -u root:root -H "Content-Type: application/json" -X POST -d '{"pduid":2,"towername":"A","outlet":1}' http://localhost:5000/groupings/outlets
 
 {
     "Success": "added outlet"
 }
 
-$curl  -H "Content-Type: application/json" -X POST -d '{"pduid":3,"towername":"B","outlet":3}' http://localhost:5000/groupings/outlets
+$curl -i -u root:root -H "Content-Type: application/json" -X POST -d '{"pduid":1,"towername":"B","outlet":3}' http://localhost:5000/groupings/outlets
 
 {
     "Success": "added outlet"
@@ -186,19 +188,19 @@ $curl  -H "Content-Type: application/json" -X POST -d '{"pduid":3,"towername":"B
 ```
 
 ## Group management
-
+Only root can create and manage groups
 Create new group with name group1
 ```
-$curl  -H "Content-Type: application/json" -X POST -d '{"name":"group1"}' http://localhost:5000/groupings/groups
+$curl -i -u root:root -H "Content-Type: application/json" -X POST -d '{"name":"group1"}' http://localhost:5000/groupings/groups
 
 {
-    "Success": "added group"
+    "Success": "added group group1"
 }
 ```
 
 View all created groups
 ```
-$curl   -X GET http://localhost:5000/groupings/groups
+$curl -i -u root:root -X GET http://localhost:5000/groupings/groups
 
 {
     "groups": [
@@ -212,13 +214,20 @@ $curl   -X GET http://localhost:5000/groupings/groups
 
 View details of group with id 1
 ```
-$curl   -X GET http://localhost:5000/groupings/groups/1
+$curl -i -u root:root -X GET http://localhost:5000/groupings/groups/1
+
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 124
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Fri, 12 Jun 2015 04:14:37 GMT
 
 {
     "group": [
         {
             "id": 1, 
-            "name": "group1"
+            "name": "group1", 
+            "outlets": []
         }
     ]
 }
@@ -226,7 +235,7 @@ $curl   -X GET http://localhost:5000/groupings/groups/1
 
 Update name of group with id 1
 ```
-$curl  -H "Content-Type: application/json" -X PUT -d '{"name":"newname"}' http://localhost:5000/groupings/groups/1
+$curl -i -u root:root -H "Content-Type: application/json" -X PUT -d '{"name":"newname"}' http://localhost:5000/groupings/groups/1
 
 {
     "message": "Updated entry for group 1"
@@ -235,7 +244,7 @@ $curl  -H "Content-Type: application/json" -X PUT -d '{"name":"newname"}' http:/
 
 Delete group with id 1
 ```
-$curl  -X DELETE http://localhost:5000/groupings/groups/1
+$curl -i -u root:root -X DELETE http://localhost:5000/groupings/groups/1
 
 {
     "message": "group newname deleted"
@@ -244,18 +253,18 @@ $curl  -X DELETE http://localhost:5000/groupings/groups/1
 
 Create new group
 ```
-$curl  -H "Content-Type: application/json" -X POST -d '{"name":"group1"}' http://localhost:5000/groupings/groups
+$curl -i -u root:root -H "Content-Type: application/json" -X POST -d '{"name":"group1"}' http://localhost:5000/groupings/groups
 
 {
-    "Success": "added group"
+    "Success": "added group group1"
 }
 ```
 
 ## Group-outlet management
-
+Only root can add outlets to group
 Add outlet with id 1 to group with id 1
 ```
-$curl  -H "Content-Type: application/json" -X POST -d '{"outlet_id":1,"group_id":1}' http://localhost:5000/groupings/groupings
+$curl -i -u root:root -H "Content-Type: application/json" -X POST -d '{"outlet_id":1,"group_id":1}' http://localhost:5000/groupings/groupings
 
 {
     "Success": "added outlet to group"
@@ -264,7 +273,7 @@ $curl  -H "Content-Type: application/json" -X POST -d '{"outlet_id":1,"group_id"
 
 To view all the group id's and associated outlet id's
 ```
-$curl   -X GET http://localhost:5000/groupings/groupings
+$curl -i -u root:root -X GET http://localhost:5000/groupings/groupings
 
 {
     "groupoutlets": [
@@ -275,12 +284,192 @@ $curl   -X GET http://localhost:5000/groupings/groupings
     ]
 }
 ```
-
-To delete outlet_id 1 and group_id 1 from table
+To view details of group with id 1
 ```
-$curl  -H "Content-Type: application/json" -X DELETE -d '{"outlet_id":1,"group_id":1}' http://localhost:5000/groupings/groupings
+$curl -i -u root:root -X GET http://localhost:5000/groupings/groups/1
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 257
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Fri, 12 Jun 2015 04:26:01 GMT
+
+{
+    "group": [
+        {
+            "id": 1, 
+            "name": "group1", 
+            "outlets": [
+                [
+                    "10.10.10.21", 
+                    "A", 
+                    1
+                ]
+            ]
+        }
+    ]
+}
+```
+
+To delete association between outlet_id 1 and group_id 1 from table
+```
+$curl -i -u root:root -H "Content-Type: application/json" -X DELETE -d '{"outlet_id":1,"group_id":1}' http://localhost:5000/groupings/groupings
 
 {
     "Success": "deleted grouping"
+}
+```
+
+## User management
+Only root can add new users
+To add user named user1 with password testpass
+```
+$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"username":"user1", "password":"testpass"}' http://localhost:5000/groupings/users
+
+HTTP/1.0 201 CREATED
+Content-Type: application/json
+Content-Length: 92
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Fri, 12 Jun 2015 04:49:20 GMT
+
+{
+    "location": "http://localhost:5000/groupings/users/user1", 
+    "username": "user1"
+}
+```
+
+To get a token for user user1 
+```
+$curl -i -u user1:testpass -X GET http://localhost:5000/groupings/login
+
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 164
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Fri, 12 Jun 2015 04:57:13 GMT
+
+{
+    "duration": 600, 
+    "token": "eyJhbGciOiJIUzI1NiIsImV4cCI6MTQzNDA4NTYzMywiaWF0IjoxNDM0MDg1MDMzfQ.eyJpZCI6Mn0.m7mU2Oi_tg8hSilGadStuhPHreCHqCrYBeiPEVic8ls"
+}
+```
+
+To list all the users(both root and normal users can use this) 
+```
+$curl -i -u user1:testpass -X GET http://localhost:5000/groupings/users
+
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 273
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Fri, 12 Jun 2015 04:50:18 GMT
+
+{
+    "users": [
+        {
+            "location": "http://localhost:5000/groupings/users/root", 
+            "username": "root"
+        }, 
+        {
+            "location": "http://localhost:5000/groupings/users/user1", 
+            "username": "user1"
+        }
+    ]
+}
+```
+
+To change password of user (both root and user can passwords)
+```
+$curl -i -u user1:testpass -X PUT -H "Content-Type: application/json" -d '{ "password":"pass"}' http://localhost:5000/groupings/users/user1
+
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 50
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Fri, 12 Jun 2015 04:52:36 GMT
+
+{
+    "message": "Updated entry for user user1"
+}
+```
+
+To delete user1 (both user1 and root can do this)
+```
+$curl -i -u user1:pass -X DELETE http://localhost:5000/groupings/users/user1
+
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 40
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Fri, 12 Jun 2015 04:54:42 GMT
+
+{
+    "message": "User user1 deleted"
+}
+```
+
+Create a new user
+``` 
+$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"username":"user1", "password":"testpass"}' http://localhost:5000/groupings/users
+
+HTTP/1.0 201 CREATED
+Content-Type: application/json
+Content-Length: 92
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Fri, 12 Jun 2015 04:55:20 GMT
+
+{
+    "location": "http://localhost:5000/groupings/users/user1", 
+    "username": "user1"
+}
+```
+
+Add give user1 the permission to control group1
+```
+$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"outletgroupid":1, "userid":2}' http://localhost:5000/groupings/user/groups
+
+HTTP/1.0 201 CREATED
+Content-Type: application/json
+Content-Length: 154
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Fri, 12 Jun 2015 05:10:01 GMT
+
+{
+    "grouping": "http://localhost:5000/groupings/groups/1", 
+    "location": "http://localhost:5000/groupings/users/user1", 
+    "username": "user1"
+}
+```
+To view all the relations between user and groups
+```
+$curl -i -u root:root -X GET http://localhost:5000/groupings/user/groups
+
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 106
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Fri, 12 Jun 2015 05:12:17 GMT
+
+{
+    "relations": [
+        {
+            "outletgroupid": 1, 
+            "userid": 2
+        }
+    ]
+}
+```
+
+To delete relation between user1 and group1
+```
+$curl -i -u root:root -X DELETE -H "Content-Type: application/json" -d '{"outletgroupid":1, "userid":2}' http://localhost:5000/groupings/user/groups
+
+HTTP/1.0 400 BAD REQUEST
+Content-Type: application/json
+Content-Length: 76
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Fri, 12 Jun 2015 05:13:10 GMT
+
+{
+    "message": "Relation between Userid 2 and outletgroup 1 is deleted"
 }
 ```

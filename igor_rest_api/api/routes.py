@@ -30,6 +30,11 @@ from .grouping.views import (
         GroupsAPI, GroupAPI,
         GroupoutletsAPI,
 )
+from .grouping.userviews import (
+        GroupingusersAPI, GroupinguserAPI, 
+        Usergroups, GroupingsloginAPI,
+        Usergroup
+)
 
 
 resources = [
@@ -47,6 +52,11 @@ resources = [
             (UserAPI, '/users/<string:username>', 'user'),
             (SNMPUsersAPI, '/snmpusers', 'snmpusers'),
             (SNMPUserAPI, '/snmpusers/<string:username>', 'snmpuser'),
+            (GroupingusersAPI, '/groupings/users', 'groupingsusers'),
+            (GroupinguserAPI, '/groupings/users/<string:username>', 'groupingsuser'),
+            (GroupingsloginAPI, '/groupings/login', 'groupingslogin'),
+            (Usergroups, '/groupings/user/groups', 'groupings_users'),
+            (Usergroup, '/groupings/user/groups/<int:id>', 'groupings_user'),
             (MachinesAPI, '/machines', 'machines'),
             (MachineAPI, '/machines/<string:hostname>', 'machine'),
             (PdusAPI, '/pdus', 'pdus'),
