@@ -35,6 +35,7 @@ from .grouping.userviews import (
         Usergroups, GroupingsloginAPI,
         Usergroup
 )
+from .grouping.controlviews import Groupcontrol, Outletcontrol
 
 
 resources = [
@@ -46,6 +47,8 @@ resources = [
             (GroupsAPI,'/groupings/groups','groupings_groups'),
             (GroupAPI,'/groupings/groups/<int:id>','groupings_group'),
             (GroupoutletsAPI,'/groupings/groupings','groupings_groupings'),
+            (Groupcontrol,'/groupcontrol/<int:groupid>','groupings_control'),
+            (Outletcontrol,'/outletcontrol/<int:outletid>','outlets_control'),
             (LoginAPI, '/login', 'login'),
             (SNMPLoginAPI, '/snmplogin', 'snmplogin'),
             (UsersAPI, '/users', 'users'),

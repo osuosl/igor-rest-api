@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-from igor_rest_api.api.grouping.models import Group, Pdudetails, Outlets, Groupoutlets
+from igor_rest_api.api.grouping.models import Group, Pdudetails, Outlets, Groupoutlets, \
+                                                Userdetails, Useroutletsgroups
 
 def query_group(id):
         outletids = []
@@ -54,3 +55,22 @@ def query_pduip(id):
     return retvalue
 
 
+def get_user_id(username):
+    user = Userdetails.query.filter_by(username=username).first()
+    return user.id
+
+
+def outlet_details(id):
+    temp = Outlets.query.filter_by(id=id).all()
+    for j in temp:
+        temp_pdu = query_pdudetails(j.pdu_id)
+        temp_pdu.extend([j.towername,j.outlet])
+    return temp_pdu
+
+def check_outlet_permission(userid,outletid):
+    usergroups = Useroutletsgroups.query.filter_by(userid=userid).all()
+
+    for group in usergroups:
+        if Groupoutlets.query.filter_by(group_id=group.outletgroupid,outlet_id=outletid).first() is not None:
+            return True
+    return False
