@@ -24,16 +24,42 @@ from .pdus.views.permissions import (
 from .auth.views import UserAPI, UsersAPI
 from .snmp.views import SNMPUserAPI, SNMPUsersAPI
 from .views import RootAPI
+from .grouping.views import (
+        PdudetailsAPI, PdudetailAPI,
+        PduoutletsAPI, PduoutletAPI,
+        GroupsAPI, GroupAPI,
+        GroupoutletsAPI,
+)
+from .grouping.userviews import (
+        GroupingusersAPI, GroupinguserAPI, 
+        Usergroups, GroupingsloginAPI,
+        Usergroup
+)
+from .grouping.controlviews import Groupcontrol, Outletcontrol
 
 
 resources = [
             (RootAPI, '/', 'root'),
+            (PdudetailsAPI,'/groupings/pdu','groupings_pdus'),
+            (PdudetailAPI,'/groupings/pdu/<string:ip>','groupings_pdu'),
+            (PduoutletsAPI,'/groupings/outlets','groupings_outlets'),
+            (PduoutletAPI,'/groupings/outlets/<int:id>','groupings_outlet'),
+            (GroupsAPI,'/groupings/groups','groupings_groups'),
+            (GroupAPI,'/groupings/groups/<int:id>','groupings_group'),
+            (GroupoutletsAPI,'/groupings/groupings','groupings_groupings'),
+            (Groupcontrol,'/groupcontrol/<int:groupid>','groupings_control'),
+            (Outletcontrol,'/outletcontrol/<int:outletid>','outlets_control'),
             (LoginAPI, '/login', 'login'),
             (SNMPLoginAPI, '/snmplogin', 'snmplogin'),
             (UsersAPI, '/users', 'users'),
             (UserAPI, '/users/<string:username>', 'user'),
             (SNMPUsersAPI, '/snmpusers', 'snmpusers'),
             (SNMPUserAPI, '/snmpusers/<string:username>', 'snmpuser'),
+            (GroupingusersAPI, '/groupings/users', 'groupingsusers'),
+            (GroupinguserAPI, '/groupings/users/<string:username>', 'groupingsuser'),
+            (GroupingsloginAPI, '/groupings/login', 'groupingslogin'),
+            (Usergroups, '/groupings/user/groups', 'groupings_users'),
+            (Usergroup, '/groupings/user/groups/<int:id>', 'groupings_user'),
             (MachinesAPI, '/machines', 'machines'),
             (MachineAPI, '/machines/<string:hostname>', 'machine'),
             (PdusAPI, '/pdus', 'pdus'),

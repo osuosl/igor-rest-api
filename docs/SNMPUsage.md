@@ -48,7 +48,7 @@ Date: Thu, 28 May 2015 10:52:56 GMT
 }
 ```
 
-Create user `igor` with password `igor`.
+Create user `igor` with password `igor`.(only root can add new users)
 
 ```
 $ curl -i -u $TOKEN -X POST -H "Content-Type: application/json" -d '{"username":"igor", "password":"igor"}' http://localhost:5000/snmpusers
@@ -218,10 +218,10 @@ Date: Thu, 28 May 2015 11:02:37 GMT
 The following examples assume the existence of a user `root` with password `root`,
 and use username:password authentication instead of an auth token.
 
-Add a new pdu.
+Add a new pdu.(only root can add new pdus)
 
 ```
-$ curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"hostname": "osl01", "fqdn": "osl01.lab.osl.edu", "username":"osl", "password":"osl"}' http://localhost:5000/pdus
+$ curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"hostname": "osl01", "ip": "10.0.0.10","password":"osl"}' http://localhost:5000/pdus
 
 
 HTTP/1.0 201 CREATED
@@ -280,10 +280,10 @@ Date: Thu, 28 May 2015 11:08:29 GMT
 
 ```
 
-Update pdu details.
+Update pdu details.(only root can do this)
 
 ```
-$curl -i -u root:root -X PUT -H "Content-Type: application/json" -d '{"ip": "10.0.0.11", "username": "username", "password": "password"}' http://localhost:5000/pdus/10.0.0.10
+$curl -i -u root:root -X PUT -H "Content-Type: application/json" -d '{"hostname": "new_hostname", "password": "password"}' http://localhost:5000/pdus/10.0.0.10
 
 HTTP/1.0 200 OK
 Content-Type: application/json
@@ -296,7 +296,7 @@ Date: Thu, 28 May 2015 11:11:15 GMT
 }
 ```
 
-Delete a pdu.
+Delete a pdu.(only root can do this)
 
 ```
 $curl -i -u root:root -X DELETE http://localhost:5000/pdus/10.0.0.10 
@@ -317,7 +317,7 @@ Date: Thu, 28 May 2015 11:12:20 GMT
 Create a new pdu entry.
 
 ```
-$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"hostname": "osl01", "ip": "10.0.0.10", "username":"osl", "password":"osl"}' http://localhost:5000/pdus 
+$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"hostname": "osl01", "ip": "10.0.0.10", "password":"osl"}' http://localhost:5000/pdus 
 
 HTTP/1.0 201 CREATED
 Content-Type: application/json

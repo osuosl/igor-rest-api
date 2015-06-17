@@ -6,6 +6,7 @@ from flask import Flask
 from igor_rest_api import app
 from igor_rest_api.db import db
 from igor_rest_api.api.auth.models import create_root_user
+from igor_rest_api.api.snmp.models import create_snmp_root_user
 
 class IgorApiTestCase(TestCase):
 
@@ -21,6 +22,7 @@ class IgorApiTestCase(TestCase):
     def setUp(self):
         self.db.create_all()
         create_root_user()
+        create_snmp_root_user()
 
     def tearDown(self):
         self.db.session.remove()
