@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+This file provides methods to authenticate user using basic auth
+"""
 from functools import wraps
 
 from flask import g

@@ -473,3 +473,78 @@ Date: Fri, 12 Jun 2015 05:13:10 GMT
     "message": "Relation between Userid 2 and outletgroup 1 is deleted"
 }
 ```
+
+## controlling state of outletgrouping
+
+root user can control all the outlet groupings and individual outlets, normal user can control the outletgroupings associated with him , and individual outlets 
+which are present in groupings associated with him
+
+To switch off all the outlets belonging to outletgrouping with id 1
+```
+$curl -i -u root:root -H "Content-Type: application/json" -X POST -d '{"status":"off"}' http://localhost:5000/groupcontrol/1
+
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 110
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Tue, 16 Jun 2015 16:01:45 GMT
+
+{
+    "Status": {
+        "10.0.1.33 A 1": "chnaged state", 
+        "10.0.1.33 B 2": "chnaged state"
+    }
+}
+```
+
+To get status of all the outlets belonging to groupid 1
+
+```
+$ curl -i -u user1:testpass  -X GET http://localhost:5000/groupcontrol/1
+
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 90
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Tue, 16 Jun 2015 16:04:16 GMT
+
+{
+    "Status": {
+        "10.0.1.33 A 1": "off", 
+        "10.0.1.33 B 2": "off"
+    }
+}
+```
+individual outlets can also be controlled using the api,to switch on outlet with id 1
+```
+$curl -i -u user1:testpass -H "Content-Type: application/json" -X POST -d '{"status":"on"}' http://localhost:5000/outletcontrol/1
+
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 67
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Tue, 16 Jun 2015 16:05:49 GMT
+
+{
+    "Status": {
+        "10.0.1.33 A 1": "chnaged state"
+    }
+}
+```
+
+To get status of outlet with id 1
+```
+$curl -i -u root:root -X GET http://localhost:5000/outletcontrol/1
+
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 56
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Tue, 16 Jun 2015 16:06:38 GMT
+
+{
+    "Status": {
+        "10.0.1.33 A 1": "on"
+    }
+}
+```

@@ -12,6 +12,10 @@ from igor_rest_api.db import db
 from pudmaster import Pdu_obj
 
 
+"""
+    GET     /groupcontrol/<int:groupid>        Returns the Status of Outlets belonging to the outletgrouping 
+    POST    /groupcontrol/<int:groupid> {'status': Status } Changes the Status of outlets belonging to outletgrouping
+"""
 class Groupcontrol(Resource):
     decorators = [auth.login_required]
     def __init__(self):
@@ -70,7 +74,7 @@ class Groupcontrol(Resource):
             if 'No SNMP response received' in str(ret_value):
                 states.append("unable to connect to pdu")
             else:
-                states.append("chnaged state")
+                states.append("changed state")
 
         state_dict = {}
         for i in range(len(outlets)):
@@ -79,6 +83,10 @@ class Groupcontrol(Resource):
         return {'Status': state_dict}
 
 
+"""
+    GET     /outletcontrol/<int:outletid>                       Returns the Status of outlet  
+    POST    /outletcontrol/<int:outletid> {'status': status }   Changes the Status of outlet
+"""
 class Outletcontrol(Resource):
     decorators = [auth.login_required]
     def __init__(self):
@@ -130,7 +138,7 @@ class Outletcontrol(Resource):
         if 'No SNMP response received' in str(ret_value):
             states.append("unable to connect to pdu")
         else:
-            states.append("chnaged state")
+            states.append("changed state")
         state_dict = {}
         state_dict[str(outlet[0])+" "+str(outlet[2])+" "+str(outlet[3])] = states[0]
         

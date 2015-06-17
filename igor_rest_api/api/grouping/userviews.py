@@ -108,7 +108,13 @@ class GroupinguserAPI(Resource):
             return {'message': 'Updated entry for user %s' % username}
 
 
-
+"""
+    GET     /groupings/user/groups          Returns associations between users and outletgroupings
+    POST    /groupings/user/groups  {'outletgroupid': outletgroupid,
+                                'userid': userid }    Creates association between user and outletgroupings
+    DELETE /groupings/user/groups  {'outletgroupid': outletgroupid,
+                                'userid': userid }    Deletes the association between user and outletgrouping
+"""
 class Usergroups(Resource):
     decorators = [auth.login_required]
     def __init__(self):
@@ -163,7 +169,9 @@ class Usergroups(Resource):
             return {'message': 'Relation between Userid %s and outletgroup %s is deleted' % (userid, outletgroupid)}, BAD_REQUEST
 
 
-
+"""
+    GET     /groupings/user/groups/<int:id>         Returns the outletgroupings associatied with user
+"""
 class Usergroup(Resource):
     decorators = [auth.login_required]
     def __init__(self):
@@ -185,8 +193,6 @@ class Usergroup(Resource):
                            'location': url_for('groupings_group', id=group.outletgroupid,
                                                _external=True)}
                           for group in groups]}
-
-
 
 
 # Login endpoint

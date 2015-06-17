@@ -1,9 +1,12 @@
 #!/usr/bin/env python
+#This file useful utilites which can be used in views
 
 from igor_rest_api.api.grouping.models import Group, Pdudetails, Outlets, Groupoutlets, \
                                                 Userdetails, Useroutletsgroups
 
 def query_group(id):
+    #takes groupid as input and returns the details 
+    #of outlets belonging to outletgrouping
         outletids = []
         temp = Groupoutlets.query.filter_by(group_id=id).all()
         for i in temp:
@@ -20,6 +23,8 @@ def query_group(id):
 
 
 def query_group_outlets(id):
+    #this function is similar to query_group except this
+    #will not return the access_string of pdus belonging to outletgrouping
         outletids = []
         temp = Groupoutlets.query.filter_by(group_id=id).all()
         for i in temp:
@@ -36,6 +41,8 @@ def query_group_outlets(id):
 
 
 def query_pdudetails(id):
+    #this function will take pdu_id as input 
+    #and returns the pdu_ip and access_string 
     pdu = Pdudetails.query.filter_by(id=id).first()
     retvalue = []
     retvalue.append(pdu.ip)
@@ -67,7 +74,9 @@ def outlet_details(id):
         temp_pdu.extend([j.towername,j.outlet])
     return temp_pdu
 
+
 def check_outlet_permission(userid,outletid):
+    #this function will validate whether a user has permission to control a outlet
     usergroups = Useroutletsgroups.query.filter_by(userid=userid).all()
 
     for group in usergroups:
