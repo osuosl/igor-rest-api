@@ -52,6 +52,8 @@ def query_pdudetails(id):
 
 def pduipfromid(id):
     pdu = Pdudetails.query.filter_by(id=id).first()
+    if pdu is None:
+        return 'invaild ip'
     return pdu.ip
 
 

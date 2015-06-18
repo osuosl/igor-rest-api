@@ -46,7 +46,7 @@ class PdudetailsAPI(Resource):
             db.session.add(pdu)
             try:
                 db.session.commit()
-                return {'Success':'added pdu %s ' % ip}
+                return {'Success':'added pdu %s ' % ip}, CREATED
             except IntegrityError as e:
                 return {'Error': 'Integrity Error'}
 
@@ -137,7 +137,7 @@ class PduoutletsAPI(Resource):
         outlet = Outlets(pdu_id,towername,outlet)
         db.session.add(outlet)
         db.session.commit()
-        return {'Success': 'added outlet'}
+        return {'Success': 'added outlet'}, CREATED
 
 
 """
@@ -233,7 +233,7 @@ class GroupsAPI(Resource):
         group = Group(name)
         db.session.add(group)
         db.session.commit()
-        return {'Success' : 'added group %s' %name}
+        return {'Success' : 'added group %s' %name}, CREATED
 
 
 """
