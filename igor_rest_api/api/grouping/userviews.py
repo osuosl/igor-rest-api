@@ -166,7 +166,7 @@ class Usergroups(Resource):
             relation = Useroutletsgroups.query.filter_by(userid=userid,outletgroupid=outletgroupid).first()
             db.session.delete(relation)
             db.session.commit()
-            return {'message': 'Relation between Userid %s and outletgroup %s is deleted' % (userid, outletgroupid)}, BAD_REQUEST
+            return {'message': 'Relation between Userid %s and outletgroup %s is deleted' % (userid, outletgroupid)}
 
 
 """
