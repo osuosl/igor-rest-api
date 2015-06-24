@@ -13,15 +13,15 @@ from pudmaster import Pdu_obj
 
 
 """
-    GET     /groupcontrol/<int:groupid>        Returns the Status of Outlets belonging to the outletgrouping 
-    POST    /groupcontrol/<int:groupid> {'status': Status } Changes the Status of outlets belonging to outletgrouping
+    GET     /group/<int:groupid>        Returns the Status of Outlets belonging to the outletgrouping 
+    POST    /group/<int:groupid> {'action': Status } Changes the Status of outlets belonging to outletgrouping
 """
 class Groupcontrol(Resource):
     decorators = [auth.login_required]
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('status', type=str, required=True,
-                                    help='No status provided',
+        self.reqparse.add_argument('action', type=str, required=True,
+                                    help='No action provided',
                                     location='json')
         super(Groupcontrol, self).__init__()
 
@@ -56,7 +56,7 @@ class Groupcontrol(Resource):
     def post(self, groupid):
         args = self.reqparse.parse_args()
 
-        status = args['status']
+        status = args['action']
         if g.user.username == 'root':
             outlets = query_group(groupid)
 
@@ -84,15 +84,15 @@ class Groupcontrol(Resource):
 
 
 """
-    GET     /outletcontrol/<int:outletid>                       Returns the Status of outlet  
-    POST    /outletcontrol/<int:outletid> {'status': status }   Changes the Status of outlet
+    GET     /outlet/<int:outletid>                       Returns the Status of outlet  
+    POST    /outlet/<int:outletid> {'action': status }   Changes the Status of outlet
 """
 class Outletcontrol(Resource):
     decorators = [auth.login_required]
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('status', type=str, required=True,
-                                    help='No status provided',
+        self.reqparse.add_argument('action', type=str, required=True,
+                                    help='No action provided',
                                     location='json')
         super(Outletcontrol, self).__init__()
 
@@ -122,7 +122,7 @@ class Outletcontrol(Resource):
     def post(self, outletid):
         args = self.reqparse.parse_args()
 
-        status = args['status']
+        status = args['action']
         if g.user.username == 'root':
             outlet = outlet_details(outletid)
         else:

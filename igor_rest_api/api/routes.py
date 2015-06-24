@@ -11,8 +11,8 @@ from .ipmi.views import (
     MachineSelRecordsAPI,
 )
 from .snmpcontrol.views import Pdustatus, OutletStatus
-from .machines.views import MachineAPI, MachinesAPI
-from .pdus.views import PduAPI, PdusAPI
+from .machines.views.views import MachineAPI, MachinesAPI
+from .pdus.views.views import PduAPI, PdusAPI
 from .machines.views.permissions import (
     UserMachineAPI, UserMachinesAPI,
     MachineUserAPI, MachineUsersAPI,
@@ -47,8 +47,8 @@ resources = [
             (GroupsAPI,'/groupings/groups','groupings_groups'),
             (GroupAPI,'/groupings/groups/<int:id>','groupings_group'),
             (GroupoutletsAPI,'/groupings/groupings','groupings_groupings'),
-            (Groupcontrol,'/groupcontrol/<int:groupid>','groupings_control'),
-            (Outletcontrol,'/outletcontrol/<int:outletid>','outlets_control'),
+            (Groupcontrol,'/group/<int:groupid>','groupings_control'),
+            (Outletcontrol,'/outlet/<int:outletid>','outlets_control'),
             (LoginAPI, '/login', 'login'),
             (SNMPLoginAPI, '/snmplogin', 'snmplogin'),
             (UsersAPI, '/users', 'users'),

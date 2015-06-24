@@ -314,7 +314,7 @@ Date: Thu, 28 May 2015 11:12:20 GMT
 
 ## Permissions Management
 
-Create a new pdu entry.
+Create a new pdu entry.(root user has access to all the pdus)
 
 ```
 $curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"hostname": "osl01", "ip": "10.0.0.10", "password":"osl"}' http://localhost:5000/pdus 

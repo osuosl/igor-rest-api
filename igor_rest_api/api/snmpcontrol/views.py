@@ -11,7 +11,7 @@ from igor_rest_api.api.snmp.models import Snmpuser
 from igor_rest_api.api.pdus.models import Pdu
 
 from pudmaster import Pdu_obj
-from utils import check_permission
+from utils import check_permission, get_access_string
 
 # Pdu management endpoints
 """
@@ -22,7 +22,10 @@ class Pdustatus(Resource):
 
     def get(self,ip):
 
-        pdu_pass = check_permission(g.user,ip)
+        if g.user.username != 'root':
+            pdu_pass = check_permission(g.user,ip)
+        else:
+            pdu_pass = get_access_string(ip)
 
         if pdu_pass == False:
             return {'Error':'No access'}
@@ -51,7 +54,10 @@ class OutletStatus(Resource):
 
     def get(self,ip,tower,outlet):
 
-        pdu_pass = check_permission(g.user,ip)
+        if g.user.username != 'root':
+            pdu_pass = check_permission(g.user,ip)
+        else:
+            pdu_pass = get_access_string(ip)
 
         if pdu_pass == False:
             return {'Error': 'No access'}
@@ -68,9 +74,11 @@ class OutletStatus(Resource):
 
     def post(self,ip,tower,outlet):
 
-
         json = request.json
-        pdu_pass = check_permission(g.user,ip)
+        if g.user.username != 'root':
+            pdu_pass = check_permission(g.user,ip)
+        else:
+            pdu_pass = get_access_string(ip)
 
         if pdu_pass == False:
             return {'Error': 'No access'}

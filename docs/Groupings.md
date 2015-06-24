@@ -481,7 +481,7 @@ which are present in groupings associated with him
 
 To switch off all the outlets belonging to outletgrouping with id 1
 ```
-$curl -i -u root:root -H "Content-Type: application/json" -X POST -d '{"status":"off"}' http://localhost:5000/groupcontrol/1
+$curl -i -u root:root -H "Content-Type: application/json" -X POST -d '{"action":"off"}' http://localhost:5000/group/1
 
 HTTP/1.0 200 OK
 Content-Type: application/json
@@ -500,7 +500,7 @@ Date: Tue, 16 Jun 2015 16:01:45 GMT
 To get status of all the outlets belonging to groupid 1
 
 ```
-$ curl -i -u user1:testpass  -X GET http://localhost:5000/groupcontrol/1
+$ curl -i -u user1:testpass  -X GET http://localhost:5000/group/1
 
 HTTP/1.0 200 OK
 Content-Type: application/json
@@ -517,7 +517,7 @@ Date: Tue, 16 Jun 2015 16:04:16 GMT
 ```
 individual outlets can also be controlled using the api,to switch on outlet with id 1
 ```
-$curl -i -u user1:testpass -H "Content-Type: application/json" -X POST -d '{"status":"on"}' http://localhost:5000/outletcontrol/1
+$curl -i -u user1:testpass -H "Content-Type: application/json" -X POST -d '{"action":"on"}' http://localhost:5000/outlet/1
 
 HTTP/1.0 200 OK
 Content-Type: application/json
@@ -534,7 +534,7 @@ Date: Tue, 16 Jun 2015 16:05:49 GMT
 
 To get status of outlet with id 1
 ```
-$curl -i -u root:root -X GET http://localhost:5000/outletcontrol/1
+$curl -i -u root:root -X GET http://localhost:5000/outlet/1
 
 HTTP/1.0 200 OK
 Content-Type: application/json
