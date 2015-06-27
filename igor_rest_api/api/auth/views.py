@@ -15,8 +15,11 @@ from .models import User
     POST    /users {'username': username,
                     'password': password}    Creates a new user
 """
+
+
 class UsersAPI(Resource):
     decorators = [auth.login_required]
+
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('username', type=str, required=True,
@@ -58,8 +61,11 @@ class UsersAPI(Resource):
     DELETE  /users/:username             Deletes user <username>
     PUT     /users/:username             Updates password for user <username>
 """
+
+
 class UserAPI(Resource):
     decorators = [auth.login_required]
+
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('password', type=str, required=True,
@@ -111,8 +117,11 @@ class UserAPI(Resource):
 """
     GET     /login            Generates an returns an authentication token
 """
+
+
 class LoginAPI(Resource):
     decorators = [auth.login_required]
+
     def get(self):
         token = g.user.generate_auth_token(TOKEN_EXPIRATION)
         return {'token': token.decode('ascii'), 'duration': TOKEN_EXPIRATION}

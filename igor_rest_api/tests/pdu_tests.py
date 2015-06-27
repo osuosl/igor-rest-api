@@ -11,7 +11,7 @@ from igor_rest_api.api.pdus.models import Pdu
 class PdusTestCase(IgorApiTestCase):
 
     test_host = 'test_host'
-    test_ip   = 'test_ip'
+    test_ip = 'test_ip'
     test_pass = 'test_pass'
 
     def setUp(self):

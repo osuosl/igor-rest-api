@@ -12,9 +12,11 @@ from ..models import Pdu
 
 # Pdu-user permissions endpoints
 """
-    GET     /Snmpusers/:username/pdus   Returns the list of pdus 
+    GET     /Snmpusers/:username/pdus   Returns the list of pdus
                                         accessible by :username
 """
+
+
 class UserPdusAPI(Resource):
     decorators = [auth.login_required]
 
@@ -25,10 +27,10 @@ class UserPdusAPI(Resource):
 
         return {'username': user.username,
                 'pdus': [{'ip': pdu.ip,
-                              'location': url_for('pdu',
-                                                  ip=pdu.ip,
-                                                  _external=True)}
-                              for pdu in user.pdus]}
+                          'location': url_for('pdu',
+                                              ip=pdu.ip,
+                                              _external=True)}
+                         for pdu in user.pdus]}
 """
     GET     /Snmpusers/:username/pdu/:ip     Returns 200 or 404,
                                                     depending on :username's
@@ -40,6 +42,8 @@ class UserPdusAPI(Resource):
                                                     :username-:ip entry
                                                     in the permissions table
 """
+
+
 class UserPduAPI(Resource):
     decorators = [auth.login_required]
 
@@ -103,6 +107,8 @@ class UserPduAPI(Resource):
     GET     /pdu/:ip/users   Returns the list of users with access
                                         to :ip
 """
+
+
 class PduUsersAPI(Resource):
     decorators = [auth.login_required]
 
@@ -115,7 +121,7 @@ class PduUsersAPI(Resource):
                 'users': [{'username': user.username,
                            'location': url_for('snmpuser', username=user.username,
                                                _external=True)}
-                            for user in pdu.users]}
+                          for user in pdu.users]}
 """
     GET     /pdu/:ip/users/:username     Returns 200 or 404,
                                                     depending on :username's
@@ -127,6 +133,8 @@ class PduUsersAPI(Resource):
                                                     :username-:ip entry
                                                     in the permissions table
 """
+
+
 class PduUserAPI(Resource):
     decorators = [auth.login_required]
 

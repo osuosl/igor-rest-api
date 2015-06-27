@@ -13,24 +13,27 @@ from pudmaster import Pdu_obj
 
 
 """
-    GET     /group/<int:groupid>        Returns the Status of Outlets belonging to the outletgrouping 
+    GET     /group/<int:groupid>        Returns the Status of Outlets belonging to the outletgrouping
     POST    /group/<int:groupid> {'action': Status } Changes the Status of outlets belonging to outletgrouping
 """
+
+
 class Groupcontrol(Resource):
     decorators = [auth.login_required]
+
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('action', type=str, required=True,
-                                    help='No action provided',
-                                    location='json')
+                                   help='No action provided',
+                                   location='json')
         super(Groupcontrol, self).__init__()
 
     def get(self, groupid):
         if g.user.username == 'root':
             outlets = query_group(groupid)
 
-        else :
-            role = Useroutletsgroups.query.filter_by(userid=g.user.id,outletgroupid=groupid).first()
+        else:
+            role = Useroutletsgroups.query.filter_by(userid=g.user.id, outletgroupid=groupid).first()
             if role is None:
                 return {'message': 'User does not have necessary permission'}
             else:
@@ -38,9 +41,9 @@ class Groupcontrol(Resource):
 
         states = []
         for outlet in outlets:
-            pdu = Pdu_obj(outlet[0],161,outlet[1])
-            state = pdu.get_outlet_status(outlet[2],outlet[3])
-            
+            pdu = Pdu_obj(outlet[0], 161, outlet[1])
+            state = pdu.get_outlet_status(outlet[2], outlet[3])
+
             if state == 'Error':
                 states.append("unable to get data")
             else:
@@ -49,9 +52,8 @@ class Groupcontrol(Resource):
         state_dict = {}
         for i in range(len(outlets)):
             state_dict[str(outlets[i][0])+" "+str(outlets[i][2])+" "+str(outlets[i][3])] = states[i]
-        
-        return {'Status': state_dict}
 
+        return {'Status': state_dict}
 
     def post(self, groupid):
         args = self.reqparse.parse_args()
@@ -60,8 +62,8 @@ class Groupcontrol(Resource):
         if g.user.username == 'root':
             outlets = query_group(groupid)
 
-        else :
-            role = Useroutletsgroups.query.filter_by(userid=g.user.id,outletgroupid=groupid).first()
+        else:
+            role = Useroutletsgroups.query.filter_by(userid=g.user.id, outletgroupid=groupid).first()
             if role is None:
                 return {'message': 'User does not have necessary permission'}
             else:
@@ -69,8 +71,8 @@ class Groupcontrol(Resource):
 
         states = []
         for outlet in outlets:
-            pdu = Pdu_obj(outlet[0],161,outlet[1])
-            ret_value = pdu.change_state(outlet[2],outlet[3],status)
+            pdu = Pdu_obj(outlet[0], 161, outlet[1])
+            ret_value = pdu.change_state(outlet[2], outlet[3], status)
             if 'No SNMP response received' in str(ret_value):
                 states.append("unable to connect to pdu")
             else:
@@ -79,35 +81,38 @@ class Groupcontrol(Resource):
         state_dict = {}
         for i in range(len(outlets)):
             state_dict[str(outlets[i][0])+" "+str(outlets[i][2])+" "+str(outlets[i][3])] = states[i]
-        
+
         return {'Status': state_dict}
 
 
 """
-    GET     /outlet/<int:outletid>                       Returns the Status of outlet  
+    GET     /outlet/<int:outletid>                       Returns the Status of outlet
     POST    /outlet/<int:outletid> {'action': status }   Changes the Status of outlet
 """
+
+
 class Outletcontrol(Resource):
     decorators = [auth.login_required]
+
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('action', type=str, required=True,
-                                    help='No action provided',
-                                    location='json')
+                                   help='No action provided',
+                                   location='json')
         super(Outletcontrol, self).__init__()
 
     def get(self, outletid):
         if g.user.username == 'root':
             outlet = outlet_details(outletid)
         else:
-            role = check_outlet_permission(g.user.id,outletid)
+            role = check_outlet_permission(g.user.id, outletid)
             if role is False:
                 return {'message': 'User does not have neccesary permission'}
             else:
                 outlet = outlet_details(outletid)
-        pdu = Pdu_obj(outlet[0],161,outlet[1])
-        state = pdu.get_outlet_status(outlet[2],outlet[3])
-            
+        pdu = Pdu_obj(outlet[0], 161, outlet[1])
+        state = pdu.get_outlet_status(outlet[2], outlet[3])
+
         states = []
         if state == 'Error':
             states.append("unable to get data")
@@ -116,7 +121,7 @@ class Outletcontrol(Resource):
 
         state_dict = {}
         state_dict[str(outlet[0])+" "+str(outlet[2])+" "+str(outlet[3])] = states[0]
-        
+
         return {'Status': state_dict}
 
     def post(self, outletid):
@@ -126,20 +131,20 @@ class Outletcontrol(Resource):
         if g.user.username == 'root':
             outlet = outlet_details(outletid)
         else:
-            role = check_outlet_permission(g.user.id,outletid)
+            role = check_outlet_permission(g.user.id, outletid)
             if role is False:
                 return {'message': 'User does not have neccesary permission'}
             else:
                 outlet = outlet_details(outletid)
 
-        pdu = Pdu_obj(outlet[0],161,outlet[1])
+        pdu = Pdu_obj(outlet[0], 161, outlet[1])
         states = []
-        ret_value = pdu.change_state(outlet[2],outlet[3],status)
+        ret_value = pdu.change_state(outlet[2], outlet[3], status)
         if 'No SNMP response received' in str(ret_value):
             states.append("unable to connect to pdu")
         else:
             states.append("changed state")
         state_dict = {}
         state_dict[str(outlet[0])+" "+str(outlet[2])+" "+str(outlet[3])] = states[0]
-        
+
         return {'Status': state_dict}

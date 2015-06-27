@@ -31,7 +31,7 @@ from .grouping.views import (
         GroupoutletsAPI,
 )
 from .grouping.userviews import (
-        GroupingusersAPI, GroupinguserAPI, 
+        GroupingusersAPI, GroupinguserAPI,
         Usergroups, GroupingsloginAPI,
         Usergroup
 )
@@ -40,15 +40,19 @@ from .grouping.controlviews import Groupcontrol, Outletcontrol
 
 resources = [
             (RootAPI, '/', 'root'),
-            (PdudetailsAPI,'/outlet_groups/pdu','groupings_pdus'),
-            (PdudetailAPI,'/outlet_groups/pdu/<string:ip>','groupings_pdu'),
-            (PduoutletsAPI,'/outlet_groups/outlets','groupings_outlets'),
-            (PduoutletAPI,'/outlet_groups/outlets/<int:id>','groupings_outlet'),
-            (GroupsAPI,'/outlet_groups/groups','groupings_groups'),
-            (GroupAPI,'/outlet_groups/groups/<int:id>','groupings_group'),
-            (GroupoutletsAPI,'/outlet_groups/groupings','groupings_groupings'),
-            (Groupcontrol,'/group/<int:groupid>','groupings_control'),
-            (Outletcontrol,'/outlet/<int:outletid>','outlets_control'),
+            (PdudetailsAPI, '/outlet_groups/pdu', 'groupings_pdus'),
+            (PdudetailAPI, '/outlet_groups/pdu/<string:ip>', 'groupings_pdu'),
+            (PduoutletsAPI, '/outlet_groups/outlets', 'groupings_outlets'),
+            (PduoutletAPI,
+                '/outlet_groups/outlets/<int:id>',
+                'groupings_outlet'),
+            (GroupsAPI, '/outlet_groups/groups', 'groupings_groups'),
+            (GroupAPI, '/outlet_groups/groups/<int:id>', 'groupings_group'),
+            (GroupoutletsAPI,
+                '/outlet_groups/groupings',
+                'groupings_groupings'),
+            (Groupcontrol, '/group/<int:groupid>', 'groupings_control'),
+            (Outletcontrol, '/outlet/<int:outletid>', 'outlets_control'),
             (LoginAPI, '/login', 'login'),
             (SNMPLoginAPI, '/snmplogin', 'snmplogin'),
             (UsersAPI, '/users', 'users'),
@@ -56,16 +60,22 @@ resources = [
             (SNMPUsersAPI, '/snmpusers', 'snmpusers'),
             (SNMPUserAPI, '/snmpusers/<string:username>', 'snmpuser'),
             (GroupingusersAPI, '/outlet_groups/users', 'groupingsusers'),
-            (GroupinguserAPI, '/outlet_groups/users/<string:username>', 'groupingsuser'),
+            (GroupinguserAPI,
+                '/outlet_groups/users/<string:username>',
+                'groupingsuser'),
             (GroupingsloginAPI, '/outlet_groups/login', 'groupingslogin'),
             (Usergroups, '/outlet_groups/user/groups', 'groupings_users'),
-            (Usergroup, '/outlet_groups/user/groups/<int:id>', 'groupings_user'),
+            (Usergroup,
+                '/outlet_groups/user/groups/<int:id>',
+                'groupings_user'),
             (MachinesAPI, '/machines', 'machines'),
             (MachineAPI, '/machines/<string:hostname>', 'machine'),
             (PdusAPI, '/pdus', 'pdus'),
             (PduAPI, '/pdus/<string:ip>', 'pdu'),
             (Pdustatus, '/pdu/<string:ip>/status', 'pdustatus'),
-            (OutletStatus, '/pdu/<string:ip>/<string:tower>/<int:outlet>', 'Outletstatus'),
+            (OutletStatus,
+                '/pdu/<string:ip>/<string:tower>/<int:outlet>',
+                'Outletstatus'),
             (UserMachinesAPI, '/users/<string:username>/machines',
                 'user_machines'),
             (UserMachineAPI,
@@ -123,6 +133,7 @@ resources = [
                 '/machines/<string:hostname>/sel/records',
                 'machine_sel_records')
             ]
+
 
 def setup(api):
     for resourceClass, url, endpoint in resources:

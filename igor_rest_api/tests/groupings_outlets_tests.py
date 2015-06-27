@@ -84,6 +84,6 @@ class GroupingsoutletsTestCase(IgorApiTestCase):
         self.assert_200(response)
 
         print response.json
-        outlet = Outlets.query.filter_by(id= 1).first()
+        outlet = Outlets.query.filter_by(id=1).first()
         self.assertIsNotNone(outlet)
         self.assertEqual(new_tower, outlet.towername)
