@@ -11,8 +11,8 @@ from igor_rest_api.api.grouping.utils import query_group, pduipfromid, query_gro
 from igor_rest_api.db import db
 
 """
-    GET     /groupings/pdu           Returns the list of all the pdus and ther ids
-    POST    /groupings/pdu {'ip': pdu_ip_address,
+    GET     /outlet_groups/pdu           Returns the list of all the pdus and ther ids
+    POST    /outlet_groups/pdu {'ip': pdu_ip_address,
                     'access_string': pdu_access_string }    Creates a new pdu entry in database
 """
 class PdudetailsAPI(Resource):
@@ -52,10 +52,10 @@ class PdudetailsAPI(Resource):
 
 
 """
-    GET      /groupings/pdu/<string:ip>                       Returns the details of pdu with specified ip address
-    PUT      /groupings/pdu/<string:ip> 
+    GET      /outlet_groups/pdu/<string:ip>                       Returns the details of pdu with specified ip address
+    PUT      /outlet_groups/pdu/<string:ip> 
                       {'access_string': new_access_string }   Will update the access_string of pdu with speciifed ip address
-    DELETE   /groupings/pdu/<string:ip>                       Deletes the pdu from database
+    DELETE   /outlet_groups/pdu/<string:ip>                       Deletes the pdu from database
 """
 class PdudetailAPI(Resource):
     decorators = [rootauth.login_required]
@@ -100,8 +100,8 @@ class PdudetailAPI(Resource):
 
 
 """
-    GET     /groupings/outlets                                      Returns the details of all the outlets 
-    POST    /groupings/outlets    {'pduid': pduid,
+    GET     /outlet_groups/outlets                                      Returns the details of all the outlets 
+    POST    /outlet_groups/outlets    {'pduid': pduid,
                         'towername': towername, 'outlet': outlet }  Creates a new outlet entry in database
 """
 class PduoutletsAPI(Resource):
@@ -141,10 +141,10 @@ class PduoutletsAPI(Resource):
 
 
 """
-    GET     /groupings/outlets/<int:id>                                 Returns the details of outlet with specified id
-    PUT     /groupings/outlets/<int:id>   {'pduid': pduid,
+    GET     /outlet_groups/outlets/<int:id>                                 Returns the details of outlet with specified id
+    PUT     /outlet_groups/outlets/<int:id>   {'pduid': pduid,
                             'towername': towername, 'outlet': outlet }  Will update the details of outlet 
-    DELETE  /groupings/outlets/<int:id>                                 Deletes the outlet from database
+    DELETE  /outlet_groups/outlets/<int:id>                                 Deletes the outlet from database
 """
 class PduoutletAPI(Resource):
     decorators = [rootauth.login_required]
@@ -204,8 +204,8 @@ class PduoutletAPI(Resource):
 
 
 """
-    GET     /groupings/groups                               Returns the details of all the outletgroupings
-    POST    /groupings/groups {'name': groupingname }       Creates a outletgrouping with the specified name
+    GET     /outlet_groups/groups                               Returns the details of all the outletgroupings
+    POST    /outlet_groups/groups {'name': groupingname }       Creates a outletgrouping with the specified name
 """
 class GroupsAPI(Resource):
     decorators = [rootauth.login_required]
@@ -237,9 +237,9 @@ class GroupsAPI(Resource):
 
 
 """
-    GET     /groupings/groups/<int:id>                              Returns the details of groupname and outlets belonging to outletgrouping 
-    PUT     /groupings/groups/<int:id>  {'name': new_group_name }   Updates the name of outletgrouping
-    DELETE  /groupings/groups/<int:id>                              Deletes the outletgrouping from database
+    GET     /outlet_groups/groups/<int:id>                              Returns the details of groupname and outlets belonging to outletgrouping 
+    PUT     /outlet_groups/groups/<int:id>  {'name': new_group_name }   Updates the name of outletgrouping
+    DELETE  /outlet_groups/groups/<int:id>                              Deletes the outletgrouping from database
 """
 class GroupAPI(Resource):
     decorators = [rootauth.login_required]
@@ -282,10 +282,10 @@ class GroupAPI(Resource):
 
 
 """
-    GET     /groupings/groupings                        Returns the associations between outletgroupings and outlets
-    POST    /groupings/groupings {'outlet_id': outlet_id,
+    GET     /outlet_groups/groupings                        Returns the associations between outletgroupings and outlets
+    POST    /outlet_groups/groupings {'outlet_id': outlet_id,
                             'group_id': group_id }      Creates association between group_id and outlet_id
-    DELETE  /groupings/groupings {'outlet_id': outlet_id,
+    DELETE  /outlet_groups/groupings {'outlet_id': outlet_id,
                             'group_id': group_id }      Deletes the association between group_id and outlet_id
 """
 class GroupoutletsAPI(Resource):

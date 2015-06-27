@@ -11,8 +11,8 @@ from .models import Userdetails, Useroutletsgroups
 
 # User management endpoints
 """
-    GET     /groupings/users                           Returns the list of users
-    POST    /groupings/users {'username': username,
+    GET     /outlet_groups/users                           Returns the list of users
+    POST    /outlet_groups/users {'username': username,
                     'password': password}    Creates a new user
 """
 class GroupingusersAPI(Resource):
@@ -56,9 +56,9 @@ class GroupingusersAPI(Resource):
                                         _external=True)}, CREATED
 
 """
-    GET     /groupings/users/:username             Returns details for user <username>
-    DELETE  /groupings/users/:username             Deletes user <username>
-    PUT     /groupings/users/:username             Updates password for user <username>
+    GET     /outlet_groups/users/:username             Returns details for user <username>
+    DELETE  /outlet_groups/users/:username             Deletes user <username>
+    PUT     /outlet_groups/users/:username             Updates password for user <username>
 """
 class GroupinguserAPI(Resource):
     decorators = [auth.login_required]
@@ -74,8 +74,8 @@ class GroupinguserAPI(Resource):
             return {'message': 'User %s does not exist' % username}, NOT_FOUND
         else:
             return {'username': user.username,
-                    #'groupings': url_for('user_groupings', username=username, _external=True),
-                    'location': url_for('groupingsuser', username=username, _external=True)}
+                    #'outlet_groups': url_for('user_outlet_groups', username=username, _external=True),
+                    'location': url_for('outlet_groupsuser', username=username, _external=True)}
 
     def delete(self, username):
         if g.user.username != 'root' and g.user.username != username:
@@ -109,10 +109,10 @@ class GroupinguserAPI(Resource):
 
 
 """
-    GET     /groupings/user/groups          Returns associations between users and outletgroupings
-    POST    /groupings/user/groups  {'outletgroupid': outletgroupid,
+    GET     /outlet_groups/user/groups          Returns associations between users and outletgroupings
+    POST    /outlet_groups/user/groups  {'outletgroupid': outletgroupid,
                                 'userid': userid }    Creates association between user and outletgroupings
-    DELETE /groupings/user/groups  {'outletgroupid': outletgroupid,
+    DELETE /outlet_groups/user/groups  {'outletgroupid': outletgroupid,
                                 'userid': userid }    Deletes the association between user and outletgrouping
 """
 class Usergroups(Resource):
@@ -170,7 +170,7 @@ class Usergroups(Resource):
 
 
 """
-    GET     /groupings/user/groups/<int:id>         Returns the outletgroupings associatied with user
+    GET     /outlet_groups/user/groups/<int:id>         Returns the outletgroupings associatied with user
 """
 class Usergroup(Resource):
     decorators = [auth.login_required]
@@ -197,7 +197,7 @@ class Usergroup(Resource):
 
 # Login endpoint
 """
-    GET     /groupings/login            Generates an returns an authentication token
+    GET     /outlet_groups/login            Generates an returns an authentication token
 """
 class GroupingsloginAPI(Resource):
     decorators = [auth.login_required]
