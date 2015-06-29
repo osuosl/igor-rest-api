@@ -6,8 +6,12 @@ from sqlalchemy.exc import IntegrityError
 
 from igor_rest_api.api.grouping.login import auth
 from igor_rest_api.api.constants import *
-from igor_rest_api.api.grouping.models import Group, Pdudetails, Outlets, Groupoutlets, Useroutletsgroups
-from igor_rest_api.api.grouping.utils import query_group, outlet_details, check_outlet_permission
+from igor_rest_api.api.grouping.models import (
+        Group, Pdudetails, Outlets, Groupoutlets,
+        Useroutletsgroups)
+from igor_rest_api.api.grouping.utils import (
+        query_group, outlet_details,
+        check_outlet_permission)
 from igor_rest_api.db import db
 from pudmaster import Pdu_obj
 
@@ -33,7 +37,8 @@ class Groupcontrol(Resource):
             outlets = query_group(groupid)
 
         else:
-            role = Useroutletsgroups.query.filter_by(userid=g.user.id, outletgroupid=groupid).first()
+            role = Useroutletsgroups.query.filter_by(userid=g.user.id,
+                                                     outletgroupid=groupid).first()
             if role is None:
                 return {'message': 'User does not have necessary permission'}
             else:
@@ -63,7 +68,8 @@ class Groupcontrol(Resource):
             outlets = query_group(groupid)
 
         else:
-            role = Useroutletsgroups.query.filter_by(userid=g.user.id, outletgroupid=groupid).first()
+            role = Useroutletsgroups.query.filter_by(userid=g.user.id,
+                                                     outletgroupid=groupid).first()
             if role is None:
                 return {'message': 'User does not have necessary permission'}
             else:

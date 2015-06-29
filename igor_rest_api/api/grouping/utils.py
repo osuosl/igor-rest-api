@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # This file useful utilites which can be used in views
 
-from igor_rest_api.api.grouping.models import Group, Pdudetails, Outlets, Groupoutlets, \
-                                                Userdetails, Useroutletsgroups
+from igor_rest_api.api.grouping.models import (
+    Group, Pdudetails, Outlets,
+    Groupoutlets, Userdetails, Useroutletsgroups)
 
 
 def query_group(id):
@@ -79,10 +80,11 @@ def outlet_details(id):
 
 
 def check_outlet_permission(userid, outletid):
-    # this function will validate whether a user has permission to control a outlet
+    # will validate whether a user has permission to control a outlet
     usergroups = Useroutletsgroups.query.filter_by(userid=userid).all()
 
     for group in usergroups:
-        if Groupoutlets.query.filter_by(group_id=group.outletgroupid, outlet_id=outletid).first() is not None:
+        if Groupoutlets.query.filter_by(group_id=group.outletgroupid,
+                                        outlet_id=outletid).first() is not None:
             return True
     return False

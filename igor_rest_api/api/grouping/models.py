@@ -93,6 +93,7 @@ def create_grouping_root_user():
     with app.app_context():
         root_user = Userdetails.query.filter_by(username=app.config['ROOT_USER']).first()
         if not root_user:
-            root_user = Userdetails(app.config['ROOT_USER'], app.config['ROOT_PASS'])
+            root_user = Userdetails(app.config['ROOT_USER'],
+                                    app.config['ROOT_PASS'])
             db.session.add(root_user)
             db.session.commit()

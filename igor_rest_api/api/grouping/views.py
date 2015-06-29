@@ -6,15 +6,19 @@ from sqlalchemy.exc import IntegrityError
 
 from igor_rest_api.api.grouping.login import rootauth
 from igor_rest_api.api.constants import *
-from igor_rest_api.api.grouping.models import Group, Pdudetails, Outlets, Groupoutlets
-from igor_rest_api.api.grouping.utils import query_group, pduipfromid, query_group_outlets
+from igor_rest_api.api.grouping.models import (
+        Group, Pdudetails, Outlets,
+        Groupoutlets)
+from igor_rest_api.api.grouping.utils import (
+        query_group, pduipfromid,
+        query_group_outlets)
 from igor_rest_api.db import db
 
 
 """
-    GET     /outlet_groups/pdu           Returns the list of all the pdus and ther ids
+    GET     /outlet_groups/pdu       Returns the list of all the pdus and ther ids
     POST    /outlet_groups/pdu {'ip': pdu_ip_address,
-                    'access_string': pdu_access_string }    Creates a new pdu entry in database
+                    'access_string': pdu_access_string }  Creates a new pdu entry in database
 """
 
 
@@ -55,10 +59,10 @@ class PdudetailsAPI(Resource):
 
 
 """
-    GET      /outlet_groups/pdu/<string:ip>                       Returns the details of pdu with specified ip address
+    GET      /outlet_groups/pdu/<string:ip>        Returns the details of pdu with specified ip address
     PUT      /outlet_groups/pdu/<string:ip>
-                      {'access_string': new_access_string }   Will update the access_string of pdu with speciifed ip address
-    DELETE   /outlet_groups/pdu/<string:ip>                       Deletes the pdu from database
+                 {'access_string': new_access_string }   Will update the access_string of pdu with speciifed ip address
+    DELETE   /outlet_groups/pdu/<string:ip>       Deletes the pdu from database
 """
 
 
@@ -105,7 +109,7 @@ class PdudetailAPI(Resource):
 
 
 """
-    GET     /outlet_groups/outlets                                      Returns the details of all the outlets
+    GET     /outlet_groups/outlets                Returns the details of all the outlets
     POST    /outlet_groups/outlets    {'pduid': pduid,
                         'towername': towername, 'outlet': outlet }  Creates a new outlet entry in database
 """
@@ -148,10 +152,10 @@ class PduoutletsAPI(Resource):
 
 
 """
-    GET     /outlet_groups/outlets/<int:id>                                 Returns the details of outlet with specified id
-    PUT     /outlet_groups/outlets/<int:id>   {'pduid': pduid,
+    GET     /outlet_groups/outlets/<int:id>      Returns the details of outlet with specified id
+    POST     /outlet_groups/outlets/<int:id>   {'pduid': pduid,
                             'towername': towername, 'outlet': outlet }  Will update the details of outlet
-    DELETE  /outlet_groups/outlets/<int:id>                                 Deletes the outlet from database
+    DELETE  /outlet_groups/outlets/<int:id>      Deletes the outlet from database
 """
 
 
@@ -174,7 +178,8 @@ class PduoutletAPI(Resource):
     def get(self, id):
         outlet = Outlets.query.filter_by(id=id).first()
         if not outlet:
-            return {'message': 'outlet with id %s does not exist' % id}, NOT_FOUND
+            return {'message': 'outlet with id %s does not exist' % id},\
+                    NOT_FOUND
         return {'outlets': [{'pdu_ip': pduipfromid(outlet.pdu_id),
                              'id': outlet.id,
                              'tower': outlet.towername,
@@ -183,7 +188,8 @@ class PduoutletAPI(Resource):
     def delete(self, id):
         outlet = Outlets.query.filter_by(id=id).first()
         if not outlet:
-            return {'message': 'outlet with id %s does not exist' % id}, NOT_FOUND
+            return {'message': 'outlet with id %s does not exist' % id},\
+                    NOT_FOUND
         else:
             db.session.add(outlet)
             db.session.commit()
@@ -191,7 +197,7 @@ class PduoutletAPI(Resource):
             db.session.commit()
             return {'message': 'outlet with id %s deleted' % outlet.id}
 
-    def put(self, id):
+    def post(self, id):
         args = self.reqparse.parse_args()
         outlet = Outlets.query.filter_by(id=id).first()
 
@@ -214,8 +220,8 @@ class PduoutletAPI(Resource):
 
 
 """
-    GET     /outlet_groups/groups                               Returns the details of all the outletgroupings
-    POST    /outlet_groups/groups {'name': groupingname }       Creates a outletgrouping with the specified name
+    GET     /outlet_groups/groups         Returns the details of all the outletgroupings
+    POST    /outlet_groups/groups {'name': groupingname }  Creates a outletgrouping with the specified name
 """
 
 
@@ -249,9 +255,9 @@ class GroupsAPI(Resource):
 
 
 """
-    GET     /outlet_groups/groups/<int:id>                              Returns the details of groupname and outlets belonging to outletgrouping
+    GET     /outlet_groups/groups/<int:id>       Returns the details of groupname and outlets belonging to outletgrouping
     PUT     /outlet_groups/groups/<int:id>  {'name': new_group_name }   Updates the name of outletgrouping
-    DELETE  /outlet_groups/groups/<int:id>                              Deletes the outletgrouping from database
+    DELETE  /outlet_groups/groups/<int:id>       Deletes the outletgrouping from database
 """
 
 
@@ -265,39 +271,43 @@ class GroupAPI(Resource):
                                    location='json')
         super(GroupAPI, self).__init__()
 
-    def get(self, id):
-        group = Group.query.filter_by(id=id).first()
+    def get(self, groupid):
+        group = Group.query.filter_by(id=groupid).first()
         if not group:
-            return {'message': 'group with id %s does not exist' % id}, NOT_FOUND
-        outlets = query_group_outlets(id)
+            return {'message': 'group with id %s does not exist' % groupid}, NOT_FOUND
+        outlets = query_group_outlets(groupid)
         return {'group': [{'id': group.id,
                            'name': group.name,
                            'outlets': outlets}]}
 
-    def put(self, id):
+    def post(self, groupid):
         args = self.reqparse.parse_args()
         name = args['name']
-        group = Group.query.filter_by(id=id).first()
+        group = Group.query.filter_by(id=groupid).first()
         if not group:
-            return {'message': 'group with id %s does not exist' % id}, NOT_FOUND
+            return {'message': 'group with id %s does not exist' % groupid}, NOT_FOUND
         else:
             group.name = name
             db.session.add(group)
             db.session.commit()
             return {'message': 'Updated entry for group %s' % group.id}
 
-    def delete(self, id):
-        group = Group.query.filter_by(id=id).first()
+    def delete(self, groupid):
+        group = Group.query.filter_by(id=groupid).first()
         if not group:
-            return {'message': 'group with id %s does not exist' % id}, NOT_FOUND
+            return {'message': 'group with id %s does not exist' % groupid}, NOT_FOUND
         else:
+            groupoutlets = Groupoutlets.query.filter_by(group_id=groupid).all()
+            for groupoutlet in groupoutlets:
+                db.session.delete(groupoutlet)
+                db.session.commit()
             db.session.delete(group)
             db.session.commit()
             return {'message': 'group %s deleted' % group.name}
 
 
 """
-    GET     /outlet_groups/groupings                        Returns the associations between outletgroupings and outlets
+    GET     /outlet_groups/groupings              Returns the associations between outletgroupings and outlets
     POST    /outlet_groups/groupings {'outlet_id': outlet_id,
                             'group_id': group_id }      Creates association between group_id and outlet_id
     DELETE  /outlet_groups/groupings {'outlet_id': outlet_id,
@@ -308,39 +318,19 @@ class GroupAPI(Resource):
 class GroupoutletsAPI(Resource):
     decorators = [rootauth.login_required]
 
-    def __init__(self):
-        self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('outlet_id', type=int, required=True,
-                                   help='No outlet id was provided',
-                                   location='json')
 
-        self.reqparse.add_argument('group_id', type=int, required=True,
-                                   help='No grouping id was provided',
-                                   location='json')
-
-    def get(self):
-        groupoutlets = Groupoutlets.query.all()
-        return {'groupoutlets': [{'group_id': groupoutlet.group_id,
-                                  'outlet_id': groupoutlet.outlet_id}
-                                 for groupoutlet in groupoutlets]}
-
-    def post(self):
-        args = self.reqparse.parse_args()
-        outlet_id = args['outlet_id']
-        group_id = args['group_id']
-        new = Groupoutlets(group_id, outlet_id)
+    def put(self, groupid, outletid):
+        new = Groupoutlets(groupid, outletid)
         db.session.add(new)
         db.session.commit()
         return {'Success': 'added outlet to group'}
 
-    def delete(self):
-        args = self.reqparse.parse_args()
-        outlet_id = args['outlet_id']
-        group_id = args['group_id']
-        groupoutlet = Groupoutlets.query.filter_by(outlet_id=outlet_id, group_id=group_id).first()
+    def delete(self, groupid, outletid):
+        groupoutlet = Groupoutlets.query.filter_by(outlet_id=outletid,
+                                                   group_id=groupid).first()
         if not groupoutlet:
             return {'message': 'grouping doesn"t exist'}
         else:
             db.session.delete(groupoutlet)
             db.session.commit()
-            return {'Success': 'deleted grouping'}
+            return {'Success': 'deleted outlet from grouping'}

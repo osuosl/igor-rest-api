@@ -29,7 +29,7 @@ class Pdustatus(Resource):
         else:
             pdu_pass = get_access_string(ip)
 
-        if pdu_pass == False:
+        if pdu_pass is False:
             return {'Error': 'No access'}
 
         else:
@@ -63,7 +63,7 @@ class OutletStatus(Resource):
         else:
             pdu_pass = get_access_string(ip)
 
-        if pdu_pass == False:
+        if pdu_pass is False:
             return {'Error': 'No access'}
 
         else:
@@ -83,7 +83,7 @@ class OutletStatus(Resource):
         else:
             pdu_pass = get_access_string(ip)
 
-        if pdu_pass == False:
+        if pdu_pass is False:
             return {'Error': 'No access'}
 
         else:

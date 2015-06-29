@@ -38,7 +38,7 @@ def permission_required(f):
         if not machine:
             return {'message': 'Host %s does not exist' % hostname}, NOT_FOUND
 
-        if not user in machine.users:
+        if user not in machine.users:
             return {'message': 'User %s does not have permission for host %s'
                     % (user.username, hostname)}, FORBIDDEN
 
