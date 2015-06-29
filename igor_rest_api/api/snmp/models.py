@@ -5,15 +5,15 @@ from werkzeug import generate_password_hash, check_password_hash
 
 from igor_rest_api import app
 from igor_rest_api.db import db
-from igor_rest_api.api.models import snmp_users 
+from igor_rest_api.api.models import snmp_users
 
 
 class Snmpuser(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True)
     pwdhash = db.Column(db.String(54))
     pdus = db.relationship('Pdu', secondary=snmp_users,
-                            backref=db.backref('pdus',lazy='dynamic'))
+                           backref=db.backref('pdus', lazy='dynamic'))
 
     def __init__(self, username, password):
         self.username = username
@@ -44,8 +44,10 @@ class Snmpuser(db.Model):
 def create_snmp_root_user():
     # Create root user
     with app.app_context():
-        root_user = Snmpuser.query.filter_by(username=app.config['ROOT_USER']).first()
+        root_user = Snmpuser.query.filter_by(
+                username=app.config['ROOT_USER']).first()
         if not root_user:
-            root_user = Snmpuser(app.config['ROOT_USER'], app.config['ROOT_PASS'])
+            root_user = Snmpuser(app.config['ROOT_USER'],
+                                 app.config['ROOT_PASS'])
             db.session.add(root_user)
             db.session.commit()

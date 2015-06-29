@@ -9,6 +9,7 @@ from .db import db
 
 manager = Manager(app)
 
+
 @manager.command
 def init_db():
     print "Creating database schema..."
@@ -18,6 +19,7 @@ def init_db():
     create_snmp_root_user()
     create_grouping_root_user()
     print "Done"
+
 
 def run():
     manager.run()

@@ -11,8 +11,8 @@ from .ipmi.views import (
     MachineSelRecordsAPI,
 )
 from .snmpcontrol.views import Pdustatus, OutletStatus
-from .machines.views import MachineAPI, MachinesAPI
-from .pdus.views import PduAPI, PdusAPI
+from .machines.views.machines import MachineAPI, MachinesAPI
+from .pdus.views.pdus import PduAPI, PdusAPI
 from .machines.views.permissions import (
     UserMachineAPI, UserMachinesAPI,
     MachineUserAPI, MachineUsersAPI,
@@ -31,7 +31,7 @@ from .grouping.views import (
         GroupoutletsAPI,
 )
 from .grouping.userviews import (
-        GroupingusersAPI, GroupinguserAPI, 
+        GroupingusersAPI, GroupinguserAPI,
         Usergroups, GroupingsloginAPI,
         Usergroup
 )
@@ -40,32 +40,42 @@ from .grouping.controlviews import Groupcontrol, Outletcontrol
 
 resources = [
             (RootAPI, '/', 'root'),
-            (PdudetailsAPI,'/groupings/pdu','groupings_pdus'),
-            (PdudetailAPI,'/groupings/pdu/<string:ip>','groupings_pdu'),
-            (PduoutletsAPI,'/groupings/outlets','groupings_outlets'),
-            (PduoutletAPI,'/groupings/outlets/<int:id>','groupings_outlet'),
-            (GroupsAPI,'/groupings/groups','groupings_groups'),
-            (GroupAPI,'/groupings/groups/<int:id>','groupings_group'),
-            (GroupoutletsAPI,'/groupings/groupings','groupings_groupings'),
-            (Groupcontrol,'/groupcontrol/<int:groupid>','groupings_control'),
-            (Outletcontrol,'/outletcontrol/<int:outletid>','outlets_control'),
+            (PdudetailsAPI, '/outlet_groups/pdu', 'groupings_pdus'),
+            (PdudetailAPI, '/outlet_groups/pdu/<string:ip>', 'groupings_pdu'),
+            (PduoutletsAPI, '/outlets', 'groupings_outlets'),
+            (PduoutletAPI,
+                '/outlets/<int:id>',
+                'groupings_outlet'),
+            (GroupsAPI, '/outlet_groups', 'groupings_groups'),
+            (GroupAPI, '/outlet_groups/<int:groupid>', 'groupings_group'),
+            (GroupoutletsAPI,
+                '/outlet_groups/<int:groupid>/<int:outletid>',
+                'groupings_groupings'),
+            (Groupcontrol, '/outlet_groups/<int:groupid>/control', 'groupings_control'),
+            (Outletcontrol, '/outlet/<int:outletid>/control', 'outlets_control'),
             (LoginAPI, '/login', 'login'),
             (SNMPLoginAPI, '/snmplogin', 'snmplogin'),
             (UsersAPI, '/users', 'users'),
             (UserAPI, '/users/<string:username>', 'user'),
             (SNMPUsersAPI, '/snmpusers', 'snmpusers'),
             (SNMPUserAPI, '/snmpusers/<string:username>', 'snmpuser'),
-            (GroupingusersAPI, '/groupings/users', 'groupingsusers'),
-            (GroupinguserAPI, '/groupings/users/<string:username>', 'groupingsuser'),
-            (GroupingsloginAPI, '/groupings/login', 'groupingslogin'),
-            (Usergroups, '/groupings/user/groups', 'groupings_users'),
-            (Usergroup, '/groupings/user/groups/<int:id>', 'groupings_user'),
+            (GroupingusersAPI, '/outlet_groups/users', 'groupingsusers'),
+            (GroupinguserAPI,
+                '/outlet_groups/users/<int:userid>',
+                'groupingsuser'),
+            (GroupingsloginAPI, '/outlet_groups/login', 'groupingslogin'),
+            (Usergroups, '/outlet_groups/user/groups', 'groupings_users'),
+            (Usergroup,
+                '/outlet_groups/user/groups/<int:id>',
+                'groupings_user'),
             (MachinesAPI, '/machines', 'machines'),
             (MachineAPI, '/machines/<string:hostname>', 'machine'),
             (PdusAPI, '/pdus', 'pdus'),
             (PduAPI, '/pdus/<string:ip>', 'pdu'),
             (Pdustatus, '/pdu/<string:ip>/status', 'pdustatus'),
-            (OutletStatus, '/pdu/<string:ip>/<string:tower>/<int:outlet>', 'Outletstatus'),
+            (OutletStatus,
+                '/pdu/<string:ip>/<string:tower>/<int:outlet>',
+                'Outletstatus'),
             (UserMachinesAPI, '/users/<string:username>/machines',
                 'user_machines'),
             (UserMachineAPI,
@@ -123,6 +133,7 @@ resources = [
                 '/machines/<string:hostname>/sel/records',
                 'machine_sel_records')
             ]
+
 
 def setup(api):
     for resourceClass, url, endpoint in resources:

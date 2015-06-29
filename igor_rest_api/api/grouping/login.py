@@ -14,6 +14,7 @@ from .models import Userdetails
 
 auth = HTTPBasicAuth()
 
+
 # Authentication, writes g.user
 @auth.verify_password
 def validate_password(username_or_token, password):
@@ -28,6 +29,7 @@ def validate_password(username_or_token, password):
 
 rootauth = HTTPBasicAuth()
 
+
 @rootauth.verify_password
 def validate_password(username_or_token, password):
     user = Userdetails.validate_auth_token(username_or_token)
@@ -39,4 +41,3 @@ def validate_password(username_or_token, password):
             return False
     g.user = user
     return True
-

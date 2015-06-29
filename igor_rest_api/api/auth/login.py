@@ -13,6 +13,7 @@ from .models import User
 
 auth = HTTPBasicAuth()
 
+
 # Authentication, writes g.user
 @auth.verify_password
 def validate_password(username_or_token, password):
@@ -23,6 +24,7 @@ def validate_password(username_or_token, password):
             return False
     g.user = user
     return True
+
 
 # Authorization for the IPMI operations
 # Requires g.user and hostname, writes g.machine
@@ -43,4 +45,3 @@ def permission_required(f):
         g.machine = machine
         return f(*args, **kwargs)
     return decorated
-

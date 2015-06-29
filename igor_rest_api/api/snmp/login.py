@@ -13,6 +13,7 @@ from .models import Snmpuser
 
 auth = HTTPBasicAuth()
 
+
 # Authentication, writes g.user
 @auth.verify_password
 def validate_password(username_or_token, password):
@@ -23,6 +24,7 @@ def validate_password(username_or_token, password):
             return False
     g.user = user
     return True
+
 
 # Authorization for the IPMI operations
 # Requires g.user and hostname, writes g.machine
@@ -36,11 +38,10 @@ def permission_required(f):
         if not machine:
             return {'message': 'Host %s does not exist' % hostname}, NOT_FOUND
 
-        if not user in machine.users:
+        if user not in machine.users:
             return {'message': 'User %s does not have permission for host %s'
                     % (user.username, hostname)}, FORBIDDEN
 
         g.machine = machine
         return f(*args, **kwargs)
     return decorated
-

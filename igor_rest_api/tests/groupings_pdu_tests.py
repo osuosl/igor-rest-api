@@ -11,7 +11,7 @@ from igor_rest_api.api.grouping.models import Pdudetails
 class GroupingsPdusTestCase(IgorApiTestCase):
 
     test_host = 'test_host'
-    test_ip   = 'test_ip'
+    test_ip = 'test_ip'
     test_pass = 'test_pass'
 
     def setUp(self):
@@ -112,6 +112,6 @@ class GroupingsPdusTestCase(IgorApiTestCase):
         self.assert_200(response)
 
         print response.json
-        pdu = Pdudetails.query.filter_by(ip= self.test_ip).first()
+        pdu = Pdudetails.query.filter_by(ip=self.test_ip).first()
         self.assertIsNotNone(pdu)
         self.assertEqual(new_pass, pdu.access_string)
