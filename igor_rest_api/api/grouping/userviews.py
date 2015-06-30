@@ -171,7 +171,7 @@ class Usergroups(Resource):
             db.session.add(relation)
             db.session.commit()
             return {'username': user.username,
-                    'grouping': url_for('groupings_group', id=outletgroupid,
+                    'grouping': url_for('groupings_group', groupid=args['outletgroupid'],
                                         _external=True),
                     'location': url_for('groupingsuser', userid=user.id,
                                         _external=True)}, CREATED
