@@ -25,8 +25,7 @@ mibViewController = view.MibViewController(mibBuilder)
 
 
 tower_dict = {'A': '1', 'a': '1', 'B': '2', 'b': '2'}
-state_dict = {'0': 'off', '1': 'on', '2': 'offwait', '3': 'onwait',
-              '4': 'offerror', '5': 'onerror'}
+state_dict = {'0': 'off', '1': 'on', '2': 'offwait', '3': 'onwait', '4': 'offerror', '5': 'onerror'}
 
 
 class Pdu_obj():
@@ -38,6 +37,8 @@ class Pdu_obj():
         self.tower_number = '1.3.6.1.4.1.1718.3.1.4'
         self.outlet_list = '1.3.6.1.4.1.1718.3.2.3.1.3'
         self.outlet_states = '1.3.6.1.4.1.1718.3.2.3.1.5'
+        self.amperage_A = '1.3.6.1.4.1.1718.3.2.2.1.7.1.1'
+        self.amperage_B = '1.3.6.1.4.1.1718.3.2.2.1.7.2.1'
 
     def nextCmd(self, oid):
         errorIndication, errorStatus, errorIndex, varBindTable = cmdGen.nextCmd(
@@ -59,7 +60,7 @@ class Pdu_obj():
             else:
                 for varBindTableRow in varBindTable:
                     for name, val in varBindTableRow:
-                        # print 'oid is ' + str(name) +'  ' + str(val)
+                        # print 'oid is ' + str(name) +'  ' + 'value is ' + str(val)
                         pass
                 return varBindTable
 
@@ -145,8 +146,7 @@ class Pdu_obj():
         state_dict = {'none': 0, 'on': 1, 'off': 2, 'reboot': 3}
 
         try:
-            oid = '1.3.6.1.4.1.1718.3.2.3.1.11.' + tower_dict[tower] +\
-                  '.1.' + str(outlet)
+            oid = '1.3.6.1.4.1.1718.3.2.3.1.11.' + tower_dict[tower] + '.1.' + str(outlet)
             return self.setCmd(oid, state_dict[state])
 
         except:
@@ -169,11 +169,33 @@ class Pdu_obj():
 
     def get_outlet_status(self, tower, outlet):
 
-        oid = '1.3.6.1.4.1.1718.3.2.3.1.3.' + tower_dict[tower] +\
-              '.1.' + str(outlet)
+        oid = '1.3.6.1.4.1.1718.3.2.3.1.3.' + tower_dict[tower] + '.1.' + str(outlet)
         state = str(self.state_from_oid(oid))
 
         if 'No SNMP response received' in state:
             return "Error"
         else:
             return state_dict[state]
+
+    def get_amperage_details(self):
+
+        amperage_A = self.getCmd(self.amperage_A)
+        amperage_B = self.getCmd(self.amperage_B)
+        try:
+            z = amperage_A%1
+            z = amperage_B%1
+            return [amperage_A, amperage_B]
+        except:
+            return ['Error', 'Error']
+
+    def get_outlet_amperage(self, tower, outlet=1):
+        if tower == 'A' or tower == 'a':
+            amperage_oid = self.amperage_A
+        else:
+            amperage_oid = self.amperage_B
+        amperage_value = self.getCmd(amperage_oid)
+        try:
+            z = amperage_value%1
+            return amperage_value
+        except:
+            return 'Error'
