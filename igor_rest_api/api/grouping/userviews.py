@@ -220,7 +220,7 @@ class Usergroup(Resource):
 
         return {'username: %s ' % username:
                 [{'groupid': group.outletgroupid,
-                  'location': url_for('groupings_group', id=group.outletgroupid,
+                  'location': url_for('groupings_group', groupid=group.outletgroupid,
                                       _external=True)}
                  for group in groups]}
 

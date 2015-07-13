@@ -78,7 +78,7 @@ class GroupingsoutletsTestCase(IgorApiTestCase):
 
         data = json.dumps({'towername': new_tower})
 
-        response = self.client.put(url_for('groupings_outlet',
+        response = self.client.post(url_for('groupings_outlet',
                                             id=1),
                                    headers=self.headers, data=data)
         self.assert_200(response)

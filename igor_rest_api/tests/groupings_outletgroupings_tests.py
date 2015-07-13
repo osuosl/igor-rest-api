@@ -55,13 +55,13 @@ class GroupingsoutletgroupingsTestCase(IgorApiTestCase):
 
 
     def test_nonexistent_grouping_info(self):
-        response = self.client.get(url_for('groupings_group', id=22627828),
+        response = self.client.get(url_for('groupings_group', groupid=22627828),
                                    headers=self.headers)
         self.assert_404(response)
 
 
     def test_remove_nonexistent_grouping(self):
-        response = self.client.delete(url_for('groupings_group', id=762728),
+        response = self.client.delete(url_for('groupings_group', groupid=762728),
                                       headers=self.headers)
         self.assert_404(response)
 
@@ -72,8 +72,8 @@ class GroupingsoutletgroupingsTestCase(IgorApiTestCase):
 
         data = json.dumps({'name': new_name})
 
-        response = self.client.put(url_for('groupings_group',
-                                            id=1),
+        response = self.client.post(url_for('groupings_group',
+                                            groupid=1),
                                    headers=self.headers, data=data)
         self.assert_200(response)
 
