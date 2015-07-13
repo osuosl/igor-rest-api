@@ -37,6 +37,8 @@ class Pdu_obj():
         self.tower_number = '1.3.6.1.4.1.1718.3.1.4'
         self.outlet_list = '1.3.6.1.4.1.1718.3.2.3.1.3'
         self.outlet_states = '1.3.6.1.4.1.1718.3.2.3.1.5'
+        self.amperage_A = '1.3.6.1.4.1.1718.3.2.2.1.7.1.1'
+        self.amperage_B = '1.3.6.1.4.1.1718.3.2.2.1.7.2.1'
 
     def nextCmd(self, oid):
         errorIndication, errorStatus, errorIndex, varBindTable = cmdGen.nextCmd(
@@ -174,3 +176,26 @@ class Pdu_obj():
             return "Error"
         else:
             return state_dict[state]
+
+    def get_amperage_details(self):
+
+        amperage_A = self.getCmd(self.amperage_A)
+        amperage_B = self.getCmd(self.amperage_B)
+        try:
+            z = amperage_A%1
+            z = amperage_B%1
+            return [amperage_A, amperage_B]
+        except:
+            return ['Error', 'Error']
+
+    def get_outlet_amperage(self, tower, outlet=1):
+        if tower == 'A' or tower == 'a':
+            amperage_oid = self.amperage_A
+        else:
+            amperage_oid = self.amperage_B
+        amperage_value = self.getCmd(amperage_oid)
+        try:
+            z = amperage_value%1
+            return amperage_value
+        except:
+            return 'Error'
