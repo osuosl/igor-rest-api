@@ -43,10 +43,14 @@ class Pdustatus(Resource):
             if status == "Error":
                 return {'error': 'Unable to get data'}
 
+            amperage = pdu.get_amperage_details()
             status_dict = {}
             for i in range(len(status)):
                 status_dict[name[i]] = status[i]
-            return {'status': status_dict}
+            amperage_dict = {}
+            amperage_dict['tower_A'] = amperage[0]
+            amperage_dict['tower_B'] = amperage[1]
+            return {'status': status_dict, 'amperage': amperage_dict}
 
 """
     GET /pdu/:ip/:tower/:outlet Returns status of specified outlet
@@ -69,11 +73,14 @@ class OutletStatus(Resource):
         else:
             pdu = Pdu_obj(ip, 161, pdu_pass)
             state = pdu.get_outlet_status(tower, outlet)
+            amperage = pdu.get_outlet_amperage(tower, outlet)
 
             if state == 'Error':
-                return {'Error': 'Unable to get data'}
-            else:
-                return {'state': state}
+                state = 'Unable to fetch data'
+            if amperage == 'Error':
+                amperage = 'unable to fetch amperage'
+
+            return {'state': state, 'amperage': amperage}
 
     def post(self, ip, tower, outlet):
 

@@ -109,9 +109,9 @@ class PdudetailAPI(Resource):
 
 
 """
-    GET     /outlet_groups/outlets                Returns the details of all the outlets
-    POST    /outlet_groups/outlets    {'pduid': pduid,
-                        'towername': towername, 'outlet': outlet }  Creates a new outlet entry in database
+    GET     /outlets                Returns the details of all the outlets
+    POST    /outlets                {'pduid': pduid, 'towername': towername, 'outlet': outlet } 
+                                    Creates a new outlet entry in database
 """
 
 
@@ -152,10 +152,10 @@ class PduoutletsAPI(Resource):
 
 
 """
-    GET     /outlet_groups/outlets/<int:id>      Returns the details of outlet with specified id
-    POST     /outlet_groups/outlets/<int:id>   {'pduid': pduid,
+    GET     /outlets/<int:id>      Returns the details of outlet with specified id
+    POST    /outlets/<int:id>   {'pduid': pduid,
                             'towername': towername, 'outlet': outlet }  Will update the details of outlet
-    DELETE  /outlet_groups/outlets/<int:id>      Deletes the outlet from database
+    DELETE  /outlets/<int:id>      Deletes the outlet from database
 """
 
 
@@ -180,7 +180,7 @@ class PduoutletAPI(Resource):
         if not outlet:
             return {'message': 'outlet with id %s does not exist' % id},\
                     NOT_FOUND
-        return {'outlets': [{'pdu_ip': pduipfromid(outlet.pdu_id),
+        return {'outlet': [{'pdu_ip': pduipfromid(outlet.pdu_id),
                              'id': outlet.id,
                              'tower': outlet.towername,
                              'outlet': outlet.outlet}]}

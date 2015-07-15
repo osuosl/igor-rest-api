@@ -94,6 +94,9 @@ class SNMPUserAPI(Resource):
             return {'message': '%s cannot delete user %s' %
                     (g.user.username, username)}, BAD_REQUEST
 
+        if username == 'root':
+            return {'message' : 'root user cannot be deleted'}
+
         user = Snmpuser.query.filter_by(username=username).first()
         if not user:
             return {'message': 'User %s does not exist' % username}, NOT_FOUND
