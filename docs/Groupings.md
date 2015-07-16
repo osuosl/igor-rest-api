@@ -25,12 +25,14 @@ Create a new pdu entry
 $curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"ip": "10.0.1.33","access_string":"string"}' http://localhost:5000/outlet_groups/pdu
 HTTP/1.0 201 CREATED
 Content-Type: application/json
-Content-Length: 42
+Content-Length: 118
 Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Wed, 15 Jul 2015 04:03:46 GMT
+Date: Thu, 16 Jul 2015 04:17:15 GMT
 
 {
-    "Success": "added pdu 10.0.1.33 "
+    "location": "http://localhost:5000/outlet_groups/pdu/10.0.1.33", 
+    "pdu_id": 1, 
+    "pdu_ip": "10.0.1.33"
 }
 ```
 View all pdu's 
@@ -100,12 +102,14 @@ Add a pdu for further testing
 $curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"ip": "10.0.1.33","access_string":"osl"}' http://localhost:5000/outlet_groups/pdu
 HTTP/1.0 201 CREATED
 Content-Type: application/json
-Content-Length: 42
+Content-Length: 118
 Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Wed, 15 Jul 2015 04:26:48 GMT
+Date: Thu, 16 Jul 2015 04:18:53 GMT
 
 {
-    "Success": "added pdu 10.0.1.33 "
+    "location": "http://localhost:5000/outlet_groups/pdu/10.0.1.33", 
+    "pdu_id": 1, 
+    "pdu_ip": "10.0.1.33"
 }
 ```
 ## Outlet management
@@ -114,12 +118,14 @@ Add outlet of pdu with id 1 , tower A and oulet number 1 to be managed
 $curl -i -u root:root -H "Content-Type: application/json" -X POST -d  '{"pduid":1,"towername":"A","outlet":1}' http://localhost:5000/outlets
 HTTP/1.0 201 CREATED
 Content-Type: application/json
-Content-Length: 34
+Content-Length: 106
 Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Wed, 15 Jul 2015 04:29:25 GMT
+Date: Thu, 16 Jul 2015 04:18:09 GMT
 
 {
-    "Success": "added outlet"
+    "location": "http://localhost:5000/outlets/1", 
+    "outlet_id": 1, 
+    "outlet_ip": "10.0.1.33"
 }
 ```
 View all outlets
@@ -193,23 +199,27 @@ Add two outlets
 $curl -i -u root:root -H "Content-Type: application/json" -X POST -d '{"pduid":1,"towername":"A","outlet":1}' http://localhost:5000/outlets
 HTTP/1.0 201 CREATED
 Content-Type: application/json
-Content-Length: 34
+Content-Length: 106
 Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Wed, 15 Jul 2015 04:35:02 GMT
+Date: Thu, 16 Jul 2015 04:19:47 GMT
 
 {
-    "Success": "added outlet"
+    "location": "http://localhost:5000/outlets/1", 
+    "outlet_id": 1, 
+    "outlet_ip": "10.0.1.33"
 }
 
 $curl -i -u root:root -H "Content-Type: application/json" -X POST -d '{"pduid":1,"towername":"B","outlet":3}' http://localhost:5000/outlets
 HTTP/1.0 201 CREATED
 Content-Type: application/json
-Content-Length: 34
+Content-Length: 106
 Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Wed, 15 Jul 2015 04:35:31 GMT
+Date: Thu, 16 Jul 2015 04:20:15 GMT
 
 {
-    "Success": "added outlet"
+    "location": "http://localhost:5000/outlets/2", 
+    "outlet_id": 2, 
+    "outlet_ip": "10.0.1.33"
 }
 ```
 ## Group management
@@ -219,12 +229,14 @@ Create new group with name group1
 $curl -i -u root:root -H "Content-Type: application/json" -X POST -d '{"name":"group1"}' http://localhost:5000/outlet_groups
 HTTP/1.0 201 CREATED
 Content-Type: application/json
-Content-Length: 40
+Content-Length: 109
 Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Wed, 15 Jul 2015 04:54:04 GMT
+Date: Thu, 16 Jul 2015 04:22:36 GMT
 
 {
-    "Success": "added group group1"
+    "group_id": 1, 
+    "group_name": "group1", 
+    "location": "http://localhost:5000/outlet_groups/1"
 }
 ```
 View all created groups
@@ -295,12 +307,14 @@ Create new group
 $curl -i -u root:root -H "Content-Type: application/json" -X POST -d '{"name":"group1"}' http://localhost:5000/outlet_groups
 HTTP/1.0 201 CREATED
 Content-Type: application/json
-Content-Length: 40
+Content-Length: 109
 Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Wed, 15 Jul 2015 04:58:01 GMT
+Date: Thu, 16 Jul 2015 04:34:57 GMT
 
 {
-    "Success": "added group group1"
+    "group_id": 1, 
+    "group_name": "group1", 
+    "location": "http://localhost:5000/outlet_groups/1"
 }
 ```
 ## Group-outlet management

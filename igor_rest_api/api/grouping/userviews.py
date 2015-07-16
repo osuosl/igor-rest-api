@@ -92,6 +92,9 @@ class GroupinguserAPI(Resource):
             return {'message': '%s cannot delete userid %d' % (
                     g.user.username, userid)}, BAD_REQUEST
 
+        if userid == 1:
+            return {'message': 'root user cannot be deleted'}
+
         user = Userdetails.query.filter_by(id=userid).first()
         if not user:
             return {'message': 'User %s does not exist' % username}, NOT_FOUND
