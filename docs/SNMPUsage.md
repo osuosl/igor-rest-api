@@ -332,7 +332,7 @@ Date: Tue, 14 Jul 2015 08:26:56 GMT
         "TowerB_Outlet9": "on"
     }
 }
-
+```
 View status of specific outlet , for example to view status of Tower A ,outlet 3
 ```
 $curl -i -u root:root -X GET http://localhost:5000/pdu/10.0.1.33/A/3
