@@ -53,7 +53,10 @@ class PdudetailsAPI(Resource):
             db.session.add(pdu)
             try:
                 db.session.commit()
-                return {'Success': 'added pdu %s ' % ip}, CREATED
+                return {'pdu_ip': pdu.ip,
+                        'pdu_id': pdu.id,
+                        'location': url_for('groupings_pdu', ip=pdu.ip,
+                                            _external=True)}, CREATED
             except IntegrityError as e:
                 return {'Error': 'Integrity Error'}
 
@@ -109,9 +112,9 @@ class PdudetailAPI(Resource):
 
 
 """
-    GET     /outlet_groups/outlets                Returns the details of all the outlets
-    POST    /outlet_groups/outlets    {'pduid': pduid,
-                        'towername': towername, 'outlet': outlet }  Creates a new outlet entry in database
+    GET     /outlets                Returns the details of all the outlets
+    POST    /outlets                {'pduid': pduid, 'towername': towername, 'outlet': outlet } 
+                                    Creates a new outlet entry in database
 """
 
 
@@ -148,14 +151,17 @@ class PduoutletsAPI(Resource):
         outlet = Outlets(pdu_id, towername, outlet)
         db.session.add(outlet)
         db.session.commit()
-        return {'Success': 'added outlet'}, CREATED
+        return {'outlet_id': outlet.id,
+                'outlet_ip': pduipfromid(outlet.pdu_id),
+                'location': url_for('groupings_outlet', id=outlet.id,
+                                     _external=True)}, CREATED
 
 
 """
-    GET     /outlet_groups/outlets/<int:id>      Returns the details of outlet with specified id
-    POST     /outlet_groups/outlets/<int:id>   {'pduid': pduid,
+    GET     /outlets/<int:id>      Returns the details of outlet with specified id
+    POST    /outlets/<int:id>   {'pduid': pduid,
                             'towername': towername, 'outlet': outlet }  Will update the details of outlet
-    DELETE  /outlet_groups/outlets/<int:id>      Deletes the outlet from database
+    DELETE  /outlets/<int:id>      Deletes the outlet from database
 """
 
 
@@ -180,7 +186,7 @@ class PduoutletAPI(Resource):
         if not outlet:
             return {'message': 'outlet with id %s does not exist' % id},\
                     NOT_FOUND
-        return {'outlets': [{'pdu_ip': pduipfromid(outlet.pdu_id),
+        return {'outlet': [{'pdu_ip': pduipfromid(outlet.pdu_id),
                              'id': outlet.id,
                              'tower': outlet.towername,
                              'outlet': outlet.outlet}]}
@@ -251,7 +257,10 @@ class GroupsAPI(Resource):
         group = Group(name)
         db.session.add(group)
         db.session.commit()
-        return {'Success': 'added group %s' % name}, CREATED
+        return {'group_id': group.id,
+                'group_name': name,
+                'location': url_for('groupings_group', groupid=group.id,
+                                     _external=True)}, CREATED
 
 
 """

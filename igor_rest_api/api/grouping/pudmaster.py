@@ -184,7 +184,7 @@ class Pdu_obj():
         try:
             z = amperage_A%1
             z = amperage_B%1
-            return [amperage_A, amperage_B]
+            return [int(amperage_A), int(amperage_B)]
         except:
             return ['Error', 'Error']
 
@@ -196,6 +196,6 @@ class Pdu_obj():
         amperage_value = self.getCmd(amperage_oid)
         try:
             z = amperage_value%1
-            return amperage_value
+            return int(amperage_value)
         except:
             return 'Error'

@@ -17,8 +17,8 @@ from pudmaster import Pdu_obj
 
 
 """
-    GET     /group/<int:groupid>        Returns the Status of Outlets belonging to the outletgrouping
-    POST    /group/<int:groupid> {'action': Status } Changes the Status of outlets belonging to outletgrouping
+    GET     /outlet_groups/<int:groupid>/control       Returns the Status of Outlets belonging to the outletgrouping
+    POST    /outlet_groups/<int:groupid>/control  {'action': Status } Changes the Status of outlets belonging to outletgrouping
 """
 
 
@@ -45,20 +45,30 @@ class Groupcontrol(Resource):
                 outlets = query_group(groupid)
 
         states = []
+        amperages = []
         for outlet in outlets:
             pdu = Pdu_obj(outlet[0], 161, outlet[1])
             state = pdu.get_outlet_status(outlet[2], outlet[3])
+            amperage = pdu.get_outlet_amperage(outlet[2], outlet[3])
 
             if state == 'Error':
                 states.append("unable to get data")
             else:
                 states.append(state)
 
+            if amperage == 'Error':
+                amperages.append('unable to get data')
+            else:
+                amperages.append(amperage)
+
         state_dict = {}
         for i in range(len(outlets)):
             state_dict[str(outlets[i][0])+" "+str(outlets[i][2])+" "+str(outlets[i][3])] = states[i]
 
-        return {'Status': state_dict}
+        amperage_dict = {}
+        for i in range(len(outlets)):
+            amperage_dict[str(outlets[i][0])+" "+str(outlets[i][2])+" "+str(outlets[i][3])] = amperages[i]
+        return {'Status': state_dict, 'amperages': amperage_dict}
 
     def post(self, groupid):
         args = self.reqparse.parse_args()
@@ -92,8 +102,8 @@ class Groupcontrol(Resource):
 
 
 """
-    GET     /outlet/<int:outletid>                       Returns the Status of outlet
-    POST    /outlet/<int:outletid> {'action': status }   Changes the Status of outlet
+    GET     /outlet/<int:outletid>/control                       Returns the Status of outlet
+    POST    /outlet/<int:outletid>/control {'action': status }   Changes the Status of outlet
 """
 
 
@@ -118,6 +128,7 @@ class Outletcontrol(Resource):
                 outlet = outlet_details(outletid)
         pdu = Pdu_obj(outlet[0], 161, outlet[1])
         state = pdu.get_outlet_status(outlet[2], outlet[3])
+        amperage = pdu.get_outlet_amperage(outlet[2], outlet[3])
 
         states = []
         if state == 'Error':
@@ -125,8 +136,14 @@ class Outletcontrol(Resource):
         else:
             states.append(state)
 
+        if amperage == 'Error':
+            amperage = 'unable to fetch data'
+        else:
+            amperage = amperage
+
         state_dict = {}
         state_dict[str(outlet[0])+" "+str(outlet[2])+" "+str(outlet[3])] = states[0]
+        state_dict['amperage'] = amperage
 
         return {'Status': state_dict}
 
