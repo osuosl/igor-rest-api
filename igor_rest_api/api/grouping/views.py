@@ -30,6 +30,9 @@ class PdudetailsAPI(Resource):
         self.reqparse.add_argument('ip', type=str, required=True,
                                    help='No ip provided',
                                    location='json')
+        self.reqparse.add_argument('fqdn', type=str, required=True,
+                                   help='No fqdn provided',
+                                   location='json')
         self.reqparse.add_argument('access_string', type=str, required=True,
                                    help='No access_string provided',
                                    location='json')
@@ -38,7 +41,8 @@ class PdudetailsAPI(Resource):
     def get(self):
         pdus = Pdudetails.query.all()
         return {'pdus': [{'id': pdu.id,
-                          'ip': pdu.ip}
+                          'ip': pdu.ip,
+                          'fqdn' : pdu.fqdn}
                          for pdu in pdus]}
 
     def post(self):
@@ -46,15 +50,17 @@ class PdudetailsAPI(Resource):
 
         ip = args['ip']
         access_string = args['access_string']
+        fqdn = args['fqdn']
         if Pdudetails.query.filter_by(ip=ip).first() is not None:
             return {'message': 'Pdu %s exists' % ip}, BAD_REQUEST
         else:
-            pdu = Pdudetails(ip, access_string)
+            pdu = Pdudetails(ip, fqdn, access_string)
             db.session.add(pdu)
             try:
                 db.session.commit()
                 return {'pdu_ip': pdu.ip,
                         'pdu_id': pdu.id,
+                        'pdu_fqdn': pdu.fqdn,
                         'location': url_for('groupings_pdu', ip=pdu.ip,
                                             _external=True)}, CREATED
             except IntegrityError as e:
@@ -74,8 +80,11 @@ class PdudetailAPI(Resource):
 
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('access_string', type=str, required=True,
+        self.reqparse.add_argument('access_string', type=str, required=False,
                                    help='No access_string provided',
+                                   location='json')
+        self.reqparse.add_argument('ip', type=str, required=False,
+                                   help='No ip provided',
                                    location='json')
         super(PdudetailAPI, self).__init__()
 
@@ -84,6 +93,7 @@ class PdudetailAPI(Resource):
         if not pdu:
             return {'message': 'Pdu %s does not exist' % ip}, NOT_FOUND
         return {'Pdudetails': [{'id': pdu.id,
+                                'fqdn': pdu.fqdn,
                                 'ip': pdu.ip}]}
 
     def delete(self, ip):
@@ -102,10 +112,14 @@ class PdudetailAPI(Resource):
         pdu = Pdudetails.query.filter_by(ip=ip).first()
 
         access_string = args['access_string']
+        ip = args['ip']
         if not pdu:
             return {'message': 'Pdu %s does not exist' % ip}, NOT_FOUND
         else:
-            pdu.access_string = access_string
+            if not access_string is None:
+                pdu.access_string = access_string
+            if not ip is None :
+                pdu.ip = ip 
             db.session.add(pdu)
             db.session.commit()
             return {'message': 'Updated entry for pdu %s' % pdu.ip}

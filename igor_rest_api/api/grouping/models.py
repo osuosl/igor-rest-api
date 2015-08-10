@@ -18,10 +18,12 @@ class Group(db.Model):
 class Pdudetails(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ip = db.Column(db.String(70), unique=True)
+    fqdn = db.Column(db.String(70), unique=True)
     access_string = db.Column(db.String(70))
 
-    def __init__(self, ip, access_string):
+    def __init__(self, ip, fqdn, access_string):
         self.ip = ip
+        self.fqdn = fqdn
         self.access_string = access_string
 
 

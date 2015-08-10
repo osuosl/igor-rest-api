@@ -22,51 +22,61 @@
 Only root can manage pdus
 Create a new pdu entry  
 ```
-$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"ip": "10.0.1.33","access_string":"string"}' http://localhost:5000/outlet_groups/pdu
+$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"ip": "10.0.1.37","access_string":"string","fqdn":"testfqdn"}' http://localhost:5000/outlet_groups/pdu
 HTTP/1.0 201 CREATED
 Content-Type: application/json
-Content-Length: 118
+Content-Length: 147
 Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Thu, 16 Jul 2015 04:17:15 GMT
+Date: Mon, 10 Aug 2015 09:24:23 GMT
 
 {
-    "location": "http://localhost:5000/outlet_groups/pdu/10.0.1.33", 
-    "pdu_id": 1, 
-    "pdu_ip": "10.0.1.33"
+    "location": "http://localhost:5000/outlet_groups/pdu/10.0.1.37", 
+    "pdu_fqdn": "testfqdn", 
+    "pdu_id": 2, 
+    "pdu_ip": "10.0.1.37"
 }
 ```
 View all pdu's 
 ```
 $curl -i -u root:root -X GET http://localhost:5000/outlet_groups/pdu
+
 HTTP/1.0 200 OK
 Content-Type: application/json
-Content-Length: 96
+Content-Length: 228
 Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Wed, 15 Jul 2015 04:04:56 GMT
+Date: Mon, 10 Aug 2015 09:25:15 GMT
 
 {
     "pdus": [
         {
+            "fqdn": "test", 
             "id": 1, 
             "ip": "10.0.1.33"
+        }, 
+        {
+            "fqdn": "testfqdn", 
+            "id": 2, 
+            "ip": "10.0.1.37"
         }
     ]
 }
 ```
 View details of pdu with ip 10.0.1.33
 ```
-$curl -i -u root:root  -X GET http://localhost:5000/outlet_groups/pdu/10.0.1.33
+$curl -i -u root:root  -X GET http://localhost:5000/outlet_groups/pdu/10.0.1.37
+
 HTTP/1.0 200 OK
 Content-Type: application/json
-Content-Length: 102
+Content-Length: 135
 Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Wed, 15 Jul 2015 04:05:53 GMT
+Date: Mon, 10 Aug 2015 09:26:06 GMT
 
 {
     "Pdudetails": [
         {
-            "id": 1, 
-            "ip": "10.0.1.33"
+            "fqdn": "testfqdn", 
+            "id": 2, 
+            "ip": "10.0.1.37"
         }
     ]
 }
@@ -413,11 +423,13 @@ Date: Wed, 15 Jul 2015 05:08:15 GMT
     "users": [
         {
             "location": "http://localhost:5000/outlet_groups/users/1", 
-            "userid": 1
+            "userid": 1,
+            "username": "root"
         }, 
         {
             "location": "http://localhost:5000/outlet_groups/users/2", 
-            "userid": 2
+            "userid": 2,
+            "username": "user1"
         }
     ]
 }

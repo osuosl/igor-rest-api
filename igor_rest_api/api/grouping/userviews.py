@@ -32,14 +32,15 @@ class GroupingusersAPI(Resource):
         super(GroupingusersAPI, self).__init__()
 
     def get(self):
-        userids = []
+        users = []
         for user in Userdetails.query.all():
-            userids.append(user.id)
-        return {'users': [{'userid': userid,
+            users.append(user)
+        return {'users': [{'userid': user.id,
+                           'username': user.username,
                            'location': url_for('groupingsuser',
-                                               userid=userid,
+                                               userid=user.id,
                                                _external=True)}
-                          for userid in userids]}
+                          for user in users]}
 
     def post(self):
         args = self.reqparse.parse_args()
@@ -84,6 +85,7 @@ class GroupinguserAPI(Resource):
             return {'message': 'Userid %d does not exist' % userid}, NOT_FOUND
         else:
             return {'username': user.username,
+                    'userid' : user.id,
                     'location': url_for('groupingsuser',
                                         userid=user.id, _external=True)}
 
