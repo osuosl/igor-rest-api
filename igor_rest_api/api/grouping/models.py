@@ -89,6 +89,14 @@ class Useroutletsgroups(db.Model):
         self.userid = userid
         self.outletgroupid = outletgroupid
 
+class UserPdus(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    userid = db.Column(db.Integer, db.ForeignKey('Userdetails.id'))
+    pduid = db.Column(db.Integer, db.ForeignKey('Pdudetails.id'))
+
+    def __init__(self, userid, pduid):
+        self.userid = userid
+        self.pduid = pduid
 
 def create_grouping_root_user():
     # Create root user

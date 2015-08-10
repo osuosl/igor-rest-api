@@ -101,8 +101,16 @@ class PdudetailAPI(Resource):
         if not pdu:
             return {'message': 'Pdu %s does not exist' % ip}, NOT_FOUND
         else:
-            db.session.add(pdu)
-            db.session.commit()
+            # delete outlets associatied with pdu
+            outlets = Outlets.query.filter_by(pdu_id=pdu.id).all()
+            for outlet in outlets:
+                # delete groups associatied with outlets
+                groupoutlets = Groupoutlets.query.filter_by(outlet_id=outlet.id).all()
+                for groupoutlet in groupoutlets:
+                    db.session.delete(groupoutlet)
+                    db.session.commit()
+                db.session.delete(outlet)
+                db.session.commit()
             db.session.delete(pdu)
             db.session.commit()
             return {'message': 'Pdu %s deleted' % pdu.ip}
@@ -211,8 +219,11 @@ class PduoutletAPI(Resource):
             return {'message': 'outlet with id %s does not exist' % id},\
                     NOT_FOUND
         else:
-            db.session.add(outlet)
-            db.session.commit()
+            # delete the groups associatied with groups
+            groupoutlets = Groupoutlets.query.filter_by(outlet_id=outlet.id).all()
+            for groupoutlet in groupoutlets:
+                db.session.delete(groupoutlet)
+                db.session.commit()
             db.session.delete(outlet)
             db.session.commit()
             return {'message': 'outlet with id %s deleted' % outlet.id}

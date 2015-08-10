@@ -101,8 +101,10 @@ class GroupinguserAPI(Resource):
         if not user:
             return {'message': 'User %s does not exist' % username}, NOT_FOUND
         else:
-            db.session.add(user)
-            db.session.commit()
+            useroutlets = Useroutletsgroups.query.filter_by(userid=userid).all()
+            for useroutlet in useroutlets:
+                db.session.delete(useroutlet)
+                db.session.commit()
             db.session.delete(user)
             db.session.commit()
             return {'message': 'User %s deleted' % user.username}
