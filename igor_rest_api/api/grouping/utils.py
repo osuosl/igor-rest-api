@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# This file useful utilites which can be used in views
+# This file provides useful utilites which can be used in views
 
 from igor_rest_api.api.grouping.models import (
     Group, Pdudetails, Outlets,

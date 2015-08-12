@@ -3,8 +3,8 @@
 /outlet_groups/users               GET => list, POST => create 
 /outlet_groups/users/<id>/         POST => edit, DELETE => delete 
 /outlet_groups/login               GET =>  return a auth token
-/outlet_groups/pdu                 GET => list 
-                  /<ip>/           POST => create, edit, DELETE => delete
+/pdu                               GET => list 
+    /<ip>/                         POST => create, edit, DELETE => delete
 /outlets                           GET => list, POST => create
         /<id>                      GET => details, POST => update, DELETE => delete
         /<id>/control              GET => details , POST {'action': <action(on,off,reboot> } => change state
@@ -22,7 +22,7 @@
 Only root can manage pdus
 Create a new pdu entry  
 ```
-$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"ip": "10.0.1.37","access_string":"string","fqdn":"testfqdn"}' http://localhost:5000/outlet_groups/pdu
+$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"ip": "10.0.1.37","access_string":"string","fqdn":"testfqdn"}' http://localhost:5000/pdu
 HTTP/1.0 201 CREATED
 Content-Type: application/json
 Content-Length: 147
@@ -30,7 +30,7 @@ Server: Werkzeug/0.9.6 Python/2.7.10
 Date: Mon, 10 Aug 2015 09:24:23 GMT
 
 {
-    "location": "http://localhost:5000/outlet_groups/pdu/10.0.1.37", 
+    "location": "http://localhost:5000/pdu/10.0.1.37", 
     "pdu_fqdn": "testfqdn", 
     "pdu_id": 2, 
     "pdu_ip": "10.0.1.37"
@@ -38,7 +38,7 @@ Date: Mon, 10 Aug 2015 09:24:23 GMT
 ```
 View all pdu's 
 ```
-$curl -i -u root:root -X GET http://localhost:5000/outlet_groups/pdu
+$
 
 HTTP/1.0 200 OK
 Content-Type: application/json
@@ -63,7 +63,7 @@ Date: Mon, 10 Aug 2015 09:25:15 GMT
 ```
 View details of pdu with ip 10.0.1.33
 ```
-$curl -i -u root:root  -X GET http://localhost:5000/outlet_groups/pdu/10.0.1.37
+$curl -i -u root:root  -X GET http://localhost:5000/pdu/10.0.1.37
 
 HTTP/1.0 200 OK
 Content-Type: application/json
@@ -76,14 +76,15 @@ Date: Mon, 10 Aug 2015 09:26:06 GMT
         {
             "fqdn": "testfqdn", 
             "id": 2, 
-            "ip": "10.0.1.37"
+            "ip": "10.0.1.37",
+            "users": []
         }
     ]
 }
 ```
 Modify access_string of pdu with ip 10.0.1.33
 ```
-$curl -i -u root:root -X PUT -H "Content-Type: application/json" -d '{"access_string":"newstring"}' http://localhost:5000/outlet_groups/pdu/10.0.1.33
+$curl -i -u root:root -X PUT -H "Content-Type: application/json" -d '{"access_string":"newstring"}' http://localhost:5000/pdu/10.0.1.33
 HTTP/1.0 200 OK
 Content-Type: application/json
 Content-Length: 53
@@ -96,7 +97,7 @@ Date: Wed, 15 Jul 2015 04:12:19 GMT
 ```
 Delete pdu with ip 10.0.1.33
 ```
-$curl -i -u root:root -X DELETE http://localhost:5000/outlet_groups/pdu/10.0.1.33
+$curl -i -u root:root -X DELETE http://localhost:5000/pdu/10.0.1.33
 HTTP/1.0 200 OK
 Content-Type: application/json
 Content-Length: 43
@@ -109,7 +110,7 @@ Date: Wed, 15 Jul 2015 04:13:58 GMT
 ```
 Add a pdu for further testing 
 ```
-$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"ip": "10.0.1.33","access_string":"osl"}' http://localhost:5000/outlet_groups/pdu
+$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"ip": "10.0.1.33","access_string":"osl"}' http://localhost:5000/pdu
 HTTP/1.0 201 CREATED
 Content-Type: application/json
 Content-Length: 118
@@ -281,7 +282,8 @@ Date: Wed, 15 Jul 2015 04:54:58 GMT
         {
             "id": 1, 
             "name": "group1", 
-            "outlets": []
+            "outlets": [],
+            "users": []
         }
     ]
 }
@@ -362,7 +364,8 @@ Date: Wed, 15 Jul 2015 05:04:08 GMT
                     "A", 
                     1
                 ]
-            ]
+            ],
+            "users": []
         }
     ]
 }
@@ -519,6 +522,36 @@ Date: Wed, 15 Jul 2015 05:13:59 GMT
 {
     "message": "Relation between Userid 2 and outletgroup 1 is deleted"
 }
+
+```
+
+To add user1(userid 2) permission to control pdu with id 1
+```
+$curl -i -u root:root  -X PUT http://localhost:5000/pdu/1/2
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 39
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Wed, 12 Aug 2015 12:54:32 GMT
+
+{
+    "Success": "added user to pdu"
+}
+```
+
+To remove user1(userid 2) from pdu 1 userlist
+```
+$curl -i -u root:root  -X DELETE http://localhost:5000/pdu/1/2
+
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 43
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Wed, 12 Aug 2015 13:01:53 GMT
+
+{
+    "Success": "deleted user from pdu"
+}
 ```
 ## controlling state of outletgrouping
 
@@ -590,5 +623,83 @@ Date: Wed, 15 Jul 2015 05:26:26 GMT
         "10.0.1.33 A 1": "on", 
         "amperage": 63
     }
+}
+```
+
+## controlling state of Pdu
+To get status of all outlets of pdu with ip 10.0.1.37 
+
+```
+$curl -i -u root:root  -X GET http://localhost:5000/pdu/10.0.1.37/control
+
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 903
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Wed, 12 Aug 2015 13:12:51 GMT
+
+{
+    "amperage": {
+        "tower_A": 63, 
+        "tower_B": 88
+    }, 
+    "status": {
+        "TowerA_Outlet1": "off", 
+        "TowerA_Outlet2": "on", 
+        "TowerA_Outlet3": "off", 
+        "TowerA_Outlet4": "off", 
+        "TowerA_Outlet5": "off", 
+        "TowerA_Outlet6": "off", 
+        "TowerA_Outlet7": "on", 
+        "TowerA_Outlet8": "on", 
+        "TowerB_Outlet1": "off", 
+        "TowerB_Outlet10": "on", 
+        "TowerB_Outlet11": "on", 
+        "TowerB_Outlet12": "on", 
+        "TowerB_Outlet13": "on", 
+        "TowerB_Outlet14": "on", 
+        "TowerB_Outlet15": "on", 
+        "TowerB_Outlet16": "on", 
+        "TowerB_Outlet2": "off", 
+        "TowerB_Outlet3": "on", 
+        "TowerB_Outlet4": "off", 
+        "TowerB_Outlet5": "on", 
+        "TowerB_Outlet6": "on", 
+        "TowerB_Outlet7": "on", 
+        "TowerB_Outlet8": "on", 
+        "TowerB_Outlet9": "on"
+    }
+}
+```
+
+To get status of outlet 2 tower B of pdu 10.0.1.37
+```
+$curl -i -u root:root  -X GET http://localhost:5000/pdu/10.0.1.33/B/2/control
+
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 44
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Wed, 12 Aug 2015 13:14:13 GMT
+
+{
+    "amperage": 88, 
+    "state": "off"
+}
+```
+
+To change the state of outlet 2 tower B of pdu 10.0.1.37
+avilable actions are on, off, reboot
+```
+$curl -i -u root:root  -H "Content-Type: application/json" -X POST -d '{"action":"on"}' http://localhost:5000/pdu/10.0.1.37/B/2/control
+
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 35
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Wed, 12 Aug 2015 13:16:16 GMT
+
+{
+    "Success": "Changed state"
 }
 ```

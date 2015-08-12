@@ -65,7 +65,7 @@ class GroupingusersAPI(Resource):
 """
     GET     /outlet_groups/users/:userid    details for user <userid>
     DELETE  /outlet_groups/users/:userid    Deletes user <userid>
-    PUT     /outlet_groups/users/:userid    Updates password of <userid>
+    POST     /outlet_groups/users/:userid    Updates password of <userid>
 """
 
 
@@ -104,6 +104,10 @@ class GroupinguserAPI(Resource):
             useroutlets = Useroutletsgroups.query.filter_by(userid=userid).all()
             for useroutlet in useroutlets:
                 db.session.delete(useroutlet)
+                db.session.commit()
+            userpdus = Userpdus.query.filter_by(userid=userid).all()
+            for userpdu in userpdus:
+                db.session.delete(userpdu)
                 db.session.commit()
             db.session.delete(user)
             db.session.commit()

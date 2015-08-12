@@ -89,10 +89,10 @@ class Useroutletsgroups(db.Model):
         self.userid = userid
         self.outletgroupid = outletgroupid
 
-class UserPdus(db.Model):
+class Userpdus(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    userid = db.Column(db.Integer, db.ForeignKey('Userdetails.id'))
-    pduid = db.Column(db.Integer, db.ForeignKey('Pdudetails.id'))
+    userid = db.Column(db.Integer, db.ForeignKey('userdetails.id'))
+    pduid = db.Column(db.Integer, db.ForeignKey('pdudetails.id'))
 
     def __init__(self, userid, pduid):
         self.userid = userid

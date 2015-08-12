@@ -8,7 +8,8 @@ from igor_rest_api.api.grouping.login import rootauth
 from igor_rest_api.api.constants import *
 from igor_rest_api.api.grouping.models import (
         Group, Pdudetails, Outlets,
-        Groupoutlets)
+        Groupoutlets, Userpdus,
+        Useroutletsgroups, Userdetails)
 from igor_rest_api.api.grouping.utils import (
         query_group, pduipfromid,
         query_group_outlets)
@@ -16,9 +17,9 @@ from igor_rest_api.db import db
 
 
 """
-    GET     /outlet_groups/pdu       Returns the list of all the pdus and ther ids
-    POST    /outlet_groups/pdu {'ip': pdu_ip_address,
-                    'access_string': pdu_access_string }  Creates a new pdu entry in database
+    GET     /pdu       Returns the list of all the pdus and ther ids
+    POST    /pdu       {'ip': pdu_ip_address,
+                        'access_string': pdu_access_string }  Creates a new pdu entry in database
 """
 
 
@@ -68,10 +69,10 @@ class PdudetailsAPI(Resource):
 
 
 """
-    GET      /outlet_groups/pdu/<string:ip>        Returns the details of pdu with specified ip address
-    PUT      /outlet_groups/pdu/<string:ip>
-                 {'access_string': new_access_string }   Will update the access_string of pdu with speciifed ip address
-    DELETE   /outlet_groups/pdu/<string:ip>       Deletes the pdu from database
+    GET      /pdu/<string:ip>        Returns the details of pdu with specified ip address
+    PUT      /pdu/<string:ip>        {'access_string': new_access_string }
+                                Will update the access_string of pdu with speciifed ip address
+    DELETE   /pdu/<string:ip>       Deletes the pdu from database
 """
 
 
@@ -92,7 +93,13 @@ class PdudetailAPI(Resource):
         pdu = Pdudetails.query.filter_by(ip=ip).first()
         if not pdu:
             return {'message': 'Pdu %s does not exist' % ip}, NOT_FOUND
+        users = Userpdus.query.filter_by(pduid=pdu.id).all()
+        userids = [ user.userid for user in users]
+        usernames = []
+        for userid in userids:
+            usernames.append(Userdetails.query.filter_by(id=userid).first().username)
         return {'Pdudetails': [{'id': pdu.id,
+                                'users': usernames,
                                 'fqdn': pdu.fqdn,
                                 'ip': pdu.ip}]}
 
@@ -110,6 +117,11 @@ class PdudetailAPI(Resource):
                     db.session.delete(groupoutlet)
                     db.session.commit()
                 db.session.delete(outlet)
+                db.session.commit()
+            #delete users associatied with pdu
+            userpdus = Userpdus.query.filter_by(pduid=pdu.id).all()
+            for userpdu in userpdus:
+                db.session.delete(userpdu)
                 db.session.commit()
             db.session.delete(pdu)
             db.session.commit()
@@ -289,9 +301,9 @@ class GroupsAPI(Resource):
 
 
 """
-    GET     /outlet_groups/groups/<int:id>       Returns the details of groupname and outlets belonging to outletgrouping
-    PUT     /outlet_groups/groups/<int:id>  {'name': new_group_name }   Updates the name of outletgrouping
-    DELETE  /outlet_groups/groups/<int:id>       Deletes the outletgrouping from database
+    GET     /outlet_groups/<int:id>       Returns the details of groupname and outlets belonging to outletgrouping
+    PUT     /outlet_groups/<int:id>  {'name': new_group_name }   Updates the name of outletgrouping
+    DELETE  /outlet_groups/<int:id>       Deletes the outletgrouping from database
 """
 
 
@@ -310,8 +322,14 @@ class GroupAPI(Resource):
         if not group:
             return {'message': 'group with id %s does not exist' % groupid}, NOT_FOUND
         outlets = query_group_outlets(groupid)
+        users = Useroutletsgroups.query.filter_by(outletgroupid=groupid).all()
+        userids = [ user.userid for user in users]
+        usernames = []
+        for userid in userids:
+            usernames.append(Userdetails.query.filter_by(id=userid).first().username)
         return {'group': [{'id': group.id,
                            'name': group.name,
+                           'users': usernames,
                            'outlets': outlets}]}
 
     def post(self, groupid):
@@ -341,11 +359,10 @@ class GroupAPI(Resource):
 
 
 """
-    GET     /outlet_groups/groupings              Returns the associations between outletgroupings and outlets
-    POST    /outlet_groups/groupings {'outlet_id': outlet_id,
-                            'group_id': group_id }      Creates association between group_id and outlet_id
-    DELETE  /outlet_groups/groupings {'outlet_id': outlet_id,
-                            'group_id': group_id }      Deletes the association between group_id and outlet_id
+
+    POST    /outlet_groups/<int:groupid>/<int:outletid>   Creates association between group_id and outlet_id
+    DELETE  /outlet_groups/<int:groupid>/<int:outletid>     Deletes the association between group_id and outlet_id
+
 """
 
 
@@ -368,3 +385,37 @@ class GroupoutletsAPI(Resource):
             db.session.delete(groupoutlet)
             db.session.commit()
             return {'Success': 'deleted outlet from grouping'}
+
+"""
+
+    PUT    /pdu/<int:pduid>/<int:userid>   Creates association between pdu and user
+    DELETE  /pdu/<int:pduid>/<int:userid>   Deletes the association between pdu and user
+
+"""
+
+
+class UserpdusAPI(Resource):
+    decorators = [rootauth.login_required]
+
+
+    def put(self, pduid, userid):
+        check = Userpdus.query.filter_by(pduid=pduid,
+                                         userid=userid).first()
+        print check
+        if not check:
+            new = Userpdus(userid, pduid)
+            db.session.add(new)
+            db.session.commit()
+            return {'Success': 'added user to pdu'}
+        else:
+            return {'Error': 'Relation already exists'}
+
+    def delete(self, pduid, userid):
+        relation = Userpdus.query.filter_by(pduid=pduid,
+                                                   userid=userid).first()
+        if not relation:
+            return {'message': 'grouping doesn"t exist'}
+        else:
+            db.session.delete(relation)
+            db.session.commit()
+            return {'Success': 'deleted user from pdu'}
