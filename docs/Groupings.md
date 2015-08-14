@@ -38,7 +38,7 @@ Date: Mon, 10 Aug 2015 09:24:23 GMT
 ```
 View all pdu's 
 ```
-$
+$curl -i -u root:root  -X GET http://localhost:5000/pdu
 
 HTTP/1.0 200 OK
 Content-Type: application/json
