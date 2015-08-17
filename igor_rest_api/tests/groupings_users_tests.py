@@ -94,6 +94,7 @@ class GroupingUsersTestCase(IgorApiTestCase):
         self.create_test_user()
 
         expected_user_info = {u'username': self.test_user,
+                               'userid' : 2,
                               u'location': url_for('groupingsuser',
                                                    userid=2,
                                                    _external=True),}
@@ -101,6 +102,7 @@ class GroupingUsersTestCase(IgorApiTestCase):
         response = self.client.get(url_for('groupingsuser', userid=2),
                                    headers=self.headers)
         self.assert_200(response)
+        print response.json
         self.assertEqual(response.json, expected_user_info,
                         'Unexpected user info after adding user')
 

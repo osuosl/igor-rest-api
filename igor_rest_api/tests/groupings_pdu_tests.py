@@ -10,8 +10,8 @@ from igor_rest_api.api.grouping.models import Pdudetails
 
 class GroupingsPdusTestCase(IgorApiTestCase):
 
-    test_host = 'test_host'
     test_ip = 'test_ip'
+    test_fqdn = 'test_fqdn'
     test_pass = 'test_pass'
 
     def setUp(self):
@@ -28,7 +28,7 @@ class GroupingsPdusTestCase(IgorApiTestCase):
                         ('Content-Type', 'application/json')]
 
     def create_test_pdu(self):
-        pdu = Pdudetails(self.test_ip, self.test_pass)
+        pdu = Pdudetails(self.test_ip, self.test_fqdn, self.test_pass)
         self.db.session.add(pdu)
         self.db.session.commit()
 
@@ -44,6 +44,7 @@ class GroupingsPdusTestCase(IgorApiTestCase):
 
     def test_add_pdu(self):
         data = json.dumps({'ip': self.test_ip,
+                           'fqdn': self.test_fqdn,
                            'access_string': self.test_pass})
 
         response = self.client.post(url_for('groupings_pdus'),
@@ -61,10 +62,11 @@ class GroupingsPdusTestCase(IgorApiTestCase):
         self.create_test_pdu()
 
         test_ip = 'test_ip'
+        test_fqdn = 'test_fqdn'
         expected_existing_user_response = {u'message': u'Pdu %s exists'
                                                        % test_ip}
 
-        data = json.dumps({'ip': self.test_ip,
+        data = json.dumps({'ip': self.test_ip, 'fqdn': self.test_fqdn,
                            'access_string': 'new_pass'})
 
         response = self.client.post(url_for('groupings_pdus'),

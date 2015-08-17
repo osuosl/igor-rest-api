@@ -7,7 +7,9 @@ from igor_rest_api.api.constants import *
 from igor_rest_api.db import db
 
 from .login import rootauth, auth
-from .models import Userdetails, Useroutletsgroups
+from .models import (
+        Userdetails, Useroutletsgroups,
+        Userpdus )
 
 
 # User management endpoints
