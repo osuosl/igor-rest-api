@@ -6,7 +6,7 @@ from flask import url_for
 
 from . import IgorApiTestCase
 from igor_rest_api.config import ROOT_USER, ROOT_PASS
-from igor_rest_api.api.grouping.models import Pdudetails
+from igor_rest_api.api.grouping.models import PduDetails
 
 class GroupingsPdusTestCase(IgorApiTestCase):
 
@@ -28,7 +28,7 @@ class GroupingsPdusTestCase(IgorApiTestCase):
                         ('Content-Type', 'application/json')]
 
     def create_test_pdu(self):
-        pdu = Pdudetails(self.test_ip, self.test_fqdn, self.test_pass)
+        pdu = PduDetails(self.test_ip, self.test_fqdn, self.test_pass)
         self.db.session.add(pdu)
         self.db.session.commit()
 
@@ -53,7 +53,7 @@ class GroupingsPdusTestCase(IgorApiTestCase):
         self.assertStatus(response, 201)
         print response.json
 
-        pdu = Pdudetails.query.filter_by(ip=self.test_ip).first()
+        pdu = PduDetails.query.filter_by(ip=self.test_ip).first()
         self.assertIsNotNone(pdu)
         self.assertEqual(self.test_ip, pdu.ip)
         self.assertEqual(self.test_pass, pdu.access_string)
@@ -86,7 +86,6 @@ class GroupingsPdusTestCase(IgorApiTestCase):
         self.assert_200(response)
 
         Pdudetails = response.json['Pdudetails'][0]
-        print Pdudetails
         self.assertEqual(self.test_ip, Pdudetails['ip'],
                          'unexpected pdu ip')
 
@@ -114,6 +113,6 @@ class GroupingsPdusTestCase(IgorApiTestCase):
         self.assert_200(response)
 
         print response.json
-        pdu = Pdudetails.query.filter_by(ip=self.test_ip).first()
+        pdu = PduDetails.query.filter_by(ip=self.test_ip).first()
         self.assertIsNotNone(pdu)
         self.assertEqual(new_pass, pdu.access_string)

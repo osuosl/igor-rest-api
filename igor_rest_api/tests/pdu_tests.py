@@ -6,7 +6,7 @@ from flask import url_for
 
 from . import IgorApiTestCase
 from igor_rest_api.config import ROOT_USER, ROOT_PASS
-from igor_rest_api.api.grouping.models import Pdudetails
+from igor_rest_api.api.grouping.models import PduDetails
 
 class PdusTestCase(IgorApiTestCase):
 
@@ -29,7 +29,7 @@ class PdusTestCase(IgorApiTestCase):
                         ('Content-Type', 'application/json')]
 
     def create_test_pdu(self):
-        pdu = Pdudetails(self.test_ip, self.test_fqdn, self.test_pass)
+        pdu = PduDetails(self.test_ip, self.test_fqdn, self.test_pass)
         self.db.session.add(pdu)
         self.db.session.commit()
 
@@ -55,7 +55,7 @@ class PdusTestCase(IgorApiTestCase):
         print response.json
         self.assertStatus(response, 201)
 
-        pdu = Pdudetails.query.filter_by(ip=self.test_ip).first()
+        pdu = PduDetails.query.filter_by(ip=self.test_ip).first()
         self.assertIsNotNone(pdu)
         self.assertEqual(self.test_ip, pdu.ip)
         self.assertEqual(self.test_pass, pdu.access_string)
@@ -102,7 +102,7 @@ class PdusTestCase(IgorApiTestCase):
                                       headers=self.headers)
         self.assert_200(response)
 
-        pdu = Pdudetails.query.filter_by(ip=self.test_ip).first()
+        pdu = PduDetails.query.filter_by(ip=self.test_ip).first()
         self.assertIsNone(pdu)
 
     def test_remove_nonexistent_pdu(self):
@@ -125,7 +125,7 @@ class PdusTestCase(IgorApiTestCase):
         self.assert_200(response)
 
         print response.json
-        pdu = Pdudetails.query.filter_by(ip= new_ip).first()
+        pdu = PduDetails.query.filter_by(ip= new_ip).first()
         self.assertIsNotNone(pdu)
         self.assertEqual(new_ip, pdu.ip)
         self.assertEqual(new_pass, pdu.access_string)

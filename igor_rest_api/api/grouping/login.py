@@ -10,7 +10,7 @@ from flask.ext.restful import Resource
 
 from igor_rest_api.api.constants import *
 
-from .models import Userdetails
+from .models import UserDetails
 
 auth = HTTPBasicAuth()
 
@@ -18,9 +18,9 @@ auth = HTTPBasicAuth()
 # Authentication, writes g.user
 @auth.verify_password
 def validate_password(username_or_token, password):
-    user = Userdetails.validate_auth_token(username_or_token)
+    user = UserDetails.validate_auth_token(username_or_token)
     if not user:
-        user = Userdetails.query.filter_by(username=username_or_token).first()
+        user = UserDetails.query.filter_by(username=username_or_token).first()
         if not user or not user.check_password(password):
             return False
     g.user = user
@@ -32,9 +32,9 @@ rootauth = HTTPBasicAuth()
 
 @rootauth.verify_password
 def validate_password(username_or_token, password):
-    user = Userdetails.validate_auth_token(username_or_token)
+    user = UserDetails.validate_auth_token(username_or_token)
     if not user:
-        user = Userdetails.query.filter_by(username=username_or_token).first()
+        user = UserDetails.query.filter_by(username=username_or_token).first()
         if not user or not user.check_password(password):
                 return False
         elif user.username != 'root':

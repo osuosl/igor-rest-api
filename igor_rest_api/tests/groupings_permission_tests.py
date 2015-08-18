@@ -7,8 +7,8 @@ from flask import url_for
 from . import IgorApiTestCase
 from igor_rest_api.config import ROOT_USER, ROOT_PASS
 from igor_rest_api.api.grouping.models import Group
-from igor_rest_api.api.grouping.models import Useroutletsgroups
-from igor_rest_api.api.grouping.models import Userdetails
+from igor_rest_api.api.grouping.models import UserOutletsGroups
+from igor_rest_api.api.grouping.models import UserDetails
 
 
 class GroupingsPermissionsTestCase(IgorApiTestCase):
@@ -37,7 +37,7 @@ class GroupingsPermissionsTestCase(IgorApiTestCase):
         return group
 
     def create_test_user(self, username='test_user'):
-        user = Userdetails(username, self.test_pass)
+        user = UserDetails(username, self.test_pass)
         self.db.session.add(user)
         self.db.session.commit()
         return user
@@ -54,8 +54,8 @@ class GroupingsPermissionsTestCase(IgorApiTestCase):
 
         grouping1 = self.create_test_grouping(name='grouping_one')
         grouping2 = self.create_test_grouping(name='grouping_two')
-        relation1 = Useroutletsgroups(user.id,grouping1.id)
-        relation2 = Useroutletsgroups(user.id,grouping2.id)
+        relation1 = UserOutletsGroups(user.id,grouping1.id)
+        relation2 = UserOutletsGroups(user.id,grouping2.id)
         self.db.session.add(relation1)
         self.db.session.add(relation2)
         self.db.session.commit()
@@ -83,7 +83,7 @@ class GroupingsPermissionsTestCase(IgorApiTestCase):
                                    headers=self.headers)
         self.assertStatus(response, 201)
 
-        group = Useroutletsgroups.query.filter_by(userid=user.id).first()
+        group = UserOutletsGroups.query.filter_by(userid=user.id).first()
         self.assertEquals(group.id, grouping.id,
                           'expected grouping to exist for user')
 
@@ -93,7 +93,7 @@ class GroupingsPermissionsTestCase(IgorApiTestCase):
         user = self.create_test_user()
 
 
-        relation = Useroutletsgroups(user.id,grouping.id)
+        relation = UserOutletsGroups(user.id,grouping.id)
         self.db.session.add(relation)
         self.db.session.commit()
         data = json.dumps({'outletgroupid': grouping.id,'userid': user.id})
@@ -104,6 +104,6 @@ class GroupingsPermissionsTestCase(IgorApiTestCase):
         print response.json
         self.assert_200(response, 'unexpected error deleting relation')
 
-        relation = Useroutletsgroups.query.filter_by(userid=user.id,outletgroupid=grouping.id).first()
+        relation = UserOutletsGroups.query.filter_by(userid=user.id,outletgroupid=grouping.id).first()
         self.assertEquals(None, relation)
 

@@ -15,7 +15,7 @@ class Group(db.Model):
         self.name = name
 
 
-class Pdudetails(db.Model):
+class PduDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ip = db.Column(db.String(70), unique=True)
     fqdn = db.Column(db.String(70), unique=True)
@@ -29,7 +29,7 @@ class Pdudetails(db.Model):
 
 class Outlets(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    pdu_id = db.Column(db.Integer, db.ForeignKey('pdudetails.id'))
+    pdu_id = db.Column(db.Integer, db.ForeignKey('pdu_details.id'))
     towername = db.Column(db.String(2))
     outlet = db.Column(db.Integer)
 
@@ -39,7 +39,7 @@ class Outlets(db.Model):
         self.outlet = outlet
 
 
-class Groupoutlets(db.Model):
+class GroupOutlets(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
     outlet_id = db.Column(db.Integer, db.ForeignKey('outlets.id'))
@@ -49,7 +49,7 @@ class Groupoutlets(db.Model):
         self.outlet_id = outlet_id
 
 
-class Userdetails(db.Model):
+class UserDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True)
     pwdhash = db.Column(db.String(54))
@@ -77,22 +77,22 @@ class Userdetails(db.Model):
             return None
         except BadSignature:
             return None
-        return Userdetails.query.get(data['id'])
+        return UserDetails.query.get(data['id'])
 
 
-class Useroutletsgroups(db.Model):
+class UserOutletsGroups(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    userid = db.Column(db.Integer, db.ForeignKey('userdetails.id'))
+    userid = db.Column(db.Integer, db.ForeignKey('user_details.id'))
     outletgroupid = db.Column(db.Integer, db.ForeignKey('group.id'))
 
     def __init__(self, userid, outletgroupid):
         self.userid = userid
         self.outletgroupid = outletgroupid
 
-class Userpdus(db.Model):
+class UserPdus(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    userid = db.Column(db.Integer, db.ForeignKey('userdetails.id'))
-    pduid = db.Column(db.Integer, db.ForeignKey('pdudetails.id'))
+    userid = db.Column(db.Integer, db.ForeignKey('user_details.id'))
+    pduid = db.Column(db.Integer, db.ForeignKey('pdu_details.id'))
 
     def __init__(self, userid, pduid):
         self.userid = userid
@@ -101,9 +101,9 @@ class Userpdus(db.Model):
 def create_grouping_root_user():
     # Create root user
     with app.app_context():
-        root_user = Userdetails.query.filter_by(username=app.config['ROOT_USER']).first()
+        root_user = UserDetails.query.filter_by(username=app.config['ROOT_USER']).first()
         if not root_user:
-            root_user = Userdetails(app.config['ROOT_USER'],
+            root_user = UserDetails(app.config['ROOT_USER'],
                                     app.config['ROOT_PASS'])
             db.session.add(root_user)
             db.session.commit()

@@ -7,8 +7,8 @@ from sqlalchemy.exc import IntegrityError
 from igor_rest_api.api.grouping.login import auth
 from igor_rest_api.api.constants import *
 from igor_rest_api.api.grouping.models import (
-        Group, Pdudetails, Outlets, Groupoutlets,
-        Useroutletsgroups, Userpdus)
+        Group, PduDetails, Outlets, GroupOutlets,
+        UserOutletsGroups, UserPdus)
 from igor_rest_api.api.grouping.utils import (
         query_group, outlet_details,
         check_outlet_permission)
@@ -37,7 +37,7 @@ class Groupcontrol(Resource):
             outlets = query_group(groupid)
 
         else:
-            role = Useroutletsgroups.query.filter_by(userid=g.user.id,
+            role = UserOutletsGroups.query.filter_by(userid=g.user.id,
                                                      outletgroupid=groupid).first()
             if role is None:
                 return {'message': 'User does not have necessary permission'}
@@ -78,7 +78,7 @@ class Groupcontrol(Resource):
             outlets = query_group(groupid)
 
         else:
-            role = Useroutletsgroups.query.filter_by(userid=g.user.id,
+            role = UserOutletsGroups.query.filter_by(userid=g.user.id,
                                                      outletgroupid=groupid).first()
             if role is None:
                 return {'message': 'User does not have necessary permission'}
@@ -191,16 +191,16 @@ class Pducontrol(Resource):
 
     def get(self, pduip):
         if g.user.username == 'root':
-            pdu = Pdudetails.query.filter_by(ip=pduip).first()
+            pdu = PduDetails.query.filter_by(ip=pduip).first()
             if pdu is None:
                 return {'Error': 'pdu doesn"t exist'}
             else:
                 pdu_access_string = pdu.access_string
         else:
-            pdu = Pdudetails.query.filter_by(ip=pduip).first()
+            pdu = PduDetails.query.filter_by(ip=pduip).first()
             if pdu is None:
                 return {'Error': 'pdu doesn"t exist'}
-            relation = Userpdus.query.filter_by(userid=g.user.id, pduid=pdu.id).first()
+            relation = UserPdus.query.filter_by(userid=g.user.id, pduid=pdu.id).first()
             if relation is None:
                 return {'message': 'User does not have neccesary permission'}
             pdu_access_string = pdu.access_string
@@ -228,16 +228,16 @@ class Pducontrol(Resource):
 
         status = args['action']
         if g.user.username == 'root':
-            pdu = Pdudetails.query.filter_by(ip=pduip).first()
+            pdu = PduDetails.query.filter_by(ip=pduip).first()
             if pdu is None:
                 return {'Error': 'pdu doesn"t exist'}
             else:
                 pdu_access_string = pdu.access_string
         else:
-            pdu = Pdudetails.query.filter_by(ip=pduip).first()
+            pdu = PduDetails.query.filter_by(ip=pduip).first()
             if pdu is None:
                 return {'Error': 'pdu doesn"t exist'}
-            relation = Userpdus.query.filter_by(userid=g.user.id, pduid=pdu.id).first()
+            relation = UserPdus.query.filter_by(userid=g.user.id, pduid=pdu.id).first()
             if relation is None:
                 return {'message': 'User does not have neccesary permission'}
             pdu_access_string = pdu.access_string
@@ -262,16 +262,16 @@ class Pduoutletcontrol(Resource):
 
     def get(self, pduip, tower, outlet):
         if g.user.username == 'root':
-            pdu = Pdudetails.query.filter_by(ip=pduip).first()
+            pdu = PduDetails.query.filter_by(ip=pduip).first()
             if pdu is None:
                 return {'Error': 'pdu doesn"t exist'}
             else:
                 pdu_access_string = pdu.access_string
         else:
-            pdu = Pdudetails.query.filter_by(ip=pduip).first()
+            pdu = PduDetails.query.filter_by(ip=pduip).first()
             if pdu is None:
                 return {'Error': 'pdu doesn"t exist'}
-            relation = Userpdus.query.filter_by(userid=g.user.id, pduid=pdu.id).first()
+            relation = UserPdus.query.filter_by(userid=g.user.id, pduid=pdu.id).first()
             if relation is None:
                 return {'message': 'User does not have neccesary permission'}
             pdu_access_string = pdu.access_string
@@ -292,16 +292,16 @@ class Pduoutletcontrol(Resource):
 
         status = args['action']
         if g.user.username == 'root':
-            pdu = Pdudetails.query.filter_by(ip=pduip).first()
+            pdu = PduDetails.query.filter_by(ip=pduip).first()
             if pdu is None:
                 return {'Error': 'pdu doesn"t exist'}
             else:
                 pdu_access_string = pdu.access_string
         else:
-            pdu = Pdudetails.query.filter_by(ip=pduip).first()
+            pdu = PduDetails.query.filter_by(ip=pduip).first()
             if pdu is None:
                 return {'Error': 'pdu doesn"t exist'}
-            relation = Userpdus.query.filter_by(userid=g.user.id, pduid=pdu.id).first()
+            relation = UserPdus.query.filter_by(userid=g.user.id, pduid=pdu.id).first()
             if relation is None:
                 return {'message': 'User does not have neccesary permission'}
             pdu_access_string = pdu.access_string

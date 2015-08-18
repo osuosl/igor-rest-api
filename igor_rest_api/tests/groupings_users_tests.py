@@ -6,7 +6,7 @@ from flask import url_for
 
 from . import IgorApiTestCase
 from igor_rest_api.config import ROOT_USER, ROOT_PASS
-from igor_rest_api.api.grouping.models import Userdetails
+from igor_rest_api.api.grouping.models import UserDetails
 
 class GroupingUsersTestCase(IgorApiTestCase):
 
@@ -27,7 +27,7 @@ class GroupingUsersTestCase(IgorApiTestCase):
                         ('Content-Type', 'application/json')]
 
     def create_test_user(self):
-        user = Userdetails(self.test_user, self.test_pass)
+        user = UserDetails(self.test_user, self.test_pass)
         self.db.session.add(user)
         self.db.session.commit()
 
@@ -70,7 +70,7 @@ class GroupingUsersTestCase(IgorApiTestCase):
         self.assertEqual(response.json, expected_new_user_response,
                          'Unexpected response when adding a new user')
 
-        user = Userdetails.query.filter_by(username=self.test_user).first()
+        user = UserDetails.query.filter_by(username=self.test_user).first()
         self.assertIsNotNone(user)
         self.assertTrue(user.check_password(self.test_pass))
 
@@ -128,7 +128,7 @@ class GroupingUsersTestCase(IgorApiTestCase):
                                       headers=self.headers)
         self.assert_200(response)
 
-        user = Userdetails.query.filter_by(username=self.test_user).first()
+        user = UserDetails.query.filter_by(username=self.test_user).first()
         self.assertIsNone(user)
 
     def test_remove_nonexistent_user(self):
@@ -146,5 +146,5 @@ class GroupingUsersTestCase(IgorApiTestCase):
                                    headers=self.headers)
         self.assert_200(response)
 
-        user = Userdetails.query.filter_by(username=self.test_user).first()
+        user = UserDetails.query.filter_by(username=self.test_user).first()
         self.assertTrue(user.check_password('newpass'))

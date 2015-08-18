@@ -8,8 +8,8 @@ from igor_rest_api.db import db
 
 from .login import rootauth, auth
 from .models import (
-        Userdetails, Useroutletsgroups,
-        Userpdus )
+        UserDetails, UserOutletsGroups,
+        UserPdus )
 
 
 # User management endpoints
@@ -35,7 +35,7 @@ class GroupingusersAPI(Resource):
 
     def get(self):
         users = []
-        for user in Userdetails.query.all():
+        for user in UserDetails.query.all():
             users.append(user)
         return {'users': [{'userid': user.id,
                            'username': user.username,
@@ -51,10 +51,10 @@ class GroupingusersAPI(Resource):
             return {'message': 'only root can add users'}
         username = args['username']
         password = args['password']
-        if Userdetails.query.filter_by(username=username).first() is not None:
+        if UserDetails.query.filter_by(username=username).first() is not None:
             return {'message': 'User %s exists' % username}, BAD_REQUEST
         else:
-            user = Userdetails(username, password)
+            user = UserDetails(username, password)
             db.session.add(user)
             db.session.commit()
             return {'username': user.username,
@@ -82,7 +82,7 @@ class GroupinguserAPI(Resource):
         super(GroupinguserAPI, self).__init__()
 
     def get(self, userid):
-        user = Userdetails.query.filter_by(id=userid).first()
+        user = UserDetails.query.filter_by(id=userid).first()
         if not user:
             return {'message': 'Userid %d does not exist' % userid}, NOT_FOUND
         else:
@@ -99,15 +99,15 @@ class GroupinguserAPI(Resource):
         if userid == 1:
             return {'message': 'root user cannot be deleted'}
 
-        user = Userdetails.query.filter_by(id=userid).first()
+        user = UserDetails.query.filter_by(id=userid).first()
         if not user:
             return {'message': 'User %s does not exist' % username}, NOT_FOUND
         else:
-            useroutlets = Useroutletsgroups.query.filter_by(userid=userid).all()
+            useroutlets = UserOutletsGroups.query.filter_by(userid=userid).all()
             for useroutlet in useroutlets:
                 db.session.delete(useroutlet)
                 db.session.commit()
-            userpdus = Userpdus.query.filter_by(userid=userid).all()
+            userpdus = UserPdus.query.filter_by(userid=userid).all()
             for userpdu in userpdus:
                 db.session.delete(userpdu)
                 db.session.commit()
@@ -121,7 +121,7 @@ class GroupinguserAPI(Resource):
                     g.user.username, userid)}
 
         args = self.reqparse.parse_args()
-        user = Userdetails.query.filter_by(id=userid).first()
+        user = UserDetails.query.filter_by(id=userid).first()
         password = args['password']
         if not user:
             return {'message': 'Userid %s does not exist' % userid}, NOT_FOUND
@@ -160,7 +160,7 @@ class Usergroups(Resource):
         super(Usergroups, self).__init__()
 
     def get(self):
-        relations = Useroutletsgroups.query.all()
+        relations = UserOutletsGroups.query.all()
         return {'relations': [{'userid': relation.userid,
                                'outletgroupid': relation.outletgroupid}
                               for relation in relations]}
@@ -171,16 +171,16 @@ class Usergroups(Resource):
         if g.user.username != 'root':
             return {'message': 'only root can add users to outlet groups'}
         userid = args['userid']
-        user = Userdetails.query.filter_by(id=userid).first()
+        user = UserDetails.query.filter_by(id=userid).first()
         if user is None:
             return {'message': 'User does not exist'}
         outletgroupid = args['outletgroupid']
-        if Useroutletsgroups.query.filter_by(userid=userid,
+        if UserOutletsGroups.query.filter_by(userid=userid,
                                              outletgroupid=outletgroupid).first() is not None:
             return {'message': 'Relation between Userid %s and outletgroup %s exists' % (
                                         userid, outletgroupid)}, BAD_REQUEST
         else:
-            relation = Useroutletsgroups(userid, outletgroupid)
+            relation = UserOutletsGroups(userid, outletgroupid)
             db.session.add(relation)
             db.session.commit()
             return {'username': user.username,
@@ -195,12 +195,12 @@ class Usergroups(Resource):
             return {'message': 'only root can delete relations '}
         userid = args['userid']
         outletgroupid = args['outletgroupid']
-        if Useroutletsgroups.query.filter_by(userid=userid,
+        if UserOutletsGroups.query.filter_by(userid=userid,
                                              outletgroupid=outletgroupid).first() is None:
             return {'message': 'Relation between Userid %s and outletgroup %s doesn"t exists' % (
                                         userid, outletgroupid)}, BAD_REQUEST
         else:
-            relation = Useroutletsgroups.query.filter_by(userid=userid,
+            relation = UserOutletsGroups.query.filter_by(userid=userid,
                                                          outletgroupid=outletgroupid).first()
             db.session.delete(relation)
             db.session.commit()
@@ -225,11 +225,11 @@ class Usergroup(Resource):
         super(Usergroup, self).__init__()
 
     def get(self, id):
-        user = Userdetails.query.filter_by(id=id).first()
+        user = UserDetails.query.filter_by(id=id).first()
         if user is None:
             return {'message': 'User with id %s does not exist' % id}, NOT_FOUND
         username = user.username
-        groups = Useroutletsgroups.query.filter_by(userid=id).all()
+        groups = UserOutletsGroups.query.filter_by(userid=id).all()
 
         return {'username: %s ' % username:
                 [{'groupid': group.outletgroupid,

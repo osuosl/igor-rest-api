@@ -4,7 +4,7 @@ from requests.auth import HTTPBasicAuth
 from requests.exceptions import ConnectionError
 
 
-class Pducmdapp(cmd.Cmd):
+class PduCmdapp(cmd.Cmd):
     
     username = None
     password = None
@@ -704,4 +704,4 @@ class Pducmdapp(cmd.Cmd):
         return True
 
 if __name__ == '__main__':
-    Pducmdapp().cmdloop()
+    PduCmdapp().cmdloop()
