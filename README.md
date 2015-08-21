@@ -1,7 +1,7 @@
 Igor REST API
 =============
 
-A REST API providing endpoints and functions for IPMI control of OSU-OSL machines.
+A REST API providing endpoints and functions for IPMI, SNMP control of OSU-OSL machines.
 
 ## Quickstart
 
@@ -34,7 +34,8 @@ Running the test server locally can be done using `manage.py` or `igor-manage`
 
 ## API Documentation
 
-   * [API Usage Examples](docs/EXAMPLES.md)
+   * [IPMI API Usage Examples](docs/EXAMPLES.md)
+   * [SNMP API Usage Examples](docs/Groupings.md)
 
 ## Resources
 
