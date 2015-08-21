@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from .auth.views import LoginAPI
-from .snmp.views import SNMPLoginAPI
 from .ipmi.views import (
     MachineChassisAPI, MachineChassisPowerAPI,
     MachineSensorsAPI, MachineSensorAPI,
@@ -10,39 +9,37 @@ from .ipmi.views import (
     MachineChassisPolicyAPI, MachineSelAPI, MachineSelTimeAPI,
     MachineSelRecordsAPI,
 )
-from .snmpcontrol.views import Pdustatus, OutletStatus
 from .machines.views.machines import MachineAPI, MachinesAPI
-from .pdus.views.pdus import PduAPI, PdusAPI
 from .machines.views.permissions import (
     UserMachineAPI, UserMachinesAPI,
     MachineUserAPI, MachineUsersAPI,
 )
-from .pdus.views.permissions import (
-        UserPduAPI, UserPdusAPI,
-        PduUserAPI, PduUsersAPI,
-)
 from .auth.views import UserAPI, UsersAPI
-from .snmp.views import SNMPUserAPI, SNMPUsersAPI
 from .views import RootAPI
 from .grouping.views import (
         PdudetailsAPI, PdudetailAPI,
         PduoutletsAPI, PduoutletAPI,
         GroupsAPI, GroupAPI,
-        GroupoutletsAPI,
+        GroupoutletsAPI, UserpdusAPI
 )
 from .grouping.userviews import (
         GroupingusersAPI, GroupinguserAPI,
         Usergroups, GroupingsloginAPI,
         Usergroup
 )
-from .grouping.controlviews import Groupcontrol, Outletcontrol
+from .grouping.controlviews import (
+        Groupcontrol, Outletcontrol,
+        Pducontrol, Pduoutletcontrol
+        )
 
 
 resources = [
             (RootAPI, '/', 'root'),
-            (PdudetailsAPI, '/outlet_groups/pdu', 'groupings_pdus'),
-            (PdudetailAPI, '/outlet_groups/pdu/<string:ip>', 'groupings_pdu'),
+            (PdudetailsAPI, '/pdu', 'groupings_pdus'),
+            (PdudetailAPI, '/pdu/<string:ip>', 'groupings_pdu'),
             (PduoutletsAPI, '/outlets', 'groupings_outlets'),
+            (Pducontrol, '/pdu/<string:pduip>/control', 'pdu_control'),
+            (Pduoutletcontrol, '/pdu/<string:pduip>/<string:tower>/<int:outlet>/control', 'pdu_outlet_control'),
             (PduoutletAPI,
                 '/outlets/<int:id>',
                 'groupings_outlet'),
@@ -51,14 +48,12 @@ resources = [
             (GroupoutletsAPI,
                 '/outlet_groups/<int:groupid>/<int:outletid>',
                 'groupings_groupings'),
+            (UserpdusAPI,'/pdu/<int:pduid>/<int:userid>','user_pdus'),
             (Groupcontrol, '/outlet_groups/<int:groupid>/control', 'groupings_control'),
             (Outletcontrol, '/outlet/<int:outletid>/control', 'outlets_control'),
             (LoginAPI, '/login', 'login'),
-            (SNMPLoginAPI, '/snmplogin', 'snmplogin'),
             (UsersAPI, '/users', 'users'),
             (UserAPI, '/users/<string:username>', 'user'),
-            (SNMPUsersAPI, '/snmpusers', 'snmpusers'),
-            (SNMPUserAPI, '/snmpusers/<string:username>', 'snmpuser'),
             (GroupingusersAPI, '/outlet_groups/users', 'groupingsusers'),
             (GroupinguserAPI,
                 '/outlet_groups/users/<int:userid>',
@@ -70,12 +65,6 @@ resources = [
                 'groupings_user'),
             (MachinesAPI, '/machines', 'machines'),
             (MachineAPI, '/machines/<string:hostname>', 'machine'),
-            (PdusAPI, '/pdus', 'pdus'),
-            (PduAPI, '/pdus/<string:ip>', 'pdu'),
-            (Pdustatus, '/pdu/<string:ip>/status', 'pdustatus'),
-            (OutletStatus,
-                '/pdu/<string:ip>/<string:tower>/<int:outlet>',
-                'Outletstatus'),
             (UserMachinesAPI, '/users/<string:username>/machines',
                 'user_machines'),
             (UserMachineAPI,
@@ -86,16 +75,6 @@ resources = [
             (MachineUserAPI,
                 '/machines/<string:hostname>/users/<string:username>',
                 'machine_user'),
-            (UserPdusAPI, '/snmpusers/<string:username>/pdus',
-                'user_pdus'),
-            (UserPduAPI,
-                '/snmpusers/<string:username>/pdus/<string:ip>',
-                'user_pdu'),
-            (PduUsersAPI, '/pdus/<string:ip>/users',
-                'pdu_users'),
-            (PduUserAPI,
-                '/pdus/<string:ip>/users/<string:username>',
-                'pdu_user'),
             (MachineChassisAPI,
                 '/machines/<string:hostname>/chassis',
                 'machine_chassis'),

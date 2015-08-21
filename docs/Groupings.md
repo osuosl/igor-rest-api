@@ -1,79 +1,138 @@
+
 # API SUMMARY 
+
+Api assumes the existance of root user with password as root , to modify the details of root user edit the [config file](../igor_rest_api/config.py)
+
+[Pdu management endpoints](#pdu-management)
+
 ```
+
+/pdu                               GET => list, POST => create
+    /<ip>/                         PUT => edit, DELETE => delete
+    /<pdu_id>/<user_id>            PUT => add user to pdu, DELETE => remove user from pdu users
+
+```
+
+[Outlet management endpoints](#outlet-management)
+
+```
+
+/outlets                           GET => list, POST => create
+        /<id>                      GET => details, POST => update, DELETE => delete
+
+```
+
+[outlet groupings management endpoints](#outlet-groupings-management)
+
+```
+
+/outlet_groups                      GET => list, POST => create
+    /<id>                           GET => details, POST => modify
+    /<id>/<outletid>                PUT,DELETE => edit (add/remove outlets via edit)
+    /<id>/users/groups              GET => list users
+                                    POST {'username': <name>, ...} => add user to group
+                                    DELETE {'username': <name>, ...} => remove user from group
+
+```
+
+[User management endpoints](#user-management)
+
+```
+
 /outlet_groups/users               GET => list, POST => create 
 /outlet_groups/users/<id>/         POST => edit, DELETE => delete 
 /outlet_groups/login               GET =>  return a auth token
-/outlet_groups/pdu                 GET => list 
-                  /<ip>/           POST => create, edit, DELETE => delete
-/outlets                           GET => list, POST => create
-        /<id>                      GET => details, POST => update, DELETE => delete
-        /<id>/control              GET => details , POST {'action': <action(on,off,reboot> } => change state
-/outlet_groups                      GET => list, POST => create
-    /<id>/<outletid>                PUT,DELETE => edit (add/remove outlets via edit)
+
+```
+
+[Control state of pdu, outlet](#controlling-state-of-pdu)
+
+```
+
+/pdu/<pdu_ip>/control              GET => details , POST {'action': <action(on,off,reboot> } => change state
+/outlets/<id>/control              GET => details , POST {'action': <action(on,off,reboot> } => change state
+        
+```
+
+[Control state of outletgrouping](#controlling-state-of-outletgrouping)
+
+```
+
+/outlet_groups 
     /<id>/control                   POST {'action': <action>, 'value': <value>, ...} => status of action
     /<id>/query                     GET => defined set of info on outlets in group (voltage, load, etc)
-    /<id>/users                     GET => list users
-                                    POST {'username': <name>, ...} => add user to group
-    /<id>/users/<user_id>    DELETE => remove user from group
+
 ```
+
 
 # API Usage EXamples
 ## Pdu management
 Only root can manage pdus
 Create a new pdu entry  
 ```
-$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"ip": "10.0.1.33","access_string":"string"}' http://localhost:5000/outlet_groups/pdu
+$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"ip": "10.0.1.37","access_string":"string","fqdn":"testfqdn"}' http://localhost:5000/pdu
 HTTP/1.0 201 CREATED
 Content-Type: application/json
-Content-Length: 118
+Content-Length: 147
 Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Thu, 16 Jul 2015 04:17:15 GMT
+Date: Mon, 10 Aug 2015 09:24:23 GMT
 
 {
-    "location": "http://localhost:5000/outlet_groups/pdu/10.0.1.33", 
-    "pdu_id": 1, 
-    "pdu_ip": "10.0.1.33"
+    "location": "http://localhost:5000/pdu/10.0.1.37", 
+    "pdu_fqdn": "testfqdn", 
+    "pdu_id": 2, 
+    "pdu_ip": "10.0.1.37"
 }
 ```
 View all pdu's 
 ```
-$curl -i -u root:root -X GET http://localhost:5000/outlet_groups/pdu
+$curl -i -u root:root  -X GET http://localhost:5000/pdu
+
 HTTP/1.0 200 OK
 Content-Type: application/json
-Content-Length: 96
+Content-Length: 228
 Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Wed, 15 Jul 2015 04:04:56 GMT
+Date: Mon, 10 Aug 2015 09:25:15 GMT
 
 {
     "pdus": [
         {
+            "fqdn": "test", 
             "id": 1, 
             "ip": "10.0.1.33"
+        }, 
+        {
+            "fqdn": "testfqdn", 
+            "id": 2, 
+            "ip": "10.0.1.37"
         }
     ]
 }
 ```
 View details of pdu with ip 10.0.1.33
 ```
-$curl -i -u root:root  -X GET http://localhost:5000/outlet_groups/pdu/10.0.1.33
+$curl -i -u root:root  -X GET http://localhost:5000/pdu/10.0.1.37
+
 HTTP/1.0 200 OK
 Content-Type: application/json
-Content-Length: 102
+Content-Length: 135
 Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Wed, 15 Jul 2015 04:05:53 GMT
+Date: Mon, 10 Aug 2015 09:26:06 GMT
 
 {
     "Pdudetails": [
         {
-            "id": 1, 
-            "ip": "10.0.1.33"
+            "fqdn": "testfqdn", 
+            "id": 2, 
+            "ip": "10.0.1.37",
+            "users": []
         }
     ]
 }
 ```
 Modify access_string of pdu with ip 10.0.1.33
 ```
-$curl -i -u root:root -X PUT -H "Content-Type: application/json" -d '{"access_string":"newstring"}' http://localhost:5000/outlet_groups/pdu/10.0.1.33
+$curl -i -u root:root -X PUT -H "Content-Type: application/json" -d '{"access_string":"newstring"}' http://localhost:5000/pdu/10.0.1.33
 HTTP/1.0 200 OK
 Content-Type: application/json
 Content-Length: 53
@@ -86,7 +145,7 @@ Date: Wed, 15 Jul 2015 04:12:19 GMT
 ```
 Delete pdu with ip 10.0.1.33
 ```
-$curl -i -u root:root -X DELETE http://localhost:5000/outlet_groups/pdu/10.0.1.33
+$curl -i -u root:root -X DELETE http://localhost:5000/pdu/10.0.1.33
 HTTP/1.0 200 OK
 Content-Type: application/json
 Content-Length: 43
@@ -99,7 +158,7 @@ Date: Wed, 15 Jul 2015 04:13:58 GMT
 ```
 Add a pdu for further testing 
 ```
-$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"ip": "10.0.1.33","access_string":"osl"}' http://localhost:5000/outlet_groups/pdu
+$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"ip": "10.0.1.33","access_string":"osl"}' http://localhost:5000/pdu
 HTTP/1.0 201 CREATED
 Content-Type: application/json
 Content-Length: 118
@@ -112,6 +171,36 @@ Date: Thu, 16 Jul 2015 04:18:53 GMT
     "pdu_ip": "10.0.1.33"
 }
 ```
+
+To add user1(userid 2) permission to control pdu with id 1
+```
+$curl -i -u root:root  -X PUT http://localhost:5000/pdu/1/2
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 39
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Wed, 12 Aug 2015 12:54:32 GMT
+
+{
+    "Success": "added user to pdu"
+}
+```
+
+To remove user1(userid 2) from pdu 1 userlist
+```
+$curl -i -u root:root  -X DELETE http://localhost:5000/pdu/1/2
+
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 43
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Wed, 12 Aug 2015 13:01:53 GMT
+
+{
+    "Success": "deleted user from pdu"
+}
+```
+
 ## Outlet management
 Add outlet of pdu with id 1 , tower A and oulet number 1 to be managed
 ```
@@ -148,6 +237,7 @@ Date: Wed, 15 Jul 2015 04:29:55 GMT
     ]
 }
 ```
+
 View details of outlet with id 1
 ```
 $curl -i -u root:root -X GET http://localhost:5000/outlets/1
@@ -168,6 +258,7 @@ Date: Wed, 15 Jul 2015 04:31:57 GMT
     ]
 }
 ```
+
 Change details of outlet with id 1
 ```
 $curl -i -u root:root -H "Content-Type: application/json" -X POST -d '{"pduid":1,"towername":"B","outlet":8}' http://localhost:5000/outlets/1
@@ -181,6 +272,7 @@ Date: Wed, 15 Jul 2015 04:32:43 GMT
     "message": "Updated entry for outlet 1"
 }
 ```
+
 Delete outlet with id 1
 ```
 $curl -i -u root:root -X DELETE http://localhost:5000/outlets/1
@@ -194,35 +286,8 @@ Date: Wed, 15 Jul 2015 04:33:55 GMT
     "message": "outlet with id 1 deleted"
 }
 ```
-Add two outlets 
-```
-$curl -i -u root:root -H "Content-Type: application/json" -X POST -d '{"pduid":1,"towername":"A","outlet":1}' http://localhost:5000/outlets
-HTTP/1.0 201 CREATED
-Content-Type: application/json
-Content-Length: 106
-Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Thu, 16 Jul 2015 04:19:47 GMT
 
-{
-    "location": "http://localhost:5000/outlets/1", 
-    "outlet_id": 1, 
-    "outlet_ip": "10.0.1.33"
-}
-
-$curl -i -u root:root -H "Content-Type: application/json" -X POST -d '{"pduid":1,"towername":"B","outlet":3}' http://localhost:5000/outlets
-HTTP/1.0 201 CREATED
-Content-Type: application/json
-Content-Length: 106
-Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Thu, 16 Jul 2015 04:20:15 GMT
-
-{
-    "location": "http://localhost:5000/outlets/2", 
-    "outlet_id": 2, 
-    "outlet_ip": "10.0.1.33"
-}
-```
-## Group management
+## Outlet Groupings management
 Only root can create and manage groups
 Create new group with name group1
 ```
@@ -271,7 +336,8 @@ Date: Wed, 15 Jul 2015 04:54:58 GMT
         {
             "id": 1, 
             "name": "group1", 
-            "outlets": []
+            "outlets": [],
+            "users": []
         }
     ]
 }
@@ -317,8 +383,7 @@ Date: Thu, 16 Jul 2015 04:34:57 GMT
     "location": "http://localhost:5000/outlet_groups/1"
 }
 ```
-## Group-outlet management
-Only root can add outlets to group
+
 Add outlet with id 1 to group with id 1
 ```
 $curl -i -u root:root  -X PUT http://localhost:5000/outlet_groups/1/1
@@ -332,6 +397,7 @@ Date: Wed, 15 Jul 2015 05:03:33 GMT
     "Success": "added outlet to group"
 }
 ```
+
 To view details of group with id 1
 ```
 $curl -i -u root:root -X GET http://localhost:5000/outlet_groups/1
@@ -352,11 +418,13 @@ Date: Wed, 15 Jul 2015 05:04:08 GMT
                     "A", 
                     1
                 ]
-            ]
+            ],
+            "users": []
         }
     ]
 }
 ```
+
 To delete association between outlet_id 1 and group_id 1 from table
 ```
 $curl -i -u root:root  -X DELETE  http://localhost:5000/outlet_groups/1/1
@@ -370,6 +438,57 @@ Date: Wed, 15 Jul 2015 05:04:34 GMT
     "Success": "deleted outlet from grouping"
 }
 ```
+
+Add give user1 the permission to control group1
+```
+$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"outletgroupid":1, "userid":2}' http://localhost:5000/outlet_groups/user/groups
+HTTP/1.0 201 CREATED
+Content-Type: application/json
+Content-Length: 150
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Wed, 15 Jul 2015 05:11:24 GMT
+
+{
+    "grouping": "http://localhost:5000/outlet_groups/1", 
+    "location": "http://localhost:5000/outlet_groups/users/2", 
+    "username": "user1"
+}
+```
+
+To view all the relations between user and groups
+```
+$curl -i -u root:root -X GET http://localhost:5000/outlet_groups/user/groups
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 106
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Wed, 15 Jul 2015 05:13:30 GMT
+
+{
+    "relations": [
+        {
+            "outletgroupid": 1, 
+            "userid": 2
+        }
+    ]
+}
+```
+
+To delete relation between user1 and group1
+```
+$curl -i -u root:root -X DELETE -H "Content-Type: application/json" -d '{"outletgroupid":1, "userid":2}' http://localhost:5000/outlet_groups/user/groups
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 76
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Wed, 15 Jul 2015 05:13:59 GMT
+
+{
+    "message": "Relation between Userid 2 and outletgroup 1 is deleted"
+}
+
+```
+
 ## User management
 Only root can add new users
 To add user named user1 with password testpass
@@ -413,11 +532,13 @@ Date: Wed, 15 Jul 2015 05:08:15 GMT
     "users": [
         {
             "location": "http://localhost:5000/outlet_groups/users/1", 
-            "userid": 1
+            "userid": 1,
+            "username": "root"
         }, 
         {
             "location": "http://localhost:5000/outlet_groups/users/2", 
-            "userid": 2
+            "userid": 2,
+            "username": "user1"
         }
     ]
 }
@@ -448,66 +569,86 @@ Date: Wed, 15 Jul 2015 05:09:13 GMT
     "message": "User user1 deleted"
 }
 ```
-Create a new user
-``` 
-$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"username":"user1", "password":"testpass"}' http://localhost:5000/outlet_groups/users
-HTTP/1.0 201 CREATED
-Content-Type: application/json
-Content-Length: 92
-Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Wed, 15 Jul 2015 05:09:51 GMT
 
-{
-    "location": "http://localhost:5000/outlet_groups/users/2", 
-    "username": "user1"
-}
-```
-Add give user1 the permission to control group1
-```
-$curl -i -u root:root -X POST -H "Content-Type: application/json" -d '{"outletgroupid":1, "userid":2}' http://localhost:5000/outlet_groups/user/groups
-HTTP/1.0 201 CREATED
-Content-Type: application/json
-Content-Length: 150
-Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Wed, 15 Jul 2015 05:11:24 GMT
 
-{
-    "grouping": "http://localhost:5000/outlet_groups/1", 
-    "location": "http://localhost:5000/outlet_groups/users/2", 
-    "username": "user1"
-}
+## controlling state of Pdu
+To get status of all outlets of pdu with ip 10.0.1.37 
+
 ```
-To view all the relations between user and groups
-```
-$curl -i -u root:root -X GET http://localhost:5000/outlet_groups/user/groups
+$curl -i -u root:root  -X GET http://localhost:5000/pdu/10.0.1.37/control
+
 HTTP/1.0 200 OK
 Content-Type: application/json
-Content-Length: 106
+Content-Length: 903
 Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Wed, 15 Jul 2015 05:13:30 GMT
+Date: Wed, 12 Aug 2015 13:12:51 GMT
 
 {
-    "relations": [
-        {
-            "outletgroupid": 1, 
-            "userid": 2
-        }
-    ]
+    "amperage": {
+        "tower_A": 63, 
+        "tower_B": 88
+    }, 
+    "status": {
+        "TowerA_Outlet1": "off", 
+        "TowerA_Outlet2": "on", 
+        "TowerA_Outlet3": "off", 
+        "TowerA_Outlet4": "off", 
+        "TowerA_Outlet5": "off", 
+        "TowerA_Outlet6": "off", 
+        "TowerA_Outlet7": "on", 
+        "TowerA_Outlet8": "on", 
+        "TowerB_Outlet1": "off", 
+        "TowerB_Outlet10": "on", 
+        "TowerB_Outlet11": "on", 
+        "TowerB_Outlet12": "on", 
+        "TowerB_Outlet13": "on", 
+        "TowerB_Outlet14": "on", 
+        "TowerB_Outlet15": "on", 
+        "TowerB_Outlet16": "on", 
+        "TowerB_Outlet2": "off", 
+        "TowerB_Outlet3": "on", 
+        "TowerB_Outlet4": "off", 
+        "TowerB_Outlet5": "on", 
+        "TowerB_Outlet6": "on", 
+        "TowerB_Outlet7": "on", 
+        "TowerB_Outlet8": "on", 
+        "TowerB_Outlet9": "on"
+    }
 }
 ```
-To delete relation between user1 and group1
+
+To get status of outlet 2 tower B of pdu 10.0.1.37
 ```
-$curl -i -u root:root -X DELETE -H "Content-Type: application/json" -d '{"outletgroupid":1, "userid":2}' http://localhost:5000/outlet_groups/user/groups
+$curl -i -u root:root  -X GET http://localhost:5000/pdu/10.0.1.33/B/2/control
+
 HTTP/1.0 200 OK
 Content-Type: application/json
-Content-Length: 76
+Content-Length: 44
 Server: Werkzeug/0.9.6 Python/2.7.10
-Date: Wed, 15 Jul 2015 05:13:59 GMT
+Date: Wed, 12 Aug 2015 13:14:13 GMT
 
 {
-    "message": "Relation between Userid 2 and outletgroup 1 is deleted"
+    "amperage": 88, 
+    "state": "off"
 }
 ```
+
+To change the state of outlet 2 tower B of pdu 10.0.1.37
+avilable actions are on, off, reboot
+```
+$curl -i -u root:root  -H "Content-Type: application/json" -X POST -d '{"action":"on"}' http://localhost:5000/pdu/10.0.1.37/B/2/control
+
+HTTP/1.0 200 OK
+Content-Type: application/json
+Content-Length: 35
+Server: Werkzeug/0.9.6 Python/2.7.10
+Date: Wed, 12 Aug 2015 13:16:16 GMT
+
+{
+    "Success": "Changed state"
+}
+```
+
 ## controlling state of outletgrouping
 
 root user can control all the outlet groupings and individual outlets, normal user can control the outletgroupings associated with him , and individual outlets 
