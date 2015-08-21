@@ -32,7 +32,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
 
 `/pdu`
 
-   * `GET` 
+   * `GET` : will return the list of pdus
 
    ```
 {
@@ -51,7 +51,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
 }
    ```
 
-   * `POST`
+   * `POST` : will add new pdu to api database
 
    ```
     {
@@ -63,7 +63,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
 
 `/pdu/<pdu_ip>`
 
-   * `GET`
+   * `GET` : will return the details of pdu with specified ip
 
    ```
 {
@@ -78,7 +78,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
 }
 
    ```
-   * `DELETE` 
+   * `DELETE` : will delete the pdu from api database
 
    ```
 {
@@ -86,7 +86,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
 }
    ```
 
-   * `PUT`
+   * `PUT` : can be used to modify the access_string and ip address of pdu
 
    ```
     {
@@ -94,9 +94,9 @@ Data in post requests shoud be sent using json form , Api will return responses 
     }
    ```
 
-`/pdu/<pdu_ip><user_id>`
+`/pdu/<pdu_ip>/<user_id>`
 
-   * `PUT` 
+   * `PUT` : will associate user with specified user_id to pdu with pdu_ip and he can control pdu outlets
 
    ```
     {
@@ -104,7 +104,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
     }
    ```
 
-   * `DELETE`
+   * `DELETE` : will delete the association between user and pdu
 
    ```
     {
@@ -115,7 +115,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
 
 `/outlets`
 
-   * `GET`
+   * `GET` : will return the list of outlets which are being managed
 
    ```
     {
@@ -130,7 +130,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
     }
    ```
 
-   * `POST`
+   * `POST` : will create a new outlet entry in database
 
    ```
     {
@@ -143,7 +143,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
 
 `/outlets/<outlet_id>`
 
-   * `GET`
+   * `GET` : will return the details of outlet with specified id
 
     ```
     {
@@ -158,7 +158,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
     }
     ```
 
-   * `POST`
+   * `POST` : this can be used to modify the details of outlet
 
     ```
     {
@@ -168,7 +168,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
     }
     ```
 
-   * `DELETE`
+   * `DELETE` : will delete the outlet from list of outlets to be managed
 
     ```
     {
@@ -179,7 +179,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
 `/outlet_groups`
 
 
-   * `GET`
+   * `GET` : will return the list of all the outlet groupings 
 
    ```
 
@@ -194,7 +194,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
    ```
 
 
-   * `POST`
+   * `POST` : will create a new outlet grouping with specified name
 
    ```
     {       
@@ -202,9 +202,9 @@ Data in post requests shoud be sent using json form , Api will return responses 
     }
    ```
 
-`/outlet_groups/<outlet_id>`
+`/outlet_groups/<id>`
 
-   * `GET`
+   * `GET` : will return the details of specified outlet grouping
 
    ```
     {
@@ -219,7 +219,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
     }
    ```
 
-   * `POST`
+   * `POST` : this can be used to modify the name of outlet grouping
 
    ```
     {       
@@ -227,7 +227,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
     }
    ```
 
-   * `DELETE`
+   * `DELETE` : this will delete the outlet grouping from database
 
    ```
     {
@@ -237,7 +237,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
 
 `/outlet_groups/<id>/<outletid>`
 
-   * `PUT`
+   * `PUT` : will add the outlet with id as outletid to outlet grouping with specified id
 
    ```
     {
@@ -245,7 +245,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
     }
    ```
 
-   * `DELETE`
+   * `DELETE` : will remove the outlet from list of outlets belonging to outlet grouping
 
    ```
     {
@@ -253,9 +253,9 @@ Data in post requests shoud be sent using json form , Api will return responses 
     }
    ```
 
-`/outlet_groups/<id>/users/groups`
+`/outlet_groups/users/groups`
 
-   * `POST`
+   * `POST` : will add the user specified in post data to outlet grouping specified in post data
 
    ```
     {
@@ -264,7 +264,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
     }
    ```
 
-   * `DELETE`
+   * `DELETE` : will delete the association between user and outlet grouping as specified in json data request
 
    ```
     {
@@ -275,7 +275,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
 
 `/outlet_groups/users`
 
-   * `GET`
+   * `GET` : will return the list of users along with their userids
 
    ```
     {
@@ -294,7 +294,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
     }
    ```
 
-   * `POST`
+   * `POST` : will create a new user with specified username and password
 
    ```
     {
@@ -306,7 +306,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
 
 `/outlet_groups/users/<user_id>`
 
-   * `POST`
+   * `POST` : this can be used to update the password of user 
 
    ```
     { 
@@ -314,7 +314,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
     }
    ```
 
-   * `DELETE` 
+   * `DELETE` : will delete the user with user_id from database
 
    ```
     {
@@ -324,7 +324,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
 
 `/pdu/<pdu_ip>/control`
 
-   * `GET`
+   * `GET` : will return the amperage and status of all the outlets of specified pdu
 
    ```
     {
@@ -363,7 +363,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
 
 `/pdu/<pdu_ip>/<tower>/<outlet>/control`
 
-   * `GET`
+   * `GET` : will return the amperage and state of specified outlet 
 
    ```
     {
@@ -372,7 +372,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
     }
    ```
 
-   * `POST`
+   * `POST` : this can be used to change the status of specified outlet
 
    ```
     {
@@ -382,7 +382,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
 
 `/outlet_groups/<id>/control`
 
-   * `POST`
+   * `POST` : this can be used to change the status of specified outlet grouping
 
    ```
     {
@@ -390,7 +390,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
     }
    ```
 
-   * `GET`
+   * `GET` : this can be used to get the status and amperages of all the outlets present in outlet grouping
 
    ```
     {
@@ -408,7 +408,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
 
 `/outlet/<id>/control`
 
-   * `POST`
+   * `POST` : this can be used to control the outlet with specified outlet id
 
    ```
     {
@@ -416,7 +416,7 @@ Data in post requests shoud be sent using json form , Api will return responses 
     }
    ```
 
-   * `GET`
+   * `GET` : will return the amperage and status of outlet with specified outlet id
 
    ```
     {
