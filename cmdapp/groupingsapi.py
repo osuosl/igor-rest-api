@@ -1,15 +1,18 @@
-import cmd, ast
-import requests, json, pprint
+import cmd
+import ast
+import requests
+import json
+import pprint
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import ConnectionError
 
 
 class PduCmdapp(cmd.Cmd):
-    
+
     username = None
     password = None
     login = None
-    
+
     # User management
     def do_set_userdetails(self, line):
         try:
@@ -29,7 +32,8 @@ class PduCmdapp(cmd.Cmd):
         else:
             try:
                 r = requests.get('http://localhost:5000/outlet_groups/login',
-                                auth=HTTPBasicAuth(self.username, self.password))
+                                 auth=HTTPBasicAuth(self.username,
+                                                    self.password))
                 if r.status_code == 401:
                     print 'incorrect login details'
                     self.login = False
@@ -48,7 +52,8 @@ class PduCmdapp(cmd.Cmd):
             return
         else:
             url = 'http://localhost:5000/outlet_groups/users'
-            r = requests.get(url, auth=HTTPBasicAuth(self.username, self.password))
+            r = requests.get(url,
+                             auth=HTTPBasicAuth(self.username, self.password))
             users = r.json()['users']
             print "user id's and names are"
             for user in users:
@@ -67,9 +72,13 @@ class PduCmdapp(cmd.Cmd):
                 line = ast.literal_eval(line)
                 if all (key in line for key in ("username", "password")):
                     url = 'http://localhost:5000/outlet_groups/users'
-                    data = {'username': line['username'], 'password': line['password']}
-                    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-                    r = requests.post(url, data=json.dumps(data), headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+                    data = {'username': line['username'],
+                            'password': line['password']}
+                    headers = {'Content-type': 'application/json',
+                               'Accept': 'text/plain'}
+                    r = requests.post(url, data=json.dumps(data),
+                                      headers=headers,
+                                      auth=HTTPBasicAuth(self.username, self.password))
                     if r.status_code == 201:
                         pprint.pprint(r.json())
                     else:
@@ -78,7 +87,6 @@ class PduCmdapp(cmd.Cmd):
                     print 'input in wrong format. use help create_user'
             except:
                 print 'input in wrong format . use help create_user'
-            
 
     def help_create_user(self):
         print 'This can be used to create new user'
@@ -90,8 +98,10 @@ class PduCmdapp(cmd.Cmd):
             return
         else:
             url = 'http://localhost:5000/outlet_groups/users/' + userid
-            headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-            r = requests.delete(url, headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+            headers = {'Content-type': 'application/json',
+                       'Accept': 'text/plain'}
+            r = requests.delete(url, headers=headers,
+                                auth=HTTPBasicAuth(self.username, self.password))
             if r.status_code == 200:
                 pprint.pprint(r.json())
             else:
@@ -130,8 +140,11 @@ class PduCmdapp(cmd.Cmd):
                 if all (key in line for key in ("ip", "access_string", "fqdn")):
                     url = 'http://localhost:5000/pdu'
                     data = {'ip': line['ip'], 'access_string': line['access_string'], 'fqdn': line['fqdn']}
-                    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-                    r = requests.post(url, data=json.dumps(data), headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+                    headers = {'Content-type': 'application/json',
+                               'Accept': 'text/plain'}
+                    r = requests.post(url, data=json.dumps(data),
+                                      headers=headers,
+                                      auth=HTTPBasicAuth(self.username, self.password))
                     if r.status_code == 201:
                         pprint.pprint(r.json())
                     else:
@@ -153,7 +166,8 @@ class PduCmdapp(cmd.Cmd):
             pdu_ip = line
             url = 'http://localhost:5000/pdu/' + pdu_ip
             headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-            r = requests.delete(url, headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+            r = requests.delete(url, headers=headers,
+                                auth=HTTPBasicAuth(self.username, self.password))
             if r.status_code == 200:
                 pprint.pprint(r.json())
             else:
@@ -173,7 +187,9 @@ class PduCmdapp(cmd.Cmd):
             url = 'http://localhost:5000/outlet_groups'
             data = {'name': group}
             headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-            r = requests.post(url, data=json.dumps(data), headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+            r = requests.post(url, data=json.dumps(data),
+                              headers=headers,
+                              auth=HTTPBasicAuth(self.username, self.password))
             if r.status_code == 201:
                 pprint.pprint(r.json())
             elif r.status_code == 200:
@@ -205,7 +221,8 @@ class PduCmdapp(cmd.Cmd):
         else:
             url = 'http://localhost:5000/outlet_groups/' + groupid
             headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-            r = requests.delete(url, headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+            r = requests.delete(url, headers=headers,
+                                auth=HTTPBasicAuth(self.username, self.password))
             if r.status_code == 200:
                 pprint.pprint(r.json())
             else:
@@ -222,7 +239,8 @@ class PduCmdapp(cmd.Cmd):
         else:
             url = 'http://localhost:5000/outlet_groups/' + groupid
             headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-            r = requests.get(url, headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+            r = requests.get(url, headers=headers,
+                             auth=HTTPBasicAuth(self.username, self.password))
             if r.status_code == 200:
                 pprint.pprint(r.json()['group'])
             else:
@@ -243,9 +261,13 @@ class PduCmdapp(cmd.Cmd):
                 line = ast.literal_eval(line)
                 if all (key in line for key in ("pduid", "towername", "outlet")):
                     url = 'http://localhost:5000/outlets'
-                    data = {'pduid': line['pduid'], 'towername': line['towername'], 'outlet': line['outlet']}
-                    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-                    r = requests.post(url, data=json.dumps(data), headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+                    data = {'pduid': line['pduid'],
+                            'towername': line['towername'],
+                            'outlet': line['outlet']}
+                    headers = {'Content-type': 'application/json',
+                               'Accept': 'text/plain'}
+                    r = requests.post(url, data=json.dumps(data), headers=headers,
+                                      auth=HTTPBasicAuth(self.username, self.password))
                     if r.status_code == 201:
                         pprint.pprint(r.json())
                     else:
@@ -279,7 +301,8 @@ class PduCmdapp(cmd.Cmd):
         else:
             url = 'http://localhost:5000/outlets/' + line
             headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-            r = requests.delete(url, headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+            r = requests.delete(url, headers=headers,
+                                auth=HTTPBasicAuth(self.username, self.password))
             if r.status_code == 200:
                 pprint.pprint(r.json())
             else:
@@ -301,7 +324,8 @@ class PduCmdapp(cmd.Cmd):
                 if all (key in line for key in ("groupid", "outletid")):
                     url = 'http://localhost:5000/outlet_groups/' + line['groupid'] + '/' + line['outletid']
                     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-                    r = requests.put(url, headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+                    r = requests.put(url, headers=headers,
+                                     auth=HTTPBasicAuth(self.username, self.password))
                     if r.status_code == 200:
                         pprint.pprint(r.json())
                     else:
@@ -324,8 +348,10 @@ class PduCmdapp(cmd.Cmd):
                 line = ast.literal_eval(line)
                 if all (key in line for key in ("groupid", "outletid")):
                     url = 'http://localhost:5000/outlet_groups/' + line['groupid'] + '/' + line['outletid']
-                    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-                    r = requests.delete(url, headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+                    headers = {'Content-type': 'application/json',
+                               'Accept': 'text/plain'}
+                    r = requests.delete(url, headers=headers,
+                                        auth=HTTPBasicAuth(self.username, self.password))
                     if r.status_code == 200:
                         pprint.pprint(r.json())
                     else:
@@ -350,9 +376,12 @@ class PduCmdapp(cmd.Cmd):
                 line = ast.literal_eval(line)
                 if all (key in line for key in ("outletgroupid", "userid")):
                     url = 'http://localhost:5000/outlet_groups/user/groups'
-                    data = {'outletgroupid': line['outletgroupid'], 'userid': line['userid']}
-                    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-                    r = requests.post(url, data=json.dumps(data), headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+                    data = {'outletgroupid': line['outletgroupid'],
+                            'userid': line['userid']}
+                    headers = {'Content-type': 'application/json',
+                               'Accept': 'text/plain'}
+                    r = requests.post(url, data=json.dumps(data), headers=headers,
+                                      auth=HTTPBasicAuth(self.username, self.password))
                     if r.status_code == 201:
                         pprint.pprint(r.json())
                     else:
@@ -375,9 +404,12 @@ class PduCmdapp(cmd.Cmd):
                 line = ast.literal_eval(line)
                 if all (key in line for key in ("outletgroupid", "userid")):
                     url = 'http://localhost:5000/outlet_groups/user/groups'
-                    data = {'outletgroupid': line['outletgroupid'], 'userid': line['userid']}
-                    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-                    r = requests.delete(url, data=json.dumps(data), headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+                    data = {'outletgroupid': line['outletgroupid'],
+                            'userid': line['userid']}
+                    headers = {'Content-type': 'application/json',
+                               'Accept': 'text/plain'}
+                    r = requests.delete(url, data=json.dumps(data), headers=headers,
+                                        auth=HTTPBasicAuth(self.username, self.password))
                     if r.status_code == 200:
                         pprint.pprint(r.json())
                     else:
@@ -404,7 +436,8 @@ class PduCmdapp(cmd.Cmd):
             url = 'http://localhost:5000/outlet_groups/' + groupid + '/control'
             data = {'action': 'on'}
             headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-            r = requests.post(url, data=json.dumps(data), headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+            r = requests.post(url, data=json.dumps(data),
+                              headers=headers, auth=HTTPBasicAuth(self.username, self.password))
             if r.status_code == 200:
                 pprint.pprint(r.json())
             else:
@@ -425,7 +458,8 @@ class PduCmdapp(cmd.Cmd):
             url = 'http://localhost:5000/outlet_groups/' + groupid + '/control'
             data = {'action': 'off'}
             headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-            r = requests.post(url, data=json.dumps(data), headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+            r = requests.post(url, data=json.dumps(data),
+                              headers=headers, auth=HTTPBasicAuth(self.username, self.password))
             if r.status_code == 200:
                 pprint.pprint(r.json())
             else:
@@ -446,7 +480,8 @@ class PduCmdapp(cmd.Cmd):
             url = 'http://localhost:5000/outlet_groups/' + groupid + '/control'
             data = {'action': 'reboot'}
             headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-            r = requests.post(url, data=json.dumps(data), headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+            r = requests.post(url, data=json.dumps(data), headers=headers,
+                              auth=HTTPBasicAuth(self.username, self.password))
             if r.status_code == 200:
                 pprint.pprint(r.json())
             else:
@@ -466,7 +501,8 @@ class PduCmdapp(cmd.Cmd):
                 return
             url = 'http://localhost:5000/outlet_groups/' + groupid + '/control'
             headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-            r = requests.get(url, headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+            r = requests.get(url, headers=headers,
+                             auth=HTTPBasicAuth(self.username, self.password))
             if r.status_code == 200:
                 pprint.pprint(r.json())
             else:
@@ -488,7 +524,8 @@ class PduCmdapp(cmd.Cmd):
             url = 'http://localhost:5000/outlet/' + outletid + '/control'
             data = {'action': 'on'}
             headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-            r = requests.post(url, data=json.dumps(data), headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+            r = requests.post(url, data=json.dumps(data), headers=headers,
+                              auth=HTTPBasicAuth(self.username, self.password))
             if r.status_code == 200:
                 pprint.pprint(r.json())
             else:
@@ -509,7 +546,8 @@ class PduCmdapp(cmd.Cmd):
             url = 'http://localhost:5000/outlet/' + outletid + '/control'
             data = {'action': 'off'}
             headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-            r = requests.post(url, data=json.dumps(data), headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+            r = requests.post(url, data=json.dumps(data), headers=headers,
+                              auth=HTTPBasicAuth(self.username, self.password))
             if r.status_code == 200:
                 pprint.pprint(r.json())
             else:
@@ -530,7 +568,8 @@ class PduCmdapp(cmd.Cmd):
             url = 'http://localhost:5000/outlet/' + outletid + '/control'
             data = {'action': 'reboot'}
             headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-            r = requests.post(url, data=json.dumps(data), headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+            r = requests.post(url, data=json.dumps(data), headers=headers,
+                              auth=HTTPBasicAuth(self.username, self.password))
             if r.status_code == 200:
                 pprint.pprint(r.json())
             else:
@@ -572,7 +611,8 @@ class PduCmdapp(cmd.Cmd):
                 if all (key in line for key in ("pduid", "userid")):
                     url = 'http://localhost:5000/pdu/' + line['pduid'] + '/' + line['userid']
                     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-                    r = requests.put(url, headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+                    r = requests.put(url, headers=headers,
+                                     auth=HTTPBasicAuth(self.username, self.password))
                     if r.status_code == 200:
                         pprint.pprint(r.json())
                     else:
@@ -596,7 +636,8 @@ class PduCmdapp(cmd.Cmd):
                 if all (key in line for key in ("pduid", "userid")):
                     url = 'http://localhost:5000/pdu/' + line['pduid'] + '/' + line['userid']
                     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-                    r = requests.delete(url, headers=headers, auth=HTTPBasicAuth(self.username, self.password))
+                    r = requests.delete(url, headers=headers,
+                                        auth=HTTPBasicAuth(self.username, self.password))
                     if r.status_code == 200:
                         pprint.pprint(r.json())
                     else:
@@ -610,7 +651,7 @@ class PduCmdapp(cmd.Cmd):
         print 'will remove user from pdu'
         print 'usage remove_user_from_pdu {"pduid":"2","userid":"3"}'
 
-    # Control pdu 
+    # Control pdu
     def do_get_pdu_details(self, line):
         if self.login != True:
             print 'please login to use api'
@@ -618,7 +659,7 @@ class PduCmdapp(cmd.Cmd):
         else:
             if line == '':
                 print 'wrong format . use help get_pdu_details'
-                return 
+                return
             pdu_ip = line
             url = 'http://localhost:5000/pdu/' + pdu_ip + '/control'
             r = requests.get(url, auth=HTTPBasicAuth(self.username, self.password))
@@ -687,7 +728,7 @@ class PduCmdapp(cmd.Cmd):
         else:
             if line == '':
                 print 'wrong format, use help get_amperage'
-                return 
+                return
             pduip = line
             url = 'http://localhost:5000/pdu/' + pduip + '/control'
             r = requests.get(url, auth=HTTPBasicAuth(self.username, self.password))

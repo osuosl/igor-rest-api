@@ -172,10 +172,9 @@ class Outletcontrol(Resource):
 
         return {'Status': state_dict}
 
-## to do 
 """
-    GET     /pdu/<string:pduip>/control                       Returns the Status of Pdu 
-    POST    /pdu/<string:pduip>/control {'action': status }   Changes the Status of Pdu 
+    GET     /pdu/<string:pduip>/control                       Returns the Status of Pdu
+    POST    /pdu/<string:pduip>/control {'action': status }   Changes the Status of Pdu
 """
 
 
@@ -245,8 +244,11 @@ class Pducontrol(Resource):
         pdu = Pdu_obj(pduip, 161, pdu_access_string)
 
 """
-    GET     /pdu/<string:pduip>/<string:tower>/<int:outlet>/control                       Returns the Status of Pdu 
-    POST    /pdu/<string:pduip>/<string:tower>/<int:outlet>/control {'action': status }   Changes the Status of Pdu 
+    GET     /pdu/<string:pduip>/<string:tower>/<int:outlet>/control
+            Returns the Status of Pdu
+    POST    /pdu/<string:pduip>/<string:tower>/<int:outlet>/control
+            {'action': status }
+            Changes the Status of Pdu
 """
 
 

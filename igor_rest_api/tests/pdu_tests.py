@@ -8,6 +8,7 @@ from . import IgorApiTestCase
 from igor_rest_api.config import ROOT_USER, ROOT_PASS
 from igor_rest_api.api.grouping.models import PduDetails
 
+
 class PdusTestCase(IgorApiTestCase):
 
     test_host = 'test_host'
@@ -36,7 +37,8 @@ class PdusTestCase(IgorApiTestCase):
     def test_list_pdus(self):
         self.create_test_pdu()
 
-        response = self.client.get(url_for('groupings_pdus'), headers=self.headers)
+        response = self.client.get(url_for('groupings_pdus'),
+                                   headers=self.headers)
         self.assert_200(response)
 
         pdu = (response.json)['pdus'][0]
@@ -82,7 +84,7 @@ class PdusTestCase(IgorApiTestCase):
         self.create_test_pdu()
 
         response = self.client.get(url_for('groupings_pdu',
-                                            ip=self.test_ip),
+                                   ip=self.test_ip),
                                    headers=self.headers)
         self.assert_200(response)
 
@@ -120,12 +122,12 @@ class PdusTestCase(IgorApiTestCase):
                            'access_string': new_pass})
 
         response = self.client.put(url_for('groupings_pdu',
-                                            ip=self.test_ip),
+                                           ip=self.test_ip),
                                    headers=self.headers, data=data)
         self.assert_200(response)
 
         print response.json
-        pdu = PduDetails.query.filter_by(ip= new_ip).first()
+        pdu = PduDetails.query.filter_by(ip=new_ip).first()
         self.assertIsNotNone(pdu)
         self.assertEqual(new_ip, pdu.ip)
         self.assertEqual(new_pass, pdu.access_string)

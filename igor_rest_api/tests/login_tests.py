@@ -6,6 +6,7 @@ from flask import url_for
 from . import IgorApiTestCase
 from igor_rest_api.api.routes import resources
 
+
 class LoginTestCase(IgorApiTestCase):
 
     def test_root(self):
@@ -19,22 +20,22 @@ class LoginTestCase(IgorApiTestCase):
 
         self.assert_401(self.client.get(url_for('login'),
                         headers=[('Authorization', 'Basic '
-                                    + base64.b64encode('toor:root'))]),
+                                  + base64.b64encode('toor:root'))]),
                         message='login should fail with incorrect username')
 
         self.assert_401(self.client.get(url_for('login'),
                         headers=[('Authorization', 'Basic '
-                                    + base64.b64encode('root:toor'))]),
+                                  + base64.b64encode('root:toor'))]),
                         message='login should fail with incorrect password')
 
         self.assert_401(self.client.get(url_for('login'),
                         headers=[('Authorization', 'Basic '
-                                    + base64.b64encode('toor:toor'))]),
+                                  + base64.b64encode('toor:toor'))]),
                         message='login should fail with wrong username/pass')
 
         self.assert_200(self.client.get(url_for('login'),
                         headers=[('Authorization', 'Basic '
-                                    + base64.b64encode('root:root'))]),
+                                  + base64.b64encode('root:root'))]),
                         message='login should pass with correct username/pass')
 
     def test_unauthenticated_endpoints(self):

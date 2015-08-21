@@ -19,7 +19,8 @@ from igor_rest_api.db import db
 """
     GET     /pdu       Returns the list of all the pdus and ther ids
     POST    /pdu       {'ip': pdu_ip_address,
-                        'access_string': pdu_access_string }  Creates a new pdu entry in database
+                        'access_string': pdu_access_string }
+                        Creates a new pdu entry in database
 """
 
 
@@ -43,7 +44,7 @@ class PdudetailsAPI(Resource):
         pdus = PduDetails.query.all()
         return {'pdus': [{'id': pdu.id,
                           'ip': pdu.ip,
-                          'fqdn' : pdu.fqdn}
+                          'fqdn': pdu.fqdn}
                          for pdu in pdus]}
 
     def post(self):
@@ -94,7 +95,7 @@ class PdudetailAPI(Resource):
         if not pdu:
             return {'message': 'Pdu %s does not exist' % ip}, NOT_FOUND
         users = UserPdus.query.filter_by(pduid=pdu.id).all()
-        userids = [ user.userid for user in users]
+        userids = [user.userid for user in users]
         usernames = []
         for userid in userids:
             usernames.append(UserDetails.query.filter_by(id=userid).first().username)
@@ -118,7 +119,7 @@ class PdudetailAPI(Resource):
                     db.session.commit()
                 db.session.delete(outlet)
                 db.session.commit()
-            #delete users associatied with pdu
+            # delete users associatied with pdu
             userpdus = UserPdus.query.filter_by(pduid=pdu.id).all()
             for userpdu in userpdus:
                 db.session.delete(userpdu)
@@ -138,8 +139,8 @@ class PdudetailAPI(Resource):
         else:
             if not access_string is None:
                 pdu.access_string = access_string
-            if not ip is None :
-                pdu.ip = ip 
+            if not ip is None:
+                pdu.ip = ip
             db.session.add(pdu)
             db.session.commit()
             return {'message': 'Updated entry for pdu %s' % pdu.ip}
@@ -147,7 +148,7 @@ class PdudetailAPI(Resource):
 
 """
     GET     /outlets                Returns the details of all the outlets
-    POST    /outlets                {'pduid': pduid, 'towername': towername, 'outlet': outlet } 
+    POST    /outlets                {'pduid': pduid, 'towername': towername, 'outlet': outlet }
                                     Creates a new outlet entry in database
 """
 
@@ -188,7 +189,7 @@ class PduoutletsAPI(Resource):
         return {'outlet_id': outlet.id,
                 'outlet_ip': pduipfromid(outlet.pdu_id),
                 'location': url_for('groupings_outlet', id=outlet.id,
-                                     _external=True)}, CREATED
+                                    _external=True)}, CREATED
 
 
 """
@@ -221,9 +222,9 @@ class PduoutletAPI(Resource):
             return {'message': 'outlet with id %s does not exist' % id},\
                     NOT_FOUND
         return {'outlet': [{'pdu_ip': pduipfromid(outlet.pdu_id),
-                             'id': outlet.id,
-                             'tower': outlet.towername,
-                             'outlet': outlet.outlet}]}
+                            'id': outlet.id,
+                            'tower': outlet.towername,
+                            'outlet': outlet.outlet}]}
 
     def delete(self, id):
         outlet = Outlets.query.filter_by(id=id).first()
@@ -297,7 +298,7 @@ class GroupsAPI(Resource):
         return {'group_id': group.id,
                 'group_name': name,
                 'location': url_for('groupings_group', groupid=group.id,
-                                     _external=True)}, CREATED
+                                    _external=True)}, CREATED
 
 
 """
@@ -323,7 +324,7 @@ class GroupAPI(Resource):
             return {'message': 'group with id %s does not exist' % groupid}, NOT_FOUND
         outlets = query_group_outlets(groupid)
         users = Useroutletsgroups.query.filter_by(outletgroupid=groupid).all()
-        userids = [ user.userid for user in users]
+        userids = [user.userid for user in users]
         usernames = []
         for userid in userids:
             usernames.append(UserDetails.query.filter_by(id=userid).first().username)
@@ -369,7 +370,6 @@ class GroupAPI(Resource):
 class GroupoutletsAPI(Resource):
     decorators = [rootauth.login_required]
 
-
     def put(self, groupid, outletid):
         new = GroupOutlets(groupid, outletid)
         db.session.add(new)
@@ -396,7 +396,6 @@ class GroupoutletsAPI(Resource):
 
 class UserpdusAPI(Resource):
     decorators = [rootauth.login_required]
-
 
     def put(self, pduid, userid):
         check = UserPdus.query.filter_by(pduid=pduid,

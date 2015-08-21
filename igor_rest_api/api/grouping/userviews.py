@@ -9,7 +9,7 @@ from igor_rest_api.db import db
 from .login import rootauth, auth
 from .models import (
         UserDetails, UserOutletsGroups,
-        UserPdus )
+        UserPdus)
 
 
 # User management endpoints
@@ -87,7 +87,7 @@ class GroupinguserAPI(Resource):
             return {'message': 'Userid %d does not exist' % userid}, NOT_FOUND
         else:
             return {'username': user.username,
-                    'userid' : user.id,
+                    'userid': user.id,
                     'location': url_for('groupingsuser',
                                         userid=user.id, _external=True)}
 

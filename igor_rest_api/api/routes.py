@@ -48,7 +48,7 @@ resources = [
             (GroupoutletsAPI,
                 '/outlet_groups/<int:groupid>/<int:outletid>',
                 'groupings_groupings'),
-            (UserpdusAPI,'/pdu/<int:pduid>/<int:userid>','user_pdus'),
+            (UserpdusAPI, '/pdu/<int:pduid>/<int:userid>', 'user_pdus'),
             (Groupcontrol, '/outlet_groups/<int:groupid>/control', 'groupings_control'),
             (Outletcontrol, '/outlet/<int:outletid>/control', 'outlets_control'),
             (LoginAPI, '/login', 'login'),

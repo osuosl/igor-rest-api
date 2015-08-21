@@ -8,6 +8,7 @@ from . import IgorApiTestCase
 from igor_rest_api.config import ROOT_USER, ROOT_PASS
 from igor_rest_api.api.grouping.models import Outlets
 
+
 class GroupingsoutletsTestCase(IgorApiTestCase):
 
     test_pduid = 1
@@ -28,14 +29,15 @@ class GroupingsoutletsTestCase(IgorApiTestCase):
                         ('Content-Type', 'application/json')]
 
     def create_test_outlet(self):
-        outlet = Outlets(self.test_pduid, self.test_tower,self.test_outlet)
+        outlet = Outlets(self.test_pduid, self.test_tower, self.test_outlet)
         self.db.session.add(outlet)
         self.db.session.commit()
 
     def test_list_outlets(self):
         self.create_test_outlet()
 
-        response = self.client.get(url_for('groupings_outlets'), headers=self.headers)
+        response = self.client.get(url_for('groupings_outlets'),
+                                   headers=self.headers)
         self.assert_200(response)
 
         outlet = (response.json)['outlets'][0]
@@ -46,8 +48,8 @@ class GroupingsoutletsTestCase(IgorApiTestCase):
 
     def test_add_outlet(self):
         data = json.dumps({'pduid': self.test_pduid,
-                            'towername': self.test_tower,
-                            'outlet': self.test_outlet})
+                           'towername': self.test_tower,
+                           'outlet': self.test_outlet})
 
         response = self.client.post(url_for('groupings_outlets'),
                                     data=data,
@@ -59,12 +61,10 @@ class GroupingsoutletsTestCase(IgorApiTestCase):
         self.assertEqual(self.test_tower, outlet.towername)
         self.assertEqual(self.test_outlet, outlet.outlet)
 
-
     def test_nonexistent_outlet_info(self):
         response = self.client.get(url_for('groupings_outlet', id=22627828),
                                    headers=self.headers)
         self.assert_404(response)
-
 
     def test_remove_nonexistent_outlet(self):
         response = self.client.delete(url_for('groupings_outlet', id=762728),

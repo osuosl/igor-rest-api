@@ -8,6 +8,7 @@ from igor_rest_api.db import db
 from igor_rest_api.api.auth.models import create_root_user
 from igor_rest_api.api.grouping.models import create_grouping_root_user
 
+
 class IgorApiTestCase(TestCase):
 
     def create_app(self):

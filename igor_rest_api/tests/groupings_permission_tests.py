@@ -54,12 +54,11 @@ class GroupingsPermissionsTestCase(IgorApiTestCase):
 
         grouping1 = self.create_test_grouping(name='grouping_one')
         grouping2 = self.create_test_grouping(name='grouping_two')
-        relation1 = UserOutletsGroups(user.id,grouping1.id)
-        relation2 = UserOutletsGroups(user.id,grouping2.id)
+        relation1 = UserOutletsGroups(user.id, grouping1.id)
+        relation2 = UserOutletsGroups(user.id, grouping2.id)
         self.db.session.add(relation1)
         self.db.session.add(relation2)
         self.db.session.commit()
-
 
         response = self.client.get(url_for('groupings_user',
                                             id=user.id),
@@ -67,7 +66,7 @@ class GroupingsPermissionsTestCase(IgorApiTestCase):
         self.assert_200(response)
 
         groupids = [group['groupid'] for group in
-                    (response.json)['username: '+ user.username+ ' ']]
+                    (response.json)['username: ' + user.username+ ' ']]
 
         self.assertIn(grouping1.id, groupids)
         self.assertIn(grouping2.id, groupids)
@@ -77,7 +76,7 @@ class GroupingsPermissionsTestCase(IgorApiTestCase):
         user = self.create_test_user()
         grouping = self.create_test_grouping()
 
-        data = json.dumps({'outletgroupid': grouping.id,'userid': user.id})
+        data = json.dumps({'outletgroupid': grouping.id, 'userid': user.id})
         response = self.client.post(url_for('groupings_users'),
                                    data=data,
                                    headers=self.headers)
@@ -87,16 +86,14 @@ class GroupingsPermissionsTestCase(IgorApiTestCase):
         self.assertEquals(group.id, grouping.id,
                           'expected grouping to exist for user')
 
-
     def test_remove_machine_from_user(self):
         grouping = self.create_test_grouping()
         user = self.create_test_user()
 
-
-        relation = UserOutletsGroups(user.id,grouping.id)
+        relation = UserOutletsGroups(user.id, grouping.id)
         self.db.session.add(relation)
         self.db.session.commit()
-        data = json.dumps({'outletgroupid': grouping.id,'userid': user.id})
+        data = json.dumps({'outletgroupid': grouping.id, 'userid': user.id})
 
         response = self.client.delete(url_for('groupings_users'),
                                       data=data,
@@ -104,6 +101,5 @@ class GroupingsPermissionsTestCase(IgorApiTestCase):
         print response.json
         self.assert_200(response, 'unexpected error deleting relation')
 
-        relation = UserOutletsGroups.query.filter_by(userid=user.id,outletgroupid=grouping.id).first()
+        relation = UserOutletsGroups.query.filter_by(userid=user.id, outletgroupid=grouping.id).first()
         self.assertEquals(None, relation)
-

@@ -8,6 +8,7 @@ from . import IgorApiTestCase
 from igor_rest_api.config import ROOT_USER, ROOT_PASS
 from igor_rest_api.api.auth.models import User
 
+
 class UsersTestCase(IgorApiTestCase):
 
     test_user = 'test_user'
@@ -49,7 +50,7 @@ class UsersTestCase(IgorApiTestCase):
 
         response = self.client.get(url_for('login'),
                                    headers=[('Authorization', 'Basic '
-                                        + base64.b64encode(self.test_user +
+                                   + base64.b64encode(self.test_user +
                                                            ':' +
                                                            self.test_pass))])
         self.assert_200(response)

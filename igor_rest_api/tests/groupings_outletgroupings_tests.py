@@ -8,6 +8,7 @@ from . import IgorApiTestCase
 from igor_rest_api.config import ROOT_USER, ROOT_PASS
 from igor_rest_api.api.grouping.models import Group
 
+
 class GroupingsoutletgroupingsTestCase(IgorApiTestCase):
 
     test_groupname = 'groupname'
@@ -53,12 +54,10 @@ class GroupingsoutletgroupingsTestCase(IgorApiTestCase):
         self.assertIsNotNone(grouping)
         self.assertEqual(self.test_groupname, grouping.name)
 
-
     def test_nonexistent_grouping_info(self):
         response = self.client.get(url_for('groupings_group', groupid=22627828),
                                    headers=self.headers)
         self.assert_404(response)
-
 
     def test_remove_nonexistent_grouping(self):
         response = self.client.delete(url_for('groupings_group', groupid=762728),
