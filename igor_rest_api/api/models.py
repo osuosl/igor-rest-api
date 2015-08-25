@@ -5,4 +5,3 @@ machine_users = db.Table('permissions',
                                    db.ForeignKey('user.id')),
                          db.Column('machine_id', db.Integer,
                                    db.ForeignKey('machine.id')))
-

@@ -9,7 +9,7 @@ from igor_rest_api.api.models import machine_users
 
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True)
     pwdhash = db.Column(db.String(54))
     machines = db.relationship('Machine', secondary=machine_users,
@@ -42,6 +42,7 @@ class User(db.Model):
 
     def __eq__(self, user):
         return self.hostname == user.hostname
+
 
 def create_root_user():
     # Create root user

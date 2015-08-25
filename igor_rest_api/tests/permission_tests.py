@@ -13,8 +13,8 @@ class PermissionsTestCase(IgorApiTestCase):
 
     test_host = 'test_host'
     test_fqdn = 'test_fqdn'
-    test_user = 'test_user' # Reused for test user
-    test_pass = 'test_pass' # Reused for test user
+    test_user = 'test_user'  # Reused for test user
+    test_pass = 'test_pass'  # Reused for test user
 
     def setUp(self):
         # Login as ROOT_USER prior to all test cases

@@ -4,6 +4,8 @@ from flask.ext.restful import Resource
 """
     GET     /                 Returns 200 OK with a message
 """
+
+
 class RootAPI(Resource):
     def get(self):
         return {'message': 'Igor lives!'}

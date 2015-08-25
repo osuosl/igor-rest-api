@@ -221,7 +221,8 @@ Date: Mon, 09 Jun 2014 18:35:01 GMT
 List available machines.
 
 ```
-$ curl -i -u root:root -X GET http://localhost:5000/machinesHTTP/1.0 200 OK
+$ curl -i -u root:root -X GET http://localhost:5000/machines
+HTTP/1.0 200 OK
 Content-Type: application/json
 Content-Length: 145
 Server: Werkzeug/0.9.4 Python/2.7.6
@@ -395,7 +396,8 @@ Date: Tue, 17 Jun 2014 18:47:00 GMT
 Revoke permission for `root` to access `osl01`.
 
 ```
-$ curl -i -X DELETE -u root:root http://localhost:5000/users/root/machines/osl01HTTP/1.0 200 OK
+$ curl -i -X DELETE -u root:root http://localhost:5000/users/root/machines/osl01
+HTTP/1.0 200 OK
 Content-Type: application/json
 Content-Length: 68
 Server: Werkzeug/0.9.4 Python/2.7.6

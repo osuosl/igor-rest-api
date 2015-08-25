@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from .auth.views import LoginAPI
-
 from .ipmi.views import (
     MachineChassisAPI, MachineChassisPowerAPI,
     MachineSensorsAPI, MachineSensorAPI,
@@ -10,20 +9,60 @@ from .ipmi.views import (
     MachineChassisPolicyAPI, MachineSelAPI, MachineSelTimeAPI,
     MachineSelRecordsAPI,
 )
-from .machines.views import MachineAPI, MachinesAPI
+from .machines.views.machines import MachineAPI, MachinesAPI
 from .machines.views.permissions import (
     UserMachineAPI, UserMachinesAPI,
     MachineUserAPI, MachineUsersAPI,
 )
 from .auth.views import UserAPI, UsersAPI
 from .views import RootAPI
+from .grouping.views import (
+        PdudetailsAPI, PdudetailAPI,
+        PduoutletsAPI, PduoutletAPI,
+        GroupsAPI, GroupAPI,
+        GroupoutletsAPI, UserpdusAPI
+)
+from .grouping.userviews import (
+        GroupingusersAPI, GroupinguserAPI,
+        Usergroups, GroupingsloginAPI,
+        Usergroup
+)
+from .grouping.controlviews import (
+        Groupcontrol, Outletcontrol,
+        Pducontrol, Pduoutletcontrol
+        )
 
 
 resources = [
             (RootAPI, '/', 'root'),
+            (PdudetailsAPI, '/pdu', 'groupings_pdus'),
+            (PdudetailAPI, '/pdu/<string:ip>', 'groupings_pdu'),
+            (PduoutletsAPI, '/outlets', 'groupings_outlets'),
+            (Pducontrol, '/pdu/<string:pduip>/control', 'pdu_control'),
+            (Pduoutletcontrol, '/pdu/<string:pduip>/<string:tower>/<int:outlet>/control', 'pdu_outlet_control'),
+            (PduoutletAPI,
+                '/outlets/<int:id>',
+                'groupings_outlet'),
+            (GroupsAPI, '/outlet_groups', 'groupings_groups'),
+            (GroupAPI, '/outlet_groups/<int:groupid>', 'groupings_group'),
+            (GroupoutletsAPI,
+                '/outlet_groups/<int:groupid>/<int:outletid>',
+                'groupings_groupings'),
+            (UserpdusAPI, '/pdu/<int:pduid>/<int:userid>', 'user_pdus'),
+            (Groupcontrol, '/outlet_groups/<int:groupid>/control', 'groupings_control'),
+            (Outletcontrol, '/outlet/<int:outletid>/control', 'outlets_control'),
             (LoginAPI, '/login', 'login'),
             (UsersAPI, '/users', 'users'),
             (UserAPI, '/users/<string:username>', 'user'),
+            (GroupingusersAPI, '/outlet_groups/users', 'groupingsusers'),
+            (GroupinguserAPI,
+                '/outlet_groups/users/<int:userid>',
+                'groupingsuser'),
+            (GroupingsloginAPI, '/outlet_groups/login', 'groupingslogin'),
+            (Usergroups, '/outlet_groups/user/groups', 'groupings_users'),
+            (Usergroup,
+                '/outlet_groups/user/groups/<int:id>',
+                'groupings_user'),
             (MachinesAPI, '/machines', 'machines'),
             (MachineAPI, '/machines/<string:hostname>', 'machine'),
             (UserMachinesAPI, '/users/<string:username>/machines',
@@ -73,6 +112,7 @@ resources = [
                 '/machines/<string:hostname>/sel/records',
                 'machine_sel_records')
             ]
+
 
 def setup(api):
     for resourceClass, url, endpoint in resources:
